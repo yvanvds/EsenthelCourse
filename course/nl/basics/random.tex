@@ -1,0 +1,61 @@
+\chapter{Random}
+
+\section{Gehele getallen}
+Een game blijft zelden boeiend als die compleet voorspelbaar is. Om die voorspelbaarheid tegen te gaan maken ontwikkelaars gebruik van willekeurige waarden via de \eeClass{Random} class. Die class laat je toe om variatie in te bouwen. De functie \eeFunc{Random()} geeft je een willekeurig getal tussen 0 en 4.294.967.295. Je kan dat testen via het volgende voorbeeld:
+
+\begin{code}
+uint number = 0;
+
+bool Update() {
+  if(Kb.bp(KB_SPACE)) number = Random();
+	return true;
+}
+
+void Draw() {
+	D.clear(BLACK);
+	D.text(0, 0, S + number);
+}
+\end{code}
+
+In praktijk zal je zelden zo'n grote getallen willen. Je kan de functie \eeClass{Random()} daarom ook gebruiken met een of meerdere argumenten. E\'en argument zorgt er voor dat je een getal krijgt in de range 0 tot het argument - 1. Dus \eeClass{Random(5)} geeft je de waarde 0, 1, 2, 3 of 4 als resultaat. Let op: dat zijn 5 verschillende waarden, maar het getal 5 zal niet voorkomen!
+
+Je kan ook twee argumenten gebruiken. \eeClass{Random(-2, 4)} heeft mogelijk de volgende waarden: -2, -1, 0, 1, 2, 3 of 4. In deze versie zijn de waarden dus wel inclusief.
+
+\begin{exercise}
+Probeer de bovenstaande code uit. Test ook de versies van de Random functie met \'e\'en of twee argumenten.
+\end{exercise}
+
+\begin{note}
+Als je een random kleur wil, dan kan je de RGB waarden van Color een willekeurige waarde tussen 0 en 255 geven. Dat kan zo:
+
+\begin{code}
+Color myColor;
+myColor.set(Random(255), Random(255), Random(255));
+\end{code}
+\end{note}
+
+\section{Random Float}
+De bovenstaande code geeft je een willekeurig geheel getal. Dikwijls zal je echter een floating point waarde willen. Daarvoor kan je een andere functie gebruiken: \eeFunc{RandomF()}. Deze functie geeft je een waarde tussen 0 en 1. Ook hier is het mogelijk om argumenten te gebruiken. \eeFunc{RandomF(3)} geeft je een waarde tussen 0 en 3. \eeFunc{RandomF(-1.3, 2.5)} levert een waarde tussen -1.3 en 2.5.
+
+Dikwijls zal je deze functies gebruiken om een object op een willekeurige positie te tonen. Dat kan zo:
+
+\begin{code}
+Circle c;
+
+c.pos.x = RandomF(-D.w(), D.w());
+c.pos.y = RandomF(-D.h(), D.h());
+\end{code}
+
+Zoals je ziet zetten we niet letterlijk getallen in de functie RandomF. Dat kan wel, maar in dit geval is dat niet aangewezen. De hoogte en de breedte van het scherm kunnen namelijk verschillen van toestel tot toestel. Aangezien het middelpunt van het scherm gelijk is aan 0, is de negatieve breedte dus de linkerkant (minimum waarde voor x). De negatieve hoogte is de onderkant (minimum waarde voor y).
+
+\begin{exercise}
+\begin{enumerate}
+\item Maak een programma dat een cirkel op het scherm toont. Telkens je op de spatiebalk drukt, geef je de cirkel een nieuwe positie.
+\item Maak een programma dat een klein vierkant op het scherm toont. Elke seconde geef je het vierkant een nieuwe positie.
+\item Dit is een uitbreiding op het vorige programma. Voor zie een int `score' die gelijk is aan nul. Je toont de score ergens op het scherm. Wanneer je de linkermuisknop indrukt, controleer je of de muiswijzer binnen het vierkant zit. Als dat zo is, verhoog je de score met 1.
+\item Uitbreiding: zorg dat het vierkant steeds sneller van positie wisselt.
+\end{enumerate}  
+\end{exercise}
+
+
+

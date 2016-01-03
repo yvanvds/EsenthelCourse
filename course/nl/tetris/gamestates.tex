@@ -1,0 +1,137 @@
+\chapter{Application States}
+Nu alle onderdelen klaar zijn beginnen we aan het eigenlijke programma. Daarin zijn er drie application states nodig: de initState waarin het programma start, de gameState waarin de eigenlijke gameplay plaatsvindt en de scoreState waarin je na een spel de score toont.
+
+Maak alvast een applicatie `tetris' met daarin een folder `states'. In die folder voorzie je 3 bestanden: initState, gameState en scoreState.
+
+\section{De Init State}
+
+In de init state voorzien we de gewone application functies: \eeFunc{InitPre}, \eeFunc{Init}, \eeFunc{Shut}, \eeFunc{Update} en \eeFunc{Draw}. Je kan die overnemen vanuit eender welk programma dat je eerder maakte. Daarna voorzie je de functies van de nodige code.
+
+Tot nu toe lieten we de \eeFunc{InitPre} functie meestal met rust. Dat is de eerste functie die uitgevoerd wordt wanneer je programma start. Je kan die functie gebruiken om enkele basisinstellingen juist te zeten. In dit geval zijn dat de naam van het programma en de afmetingen van het window. Je kan daarvoor de constanten gebruiken die we eerder ingaven.
+
+\begin{code}
+void InitPre()
+{
+   EE_INIT();
+   App.name(APP_NAME);
+   D.mode(WINDOW_WIDTH, WINDOW_HEIGHT);  
+}
+\end{code}
+
+De \eeFunc{Init} functie bevat twee lijnen code. Je voert de \eeFunc{create} functie uit van het object \eeClass{Background} en je voert de \eeFunc{startMusic} functie uit van het object \eeClass{SoundManager}. Je kan deze functie ongetwijfeld ook zonder voorbeeld uitwerken.
+
+De Update functie slaan we even over. Maar in de \eeFunc{Draw} functie kan je even uitleven. Hierin zorg je voor een mooi startscherm. Je kan zeker de afbeelding gebruiken die voorzien is en enkele teksten tonen in de bijgevoegde tetris fonts. Voor zie ook ergens de tekst ``Push space to start'', want dat is de manier waarop we het spel zullen starten.
+
+
+\section{De Game State}
+
+In het bestand `gameState maak je drie functies: \eeFunc{GameInit}, \eeFunc{GameUpdate} en \eeFunc{GameDraw}. Deze functies laten we voorlopig ongeveer leeg, al kan je in de draw functie wel al de achtergrond tekenen. Je voorziet ook de declaratie van de state. Hier zie je hoe dit bestand er voorlopig uit dient te zien:
+
+\begin{code}
+bool GameInit()
+{
+   return true;
+}
+
+bool GameUpdate()
+{
+   if(Kb.bp(KB_ESC)) return false;  
+   return true;
+}
+
+void GameDraw()
+{
+   Background.draw();
+}
+
+State GameState(GameUpdate, GameDraw, GameInit);
+\end{code}
+
+Je voegt nu in de init state een test toe: wanneer je op de spatiebalk klikt, dan schakelt je programma over naar de GameState, met een fade van 0.4 seconden. (Als je niet meer weet hoe dat moet, kijk dan in hoofdstuk \ref{chapter:application_states}.
+
+Je kan nu al eens testen of je programma overschakelt naar de gamestate wanneer dat nodig is.
+
+\section{De Score State}
+
+Deze application state is nauw verweven met een class \eeClass{score}. Het is daarom nodig dat we ze samen uitwerken. Begin met deze code voor de application state:
+
+\begin{code}
+bool scoreUpdate() { 
+  return true;
+}
+
+void scoreDraw() {}
+
+State ScoreState(scoreUpdate, scoreDraw);
+\end{code}
+
+Voor de class \eeClass{score} maak je een afzonderlijk code bestand. De basis voor de class \eeClass{score} ziet er zo uit:
+
+\begin{code}
+class score
+{
+private:
+   int   points;
+   int   level ;
+   bool  won   ;
+   float speed ;
+   
+   void checkWin() {}
+   
+public:   
+   void  init      (         )   {}   
+   void  addPoints (int value)   {}   
+   float getSpeed  (         ) C {}
+   int   getPoints (         ) C {}
+   int   getLevel  (         ) C {}
+   bool  hasWon    (         ) C {}
+   
+   void  gameIsLost(         )   {}
+}
+
+score Score;
+\end{code}
+
+Zoals je ziet bevat deze class 4 waarden: points, level, won en speed. Die laatste heeft niet echt iets met de score te maken. Maar omdat de snelheid afhankelijk is van het level, is het handig om de samen te zetten. Zo kan het score object ook de snelheid verhogen wanneer dat nodig is.
+
+\subsection{Wat eenvoudig is}
+We werken de eenvoudige functies eerst uit. De \eeFunc{init} functie geeft alle variabelen een geschikte startwaarde. Je begint op level 1, met 0 punten. En je hebt nog niet gewonnen. De snelheid is gelijk aan de constante \verb|INITIAL_SPEED|.
+
+De functies \eeFunc{getSpeed}, \eeFunc{getPoints}, \eeFunc{getLevel} en \eeFunc{hasWon} geven gewoon de waarde van de bijbehorende variabele als resultaat.
+
+Werk deze vijf functies nu uit.
+
+\subsection{checkWin \& gameIsLost}
+In \eeFunc{checkWin} moet je controleren of het huidige level groter is dan de constante \verb|NUM_LEVELS|. Als dat zo is, dan wordt `won' gelijk aan \verb|true|. Je schakelt dan ook over naar de `score' application state via \verb|ScoreState.set(1);| en laat via de \eeClass{SoundManager} een feestelijk geluid horen.
+
+De functie \eeFunc{gameIsLost} is gelijkaardig, maar de controle is niet nodig. Je hebt verloren wanneer een blok niet meer in het speelveld past. Die controle kunnen we niet uitvoeren vanuit deze class. Ze zal later ergens anders gebeuren, en daar wordt dan deze functie uitgevoerd. In de functie zorg je dat `won' gelijk wordt aan \verb|false| en schakel je weer over naar \eeFunc{ScoreState}. En dit maal laat je een minder feestelijk geluid horen.
+
+\subsection{addPoints}
+Deze laatste functie voegt punten toe aan de score. Op dat moment gaan we ook kijken of we in een volgend level terechtkomen en zo nodig de snelheid aanpassen. We kunnen hier ook controleren of de speler het spel gewonnen heeft, want dat kan natuurlijk enkel op het moment dat hij punten krijgt.
+
+Je kan hier weer de volgende code overnemen. Nogmaals, zorg dat je de code ook begrijpt. Enkel overtypen is niet genoeg!
+
+\begin{code}
+void addPoints(int value)
+{
+	 if(value > 0)
+	 {
+	 	  points += POINTS_PER_LINE * value;
+	 	  SoundManager.score();
+	 		
+	 	  if(points >= level * POINTS_PER_LEVEL)
+	 	  {
+	 			 level++;
+	 			 checkWin();
+				 speed -= SPEED_CHANGE;
+		  } 
+	 }      
+}
+\end{code}
+
+\subsection{Score State}
+Uiteindelijk kan je nu ook de score state uitwerken. Het framework daarvoor heb je al toegevoegd (want anders kon je de state niet gebruiken in de \eeClass{score} class. Zoals je ziet bevat deze state enkel een \eeFunc{update} en een \eeFunc{draw} functie. Er moet niets ge\"initialiseeerd worden, dus is een \eeFunc{init} functie overbodig.
+
+Om de draw functie uit te werken kan je je inspireren op de draw functie in de Init state die je eerder maakte. Het is waarschijnlijk het mooist als die daar op lijkt. Maar je kan nu wel een licht afwijkende versie maken, afhankelijk van of je al dan niet gewonnen hebt. (Je gebruikt de functie \eeFunc{Score.hasWon()} om dat te controleren. Ook wil je de score op het scherm tonen vraag je de speler of hij nog een spel wil spelen. Voor dat laatste geef je de instructie dat er op y of n gedrukt kan worden.
+
+In de update functie controleer je de toetsen y en n. Wanneer de speler op y drukt, dan schakel je weer over naar de GameState. Drukt hij op n, dan sluit je het programma af.

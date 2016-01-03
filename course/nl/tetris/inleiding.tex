@@ -1,0 +1,143 @@
+\chapter{Inleiding}
+Je hebt in de vorige hoofdstukken alles gezien om een eenvoudige 2D game te maken. Maar hoe breng je dat nu op een overzichtelijke manier samen in een groot project? Er bestaat eigenlijk niet \'e\'en antwoord daarop. Je leert dat vooral door ervaring op te doen. Wat voor de ene persoon werkt, vind de andere misschien minder goed. Toch zijn er een aantal regels die het je zeker makkelijker kunnen maken. En wanneer je in groep werkt dan zal de lead programmer meestal ook een aantal regels opleggen die iedereen moet volgen. Dat zijn niet noodzakelijk goede of slechte regels, maar ze werken zolang iedereen hetzelfde doet.
+
+In dit deel van de cursus bouw je een project op voor een tetris kloon. Je leert om stap voor stap een project uit te werken zonder dat je het overzicht kwijt raakt.
+
+\begin{note}
+Tetris bestaat uit blokken die dan weer bestaan uit vierkanten. In deze cursus bedoelen we met een blok steeds het hele tetris figuurtje. Staat er `square' of vierkant, dan gaat het om de vierkantjes die samen een blok vormen.
+\end{note}
+
+\section{Setup}
+Open eerst het project `Tetris\_start'. Daarin vind je alvast de graphics, geluiden en fonts die we gaan gebruiken. Er is ook alvast een lege app `Tetris' voorzien, maar die gaan we nog niet dadelijk gebruiken.
+
+\begin{enumerate}
+	\item Maak eerst op het hoogste niveau een Library aan. Dat doe je door rechts te klikken en `new library' te kiezen. Je geeft deze library de naam `Tetris parts'. Je Een library is een groene map. De code in een library kan je gebruiken vanuit elke applicatie binnen je project, net zoals de library `Esenthel Engine' die altijd aanwezig is.
+	\item Maak ook een nieuwe applicatie (blauwe map). Die noem je `squareTester'.
+	\item In de applicatie `squareTester' maak je een code bestand `main'. 
+	\item In de library `Tetris parts' maak je een nieuwe folder (geel) met de naam `definitions'.
+	\item Maak van `squareTester' de actieve applicatie.
+\end{enumerate}
+	
+Je kan in het bestand `squareTester/main' de code van `Tetris/initState' overnemen. Verwijder dan wel de regel 
+	
+\begin{code}
+D.full(true);
+\end{code}
+
+Dat maakt het makkelijker om je programma te be\"indigen wanneer er iets fout gaat.	
+
+\section{Constants}
+In het vorige hoofdstuk leerde je over constanten. Het is een goed idee om, voordat je aan de echte code begint, enkele belangrijke constanten vast te leggen. Die kan je dan overal in je code gebruiken en later eenvoudig aanpassen als dat nodig blijkt. Je begint daarom in de map `Tetris parts/definitions' met een nieuw code bestand dat je `constants'noemt.
+
+Om later de naam van het programma eenvoudig te wijzigen, maken we alvast een constante \eeClass{Str} met de voorlopige naam.
+
+\begin{code}
+C Str APP_NAME = "Tetris";
+\end{code}
+
+De grootte van het standaard applicatie window is niet ideaal voor dit spel. Die grootte moet in pixels worden ingegeven. We declareren daar een constante \eeClass{int} voor, zodat we die later eenvoudig kunnen aanpassen.
+
+\begin{code}
+// the window size on the screen, in pixels
+C int WINDOW_WIDTH  = 900;
+C int WINDOW_HEIGHT = 800;
+\end{code}
+
+Tetris bestaat uit rijen en kolommen. Ook die leggen we vast:
+
+\begin{code}
+// this impacts the playing field
+C int SQUARES_PER_ROW = 10;
+C int ROWS            = 15;
+\end{code}
+
+Over de score kunnen we ook al iets zeggen. Er moeten een aantal levels zijn, de punten die je per lijn en per level krijgt liggen ook vast.
+
+\begin{code}
+// the score system uses these
+C int POINTS_PER_LINE  =  525;
+C int POINTS_PER_LEVEL = 6300;
+C int NUM_LEVELS       =    5;
+\end{code}
+
+De snelheid van het spel gaat elk level omhoog. We kunnen die begrippen ook al vastleggen.
+
+\begin{code}
+// the speed will increase every level
+C float INITIAL_SPEED = 1.0;
+C float SPEED_CHANGE  = 0.1;
+\end{code}
+
+Als je tetris speelt, dan is er een korte periode waarin je een blok dat de onderkant van het spel bereikt nog opzij kan schuiven. Die periode leggen we ook vast.
+
+\begin{code}
+// the time a block can be slided to the side
+// when it hits bottom
+C float SLIDE_TIME = 0.25;
+\end{code}
+
+Dan moeten we bepalen hoe groot het speelveld is. We leggen daarom de linkeronderhoek vast, en de grootte van de rechthoek die we daarop toepassen.
+
+\begin{code}
+// the area reserved for the playing field 
+C Vec2 GAMEAREA     (-0.8, -0.8);
+C Vec2 GAMEAREA_SIZE( 1.0,  1.4);
+\end{code}
+
+Een nieuw blok verschijnt altijd bovenaan het scherm. Waar dat precies is, dat kunnen we afleiden uit de waarden die we al hebben: SQUARES\_PER\_ROW en ROWS. Daarnaast is er ook nog een wachtpositie, die je meestal bovenaan rechts naast het speelveld toont. Het valt je misschien op dat we hier geen \eeClass{Vec2} gebruiken, maar een \eeClass{VecI2}. Dat is een vector waar enkel gehele getallen in passen. We willen geen tetris waar blokken halverwege tussen twee posities kunnen zitten.
+
+\begin{code}
+// position for the current and next block
+C VecI2 STARTPOS(SQUARES_PER_ROW / 2, ROWS - 1);
+C VecI2 WAITPOS (SQUARES_PER_ROW + 4, ROWS - 3);
+\end{code}
+
+Tot slot kunnen we met de voorgaande constante ook de grootte van een vierkant berekenen. Dat heeft het voordeel dat we later de voorgaande constanten kunnen aanpassen en dat de grootte van een vierkant dan vanzelf aangepast wordt.
+
+\begin{code}
+// the size of a square
+C float SQUARE_SIZE = GAMEAREA_SIZE.x / SQUARES_PER_ROW;
+\end{code}
+
+\begin{note}
+Het zal natuurlijk zelden gebeuren dat je bij de start aan een project al perfect weet welke constanten je nodig zal hebben. In praktijk zal je dus meestal enkele waarden vastleggen en daarna de lijst aanvullen wanneer je merkt dat je nog constanten nodig hebt.
+\end{note}
+
+\section{Enumeraties}
+Maak in de folder `Tetris parts/definitions' een nieuw code bestand `enumerations'. hierin voorzie je alvast twee enum's die je in het project nodig zal hebben. Ten eerste is er het blok type. Tetris heeft vierkante blokken, T blokken enzovoort. Een lijst kan er zo uitzien:
+
+\begin{code}
+enum BLOCK_TYPE
+{
+   BT_SQUARE     ,
+   BT_T          ,
+   BT_L          ,
+   BT_BACKWARDS_L,
+   BT_STRAIGHT   ,
+   BT_S          ,
+   BT_BACKWARDS_S,
+   BT_NUM        , // number of block types used in the game
+   BT_BACKGROUND , // special case, only for background
+   BT_WALL       ,      
+}
+\end{code}
+
+De drie laatste waarden  verdienen wat extra aandacht. De waarde `BT\_NUM' is handig omdat het nummer waar die waarde voor staat, gelijk is aan de mogelijkheden + 1. Dat maakt het eenvoudig om een random functie te gebruiken. Die is immers exclusief de hoogste waarde. Zo kunnen we later in het programma eenvoudig de volgende functie gebruiken:
+
+\begin{code}
+blockType type = Random(BT_NUM);
+\end{code}
+
+Waarom staat BT\_NUM dan niet op het eind? Wel, de laatste twee waarden zijn speciale gevallen. Het is handig voor de afwerking van het spel om ook vierkanten te gebruiken om de achtergrond en de randen van het spel te tekenen. En de kleur van zo'n vierkant wordt bepaald door het blok type. Omdat we niet willen dat die types ook in het spel gebruiken, plaatsen we BT\_NUM daar voor.
+
+Een tweede enumeratie hebben we nodig om de mogelijke richtingen van een blok te bepalen. Een blok kan nooit naar boven, maar wel naar links, naar rechts, of naar beneden. Blokken die al beneden zijn, hebben geen richting meer.
+
+\begin{code}
+enum DIRECTION
+{
+   D_LEFT ,
+   D_RIGHT,
+   D_DOWN ,
+   D_NONE ,
+}
+\end{code}

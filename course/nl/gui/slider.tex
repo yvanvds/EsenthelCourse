@@ -1,0 +1,54 @@
+\chapter{Slider}
+
+Een slider heeft een waarde tussen 0 en 1, afhankelijk van zijn positie. Je kan die waarde opvragen via de operator \eeFunc{()}. Voor een gewone slider wordt dat:
+
+\begin{code}
+float value = mySlider();
+\end{code}
+
+Maar wanneer je slider een pointer is, dan moet je wel aangeven dat je niet de pointer maar het object zelf wil aanspreken:
+
+\begin{code}
+float value = (*mySlider)();
+\end{code}
+
+Doe je dat dan vanuit een static functie die je koppelt aan de slider, dan wordt die variabele automatisch aangepast wanneer je de slider beweegt. Zo kan je het volgende schrijven:
+
+\begin{code}
+class sliderWindow
+{
+private:
+   GuiObjs objs;
+	 Window * window;
+	 Slider * speedSlider;   
+	 float currentSpeed = 1;	
+	
+   static void speedSliderFunction(sliderWindow & obj) {
+		  currentSpeed = (*obj.speedSlider)() * 5;
+	 }
+	
+public:
+   void create()
+   {
+      objs.load( --- Drop Gui Object here --- );
+      window = objs.findWindow("window");
+			speedSlider = objs.findSlider("speedSlider");
+
+			speedSlider.func(speedSliderFunction, T);
+      Gui += objs;
+   }
+}
+sliderWindow SliderWindow;
+\end{code}
+
+\begin{note}
+Sliders geven altijd een waarde tussen 0 en 1. Je kan die schaal niet aanpassen, maar je kan wel het resultaat vermenigvuldigen tot de range die je nodig hebt. Wil je bijvoorbeeld een waarde tussen 10 en 50, dan schrijf je:
+
+\begin{code}
+float value = 10 + slider() * 40;
+\end{code}
+\end{note} 
+
+\begin{exercise}
+Maak een window met drie sliders en een \eeClass{Color}. De color stel je in het begin gelijk aan BLACK, maar de sliders wijzigen respectievelijk de r, g en b waarden van de color. Teken dan ook de achtergrond in deze kleur.
+\end{exercise}

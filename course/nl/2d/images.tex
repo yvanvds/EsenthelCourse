@@ -1,0 +1,292 @@
+\chapter{Afbeeldingen en Geluid}
+\section{Afbeeldingen}
+Een moderne 2D game bevat bijna altijd afbeeldingen. Wat er ook op het scherm gebeurt, bijna altijd bestaat het uit het tonen en manipuleren van afbeeldingen. Aangezien een afbeelding steeds een rechthoek is, gebruik je een \eeClass{Rect} om ze op het scherm te tonen.
+
+\begin{code}
+Images(=== drop hier een afbeelding ===).draw(Rect(-0.1, -0.1, 0.1, 0.1));
+\end{code}
+
+Via \eeClass{Images()} kan je elke afbeelding in je project gebruiken. Je dropt de gewenste afbeelding tussen de haakjes. Daarna gebruik je de \eeFunc{draw} functie met als argument een \eeClass{Rect} om de afbeelding te tonen. Een bewegende afbeelding is op die manier heel eenvoudig. Je moet enkel de positie onthouden en je rechthoek daar van afleiden.
+
+\begin{code}
+Vec2 ship(0, -0.8);
+
+// tijdens update:
+if(Kb.b(KB_LEFT )) ship.x -= Time.d();
+if(Kb.b(KB_RIGHT)) ship.x += Time.d();
+
+// tijdens draw:
+Images(=== spaceship ===).draw(Rect(ship - 0.1,  ship + 0.1));
+\end{code}
+
+\begin{note}
+Als je afbeeldingen zoals in dit voorbeeld wil gebruiken, dan vind je die makkelijk via Google images. Meestal zal je wel afbeeldingen willen met een transparante achtergrond. Dat kan enkel met een GIF of PNG formaat. Aangezien Esenthel geen GIF ondersteunt, moet je dus op zoek naar PNG afbeeldingen. De search tools op 
+Google images laten je toe om specifiek naar transparante afbeeldingen te zoeken. Vind je niet dadelijk iets bruikbaar? Voeg dan eens de term `icon' of `sprites' toe aan je zoekopdracht.
+
+Denk er wel aan dat je deze afbeeldingen enkel tijdens de ontwerpfaze kan gebruiken. Zou je een game publiceren met afbeeldingen die niet van jou zijn, dan krijg je problemen met auteursrechten.
+\end{note}
+
+Om alles iets realistischer te maken gebruik je meestal variaties op een afbeelding. In het volgende voorbeeld gebruiken we twee alternatieve versies van de afbeelding `spaceship' tijdens de verplaatsing.
+
+\begin{code}
+if(Kb.b(KB_LEFT))
+{
+	Images(=== spaceship ===      ).draw(Rect(ship - 0.1,  ship + 0.1));
+} else if(Kb.b(KB_RIGHT))
+{
+	Images(=== spaceship_left === ).draw(Rect(ship - 0.1,  ship + 0.1));
+} else
+{
+	Images(=== spaceship_right ===).draw(Rect(ship - 0.1,  ship + 0.1));
+}
+\end{code}
+
+Een andere mogelijkheid is het vari\"eren van de afbeelding in tijd. Je kan een animatie maken door telkens te wisselen tussen bepaalde afbeeldingen. In het volgende voorbeeld zie je een player class die drie varianten gebruikt voor elke richting.
+
+\begin{code}
+class player
+{
+private:
+   
+   Vec2 pos;
+   float timer = 0.4;
+   
+   DIR_ENUM dir = DIRE_DOWN;
+   
+public:   
+   
+   
+   void update()
+   {
+      // pas de richting aan
+      if(Kb.bp(KB_UP   )) dir = DIRE_UP   ;
+      if(Kb.bp(KB_DOWN )) dir = DIRE_DOWN ;
+      if(Kb.bp(KB_LEFT )) dir = DIRE_LEFT ;
+      if(Kb.bp(KB_RIGHT)) dir = DIRE_RIGHT;
+      
+      // positie upate
+      switch(dir)
+      {
+         case DIRE_UP   : pos.y += Time.d() * 0.5; break;
+         case DIRE_DOWN : pos.y -= Time.d() * 0.5; break;
+         case DIRE_LEFT : pos.x -= Time.d() * 0.5; break;
+         case DIRE_RIGHT: pos.x += Time.d() * 0.5; break;
+      }
+      
+      // timer voor animaties
+      timer -= Time.d();
+      if(timer < 0) timer = 0.4;
+   }
+   
+   void draw()
+   {
+      // een verwijzing naar een image
+      ImagePtr current;
+      
+      // evalueer de richting
+      switch(dir)
+      {
+         case DIRE_UP:
+         {
+            // kies een afbeelding afhankelijk van de tijd (wisselt tussen 1 - 2 - 3 - 2)
+            if      (timer > 0.3) current = Images(=== back1 ===);
+            else if (timer > 0.2) current = Images(=== back2 ===);
+            else if (timer > 0.1) current = Images(=== back3 ===);
+            else                  current = Images(=== back2 ===);
+            break;
+         }
+         
+         case DIRE_DOWN:
+         {
+            if      (timer > 0.3) current = Images(=== front1 ===);
+            else if (timer > 0.2) current = Images(=== front2 ===);
+            else if (timer > 0.1) current = Images(=== front3 ===);
+            else                  current = Images(=== front2 ===);
+            break;
+         }
+         
+         case DIRE_LEFT:
+         {
+            if      (timer > 0.3) current = Images(=== left1 ===);
+            else if (timer > 0.2) current = Images(=== left2 ===);
+            else if (timer > 0.1) current = Images(=== left3 ===);
+            else                  current = Images(=== left2 ===);
+            break;
+         }
+         
+         case DIRE_RIGHT:
+         {
+            if      (timer > 0.3) current = Images(=== right1 ===);
+            else if (timer > 0.2) current = Images(=== right2 ===);
+            else if (timer > 0.1) current = Images(=== right3 ===);
+            else                  current = Images(=== right2 ===);
+            break;
+         }
+      }
+      
+      // toon de afbeelding waar current naar verwijst op het scherm
+      current->draw(Rect(pos - 0.05, pos + 0.05));
+   }   
+}
+\end{code}
+
+De bovenstaande code vind je ook terug in de template. Maak een object van de class player en gebruik die in je programma om te zien wat het resultaat is van deze code.
+
+\begin{note}
+Op regel 39 zie je een object `current' van de class \eeClass{ImagePtr}. Deze class is een `pointer' naar een \eeClass{Image}. Via de code die volgt stellen we die pointer gelijk aan de image die we op dat moment willen tonen. Daarna gebruiken we \verb|current->draw()|. Het pijltje wil zeggen dat we van de image waar de pointer naar verwijst, de functie \eeFunc{draw()} uitvoeren. In een volgend hoofdstuk leer je meer over pointers.
+\end{note}
+
+\subsection{Oefeningen}
+De `Image' class in Esenthel bevat een overvloed aan functies. De meeste van die functies heb je waarschijnlijk niet nodig om een eenvoudig programma te maken, maar het is goed te onthouden dat, wat je ook met een image wil doen, er waarschijnlijk wel een functie voor bestaat. (Of een combinatie van functies.)
+
+Experimenteer alvast eens met de volgende functies, zodat je weet wat ze doen.
+
+\begin{itemize}
+\item De functie \eeFunc{draw} heeft ook een variant waarin je kleuren kan instellen. Probeer die functie uit. (Hint: de tweede kleur is dikwijls \eeFunc{TRANSPARENT})
+\item Teken een afbeelding met de functie \eeFunc{drawFit}. Waarin verschilt deze functie van \eeFunc{draw}?
+\item Teken een afbeelding met de functie \eeFunc{drawRotate}. Probeer de afbeelding ook te roteren via de pijltjestoetsen.
+\item Teken een afbeelding met de functie \eeFunc{drawFS}
+\item (Uitbreiding) Laad een afbeelding, voer er een blur op uit en exporteer de afbeelding als PNG.
+\end{itemize}
+
+\section{Geluid}
+Om je game aantrekkelijk te maken voeg je best ook geluid toe. Daarin zijn er twee belangrijke groepen: muziek en effecten (FX). Muziek speel je meestal op de achtergrond, effecten koppel je aan bepaalde acties, zoals het indrukken van een toets of een muisklik. Ook speel je vaak een geluid af wanneer de speler wint, een punt verdient of verliest.
+
+\subsection{Muziek}
+Een soundtrack afspelen kan heel eenvoudig met de class \eeClass{Sound}:
+
+\begin{code}
+Sound soundtrack;
+
+void InitPre()
+{
+   EE_INIT();
+}
+
+bool Init()
+{
+   soundtrack.create(=== drop hier je audio file ===);
+   return true;
+}
+
+void Shut() {}
+
+bool Update()
+{
+   if(Kb.bp(KB_ESC)) return false;
+   
+   if(Kb.bp(KB_SPACE))
+   {
+      if(soundtrack.playing())
+      {
+         soundtrack.pause();
+      } else
+      {
+         soundtrack.play();
+      }
+   }
+   return true;
+}
+\end{code}
+
+Hierbij moet je wel enkele zaken goed onthouden:
+
+\begin{itemize}
+\item Voordat je een geluid kan gebruiken, moet je het eerst laden. Dat doe je met de functie \eeFunc{create()}. Die heeft minstens \'e\'en argument nodig: een audiofile. Je kan die file gewoon van je resources naar de functie slepen. Deze functie gebruik je meestal in de \eeFunc{Init()} functie, want je wil het geluid niet tijdens elke update opnieuw laden.
+\item De functie \eeFunc{play()} start het geluid.
+\item De functie \eeFunc{pause()} pauseert het geluid. Wanner je nogmaals de \eeFunc{play()} functie gebruikt, dan speelt dit geluid verder van op de positie waar het stopte.
+\item Je kan in plaats van \eeFunc{pause()} ook \eeFunc{stop()} gebruiken. Wanneer je na \eeFunc{stop()} opnieuw \eeFunc{play()} aanroept, dan start het geluid terug van het begin.
+\end{itemize}
+
+Overigens heeft de \eeFunc{create()} functie nog enkele mogelijke argumenten. Enkel de audio file is noodzakelijk, maar hier zie je een voorbeeld met alle argumenten:
+
+\begin{code}
+soundtrack.create(=== audio file ===, true, 0.8, VOLUME_MUSIC);
+\end{code}
+
+Wat betekenen deze argumenten?
+
+\begin{enumerate}
+\item Het eerste argument ken je al, dat is het audio bestand.
+\item Het tweede argument staat voor `loop'. De waarde kan true of false zijn. Daarmee geef je aan op het geluid in een loop gespeeld moet worden. (Dat wil zeggen dat het op het eind van de track automatisch opnieuw start.) De standaard waarde is false.
+\item Het derde argument geeft het volume aan. De standaard waarde is 1.0, wat ook het maximum is. De minimum toegelaten waarde is 0.
+\item Het laatste argument is een `channel'. Esenthel heeft verschillende channels voor het spelen van audio. Als je dit argument niet gebruikt, dan hoort je geluid bij het channel `VOLUME\_FX'. Door hier een andere waarde te gebruiken, wijs je het geluid toe aan een ander channel. Dat heeft als voordeel dat je later het volume voor alle geluiden van een channel samen kan aanpassen. (Het is gebruikelijk dat je in een game de speler toelaat om het volume van de muziek, fx of voice afzonderlijk kan aanpassen.
+\end{enumerate}
+
+\subsection{exercise}
+Maak een programma waarin je een soundtrack laadt. Je voorziet ook een groene, een oranje en een rode cirkel op het scherm. Zorg er voor dat de track begint te spelen wanneer je in de groene cirkel klikt, pauseert wanneer je in de oranje cirkel klikt en stopt wanneer je in de rode cirkel klikt.
+
+\textbf{Uitbreiding:} Zoek in de class sound naar een functie om de positie binnen de soundfile op het scherm te tonen. Pas op, dit is niet de functie om de positie van het geluid in een 3D wereld te tonen!
+
+\textbf{Uitbreiding:} Dit is al wat moeilijker. Gebruik de functies \eeFunc{fadeInFromSilence()} en \eeFunc{fadeOut()} om de een fade van 3 seconden toe te passen in plaats van het geluid dadelijk te starten of te stoppen.
+
+\subsection{Playlists (Uitbreiding)}
+Om meer te doen met muziek kan je ook playlists gebruiken. Zo breng je meer variatie en kan je ook wisselen tussen playlists wanneer je bijvoorbeeld een gevecht start. Wie wil weten hoe dit werkt bestudeert de volgende code:
+
+\begin{code}
+// defined play lists
+Playlist Battle , // this is battle playlist used for playing when battles
+         Explore, // exploring playlist
+         Calm   ; // calm playlist
+
+void InitPre()
+{
+   EE_INIT();
+}
+
+bool Init()
+{
+   if(!Battle.songs())                         // create 'Battle' playlist if not yet created
+   {
+      Battle += (drop hier dramatische track); // add "battle0" track to 'Battle' playlist
+      Battle += (hier ook                   ); // add "battle1" track to 'Battle' playlist
+   }
+   if(!Explore.songs())                        // create 'Explore' playlist if not yet created
+   {
+      Explore+= (hier een rustige track     ); // add "explore" track to 'Explore' playlist
+   }
+   if(!Calm.songs())                           // create 'Calm' playlist if not yet created
+   {
+      Calm   += (Hier nog een rustige track ); // add "calm" track to 'Calm' playlist
+   }
+   return true;
+}
+
+void Shut()
+{
+}
+
+bool Update()
+{
+   if(Kb.bp(KB_ESC))return false;
+   if(Kb.c('1'))Music.play(Battle );
+   if(Kb.c('2'))Music.play(Explore);
+   if(Kb.c('3'))Music.play(Calm   );
+   if(Kb.c('4'))Music.play(null   );
+   return true;
+}
+
+void Draw()
+{
+   D.clear(TURQ);
+
+   if(Music.playlist()) // if any playlist playing
+   {
+      D.text(0, 0, S+"time " +Music.time()+" / "+Music.length()+" length");
+   }else
+   {
+      D.text(0, 0, "No playlist playing");
+   }
+   D.text(0, -0.2, "Press 1-battle, 2-explore, 3-calm, 4-none");
+}
+\end{code}
+
+\subsection{FX}
+Korte geluiden kan je spelen met de functie \eeFunc{SoundPlay()}. Die speelt het geluid dat je als argument geeft onmiddelijk af. Aangezien je geen object van de class \eeClass{Sound} maakt, heb je verder geen controle meer over het geluid. Je gebruikt dit dan ook vooral voor korte geluiden. (We noemen dat 'one-shots'.)
+
+\subsection{exercise}
+In het template project vind je enkele geluiden in de folder `sound'. Speel telkens een `blip' wanneer je op de down pijltjestoets drukt. Voor de pijltjestoetsen links en rechts gebruik je het geluid `rotate'. Tot slot speel je `down' wanneer je op de spatiebalk drukt.
+
+\textbf{Uitbreiding:} Speel ook de soundtrack terug af, maar zorg dat je het volume kan aanpassen via het muiswieltje.
+
+ 

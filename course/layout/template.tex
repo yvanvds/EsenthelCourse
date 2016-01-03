@@ -1,0 +1,326 @@
+\usepackage[T1]{fontenc}
+\usepackage{import}
+\usepackage{media9} 
+\usepackage{amssymb} % for changing item bullets
+\usepackage{bbding} % dingbats (for bullets)
+\usepackage{textcomp}
+\usepackage{color,calc,graphicx,soul}
+\usepackage{geometry}
+\usepackage{layout}
+\RequirePackage[calcwidth]{titlesec}
+\usepackage{bookman}
+\usepackage{fix-cm}
+\let\footruleskip\undefined %will be redefined in fancyhdr
+\usepackage{fancyhdr}
+\usepackage[bookmarks, colorlinks=true]{hyperref}
+\usepackage{makeidx}
+\usepackage{hyphenat}
+\usepackage{parskip}
+\usepackage[most]{tcolorbox}
+\usetikzlibrary{shadows}
+\usepackage{environ}
+\usepackage{polyglossia}
+\usepackage{listings,fontspec}
+
+\geometry{
+	includeheadfoot,
+	margin=2.54cm
+}
+
+%% colors 
+\definecolor{primaryBack}{HTML}{4782D3}
+\definecolor{primaryDark}{HTML}{14478D}
+\definecolor{primaryLight}{HTML}{98BEF4}
+\definecolor{primaryIntense}{HTML}{2965B9}
+
+\definecolor{secondaryBack}{HTML}{FF8145}
+\definecolor{secondaryDark}{HTML}{D64E0D}
+\definecolor{secondaryLight}{HTML}{FFB795}
+\definecolor{secondaryIntense}{HTML}{FF6C25}
+
+\definecolor{thirdBack}{HTML}{FFDC45}
+\definecolor{thirdDark}{HTML}{D6B00D}
+\definecolor{thirdLight}{HTML}{FFEB95}
+\definecolor{thirdIntense}{HTML}{FFD625}
+
+\definecolor{complementBack}{HTML}{FFB945}
+\definecolor{complementDark}{HTML}{D68A0D}
+\definecolor{complementLight}{HTML}{FFD795}
+\definecolor{complementIntense}{HTML}{FFAD25}
+
+\definecolor{hidden}{HTML}{FFD7B5}
+
+\definecolor{red}{HTML}{FF0000}
+\definecolor{blue}{HTML}{0000FF}
+\definecolor{green}{HTML}{009900}
+\definecolor{orange}{HTML}{FFA500}
+
+%%language
+\iftoggle{dutch} {
+	\setmainlanguage{dutch}
+	\PolyglossiaSetup{dutch}{indentfirst=false}
+}{
+	\setmainlanguage{english}
+	\PolyglossiaSetup{english}{indentfirst=false}
+}
+
+% section header
+\titleformat{\section}[hang]{\bfseries}{
+\huge\color{primaryIntense}\thesection}{10pt}{\huge\raggedleft\color{primaryIntense}}[{\titlerule[0.5pt]}]
+
+% subsection header
+\titleformat{\subsection}[hang]{\bfseries}{
+\huge\color{primaryIntense}\thesubsection}{10pt}{\LARGE\raggedleft\color{primaryIntense}}
+\setcounter{secnumdepth}{3}
+
+% subsection header
+\titleformat{\subsubsection}[hang]{\bfseries}{
+\large\color{primaryIntense}\thesubsubsection}{10pt}{\large\raggedleft\color{primaryIntense}}
+
+
+% table of contents
+\pagestyle{fancy}
+\hypersetup{linkcolor=primaryDark}
+\maxtocdepth{subsubsection}
+
+% colored description
+%\setdescription{leftmargin=1cm,labelindent=0.4cm}
+%\renewcommand{\descriptionlabel}[1]
+%{\hspace{\labelsep}{\color{red}{\bfseries #1}}}
+%
+% color of texttt
+\let\Oldtexttt\texttt
+\renewcommand\texttt[1]{{\ttfamily\color{primaryDark} {\bfseries #1}}}
+
+% chapter header
+\makeatletter
+\newlength\dlf@normtxtw
+\setlength\dlf@normtxtw{\textwidth}
+\def\myhelvetfont{\def\sfdefault{mdput}}
+\newsavebox{\feline@chapter}
+\newcommand\feline@chapter@marker[1][4cm]{%
+\sbox\feline@chapter{%
+\resizebox{!}{#1}{\fboxsep=1pt%
+\colorbox{primaryBack}{\color{complementIntense}\bfseries\sffamily\thechapter}%
+}}%
+\rotatebox{90}{%
+\resizebox{%
+\heightof{\usebox{\feline@chapter}}+\depthof{\usebox{\feline@chapter}}}%
+{!}{\scshape\so\@chapapp}}\quad%
+\raisebox{\depthof{\usebox{\feline@chapter}}}{\usebox{\feline@chapter}}%
+}
+\newcommand\feline@chm[1][4cm]{%
+\sbox\feline@chapter{\feline@chapter@marker[#1]}%
+\makebox[0pt][l]{% aka \rlap
+\makebox[1cm][r]{\usebox\feline@chapter}%
+}}
+\makechapterstyle{daleif1}{
+\renewcommand\chapnamefont{\normalfont\Large\scshape\raggedleft\so}
+\renewcommand\chaptitlefont{\normalfont\huge\bfseries\scshape\color{primaryIntense}}
+\renewcommand\chapternamenum{}
+\renewcommand\printchaptername{}
+\renewcommand\printchapternum{\null\hfill\feline@chm[2.5cm]\par}
+\renewcommand\afterchapternum{\par\vskip\midchapskip}
+\renewcommand\printchaptertitle[1]{\chaptitlefont\raggedleft ##1\par}
+}
+\makeatother
+\chapterstyle{daleif1}
+
+%title page
+\makeatletter
+\newlength\drop
+\newcommand*{\titleGM}{%
+	\thispagestyle{empty}
+	\begingroup% Gentle Madness
+	\drop = 0.1\textheight
+	\vspace*{\baselineskip}
+	\hbox{%
+		\hspace*{0.2\textwidth}%
+		\hspace*{0.05\textwidth}% 
+		\parbox[b]{0.75\textwidth}{%
+		   \vbox{%
+				 \vspace{\drop}
+				 \rule{0.75\textwidth}{1pt}
+				 {\Huge\bfseries\sffamily\raggedleft\color{primaryIntense}\@title\par}
+				 \vskip2.37\baselineskip
+				 {\Large\bfseries\sffamily\raggedleft\color{primaryDark}\@author\par}
+				 \rule{0.75\textwidth}{1pt}
+				 \vskip4.37\baselineskip
+				 {\Large\bfseries\sffamily\raggedleft\color{primaryDark}Revision: \@date\par}
+				 \vskip4.37\baselineskip
+				 \includegraphics[scale=0.2]{mute-logo}
+			 }
+		}
+	}
+	\pagebreak
+	\vfill
+	\null
+	\endgroup
+}
+\makeatother
+
+%paragraph
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5cm plus3mm minus2mm}
+
+%table
+
+\newcommand{\tempcaption}{}
+\newenvironment{myTable}[2]{%
+  \gdef\tempcaption{#1}%
+  \begin{center}%
+
+    \begin{tcolorbox}[
+      colback=primaryLight,
+      colframe=primaryIntense,
+      left=1mm,right=1mm,top=1mm,bottom=1mm,boxsep=0mm,
+      toptitle=0.5mm,
+      bottomtitle=0.5mm,
+      center title,
+      title=\tempcaption,
+    ]%
+    \centering
+    \begin{tabular}{#2}%
+}{%
+    \end{tabular}%
+    \end{tcolorbox}%
+  \end{center}%
+}
+
+%listing
+\lstset{
+  frame=tb,
+  language=c++,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  %backgroundcolor=\color{primaryLight}, % Set the background color for the snippet - useful for highlighting
+  firstnumber=1, % Line numbers begin at line 1
+  stepnumber=5,
+  frame=lines, % Frame around the code box, value can be: none, leftline, topline, bottomline, lines, single, shadowbox
+  %frameround=tttt, % Rounds the corners of the frame for the top left, top right, bottom left and bottom right
+  numbers=left,
+  numbersep=10pt, % Distance of line numbers from the code box
+  numberstyle=\tiny\color{primaryDark}, % Style used for line numbers
+  rulecolor=\color{primaryDark}, % Frame border color
+  keywordstyle=\color{blue},
+  commentstyle=\color{green},
+  stringstyle=\color{red},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=2
+}
+
+\lstset{
+  emph={Vec, Vec2, Circle, Memc, Str, FREPA, SQLColumn, SQLValues, TextData, File, 
+	      Memx, SQL, GuiObjs, Window, Button, TextLine, TextNode},
+  emphstyle={\color{blue}\bfseries}
+}
+
+\renewcommand{\labelitemi}{\SquareShadowBottomRight}
+\renewcommand{\labelitemii}{\tiny\Square}
+
+% special blocks
+\newtheorem{example}{Example}
+\newtheorem{remember}{Remember This!}
+
+\tcbset{
+myNote/.style={
+  enhanced,
+  colback=complementLight,
+  colframe=complementDark,
+  fonttitle=\scshape,
+  title={Note},
+  title style={fill=complementDark},
+  }
+}
+
+\newtcolorbox{note}{myNote}
+
+\tcbset{
+myInfo/.style={
+  enhanced,
+  colback=complementLight,
+  colframe=complementDark,
+  fonttitle=\scshape,
+  title={Info},
+  title style={fill=complementDark},
+  }
+}
+
+\newtcolorbox{info}{myInfo}
+
+%\tcbset{
+%myWorld/.style={
+  %enhanced,
+  %colback=thirdLight,
+  %colframe=thirdIntense,
+  %fonttitle=\scshape,
+  %title={De echte wereld},
+  %title style={fill=thirdDark},
+  %coltitle=thirdLight,
+  %}
+%}
+%
+%\newtcolorbox{praktijk}{myWorld}
+
+\tcbset{
+myWarning/.style={
+  enhanced,
+  colback=thirdLight,
+  colframe=thirdIntense,
+  fonttitle=\scshape,
+  title={Warning!},
+  title style={fill=thirdDark},
+  coltitle=thirdLight,
+  }
+}
+
+\newtcolorbox{warning}{myWarning}
+
+\tcbset{
+myExercise/.style={
+  enhanced,
+  colback=primaryLight,
+  colframe=primaryDark,
+  fonttitle=\scshape,
+  title={Time for Action},
+  title style={fill=primaryDark},
+  }
+}
+
+\newtcolorbox{exercise}{myExercise}
+
+\newcommand*\tick{\item[\Checkmark]}
+\newcommand*\fail{\item[\XSolidBrush]}
+\newcommand*\pencil{\item[\PencilRightDown]}
+
+\tcbset{
+myTest/.style={
+  enhanced,
+  colback=secondaryLight,
+  colframe=secondaryDark,
+  fonttitle=\scshape,
+  fontlower=\itshape,
+  title={Test Jezelf},
+  title style={fill=secondaryDark},
+  collower=hidden,
+  }
+}
+
+\newtcolorbox{test}{myTest}
+
+\lstnewenvironment{code}
+	{
+		\lstset{language={[Visual]C++}, columns=fixed}
+	}
+	{
+	}
+%
+\newcommand{\eeClass}[1]{\texttt{#1}}
+\newcommand{\eeFunc}[1]{\texttt{#1}}
+\newcommand{\eeOpp}[1]{\texttt{#1}}
+
+\author{Mute (http://mutecode.com)}

@@ -1,0 +1,255 @@
+\chapter{Interactie}
+De meeste interacties met een programma gebeuren via het toetsenbord en de muis. (Mobile devices gebruiken vooral touches, maar die komen later aan bod.) In dit hoofdstuk overlopen we de verschillende mogelijkheden.
+
+\section{Muis Interacties}
+De class \eeClass{Mouse} vind je in Esenthel Engine $\Rightarrow$ Input $\Rightarrow$ Mouse. Computers zijn niet voorzien om meer dan \'e\'en mouse pointer te tonen, dus Esenthel voorziet alvast een object van de class: \eeClass{Ms}. Het is dus onnodig om zelf een object van de class \eeClass{Mouse} te maken.
+
+Als je even naar de beschikbare functies kijkt in deze class, dan zie je dat er heel wat mogelijkheden zijn. Meestal zijn we vooral ge\"interesseerd in `clicks' en positie.
+
+\subsection{Positie}
+De positie van de muis op het scherm is een \eeClass{Vec2}. Je kan de huidige positie opvragen via de functie \eeFunc{Ms.pos()}. De volgende code toont een \eeClass{Vec2} op het scherm. De positie is steeds gelijk aan de positie van de muis. 
+
+
+
+\begin{code}
+Vec2 mousePos;
+
+void InitPre()
+{
+   EE_INIT();
+}
+
+bool Init()
+{   
+   return true;
+}
+
+void Shut() {}
+
+bool Update()
+{
+   if(Kb.bp(KB_ESC)) return false;  
+   mousePos = Ms.pos();  
+   return true;
+}
+
+void Draw()
+{
+   D.clear(BLACK);
+   mousePos.draw(RED);
+}
+\end{code}
+
+\begin{exercise}
+Pas het bovenstaande voorbeeld aan, zodat mousePos iets onder de positie van de muis wordt getoond.
+\end{exercise} 
+
+\subsection{Clicks}
+Je kan via het \eeClass{Ms} object vanalles te weten komen over de status van de muis. Aangezien we meestal meer dan \'e\'en knop op een muis hebben, zal je als argument steeds een nummer moeten opgeven. De linkerknop heeft index 0, de rechterknop index 1. Enkele voorbeelden: 
+
+\begin{code}
+Ms.bp(0); // true als de linkerknop ingedrukt werd in dit frame
+Ms.br(1); // true als de rechterknop los gelaten werd in dit frame
+Ms.b (0); // true zolang de linkerknop ingedrukt is
+Ms.bd(0); // true wanneer in dit frame een dubbelklik plaatsvond
+\end{code}
+
+Het verschil tussen \eeFunc{Ms.bp()} en \eeFunc{Ms.b()} is subtiel:
+\begin{itemize}
+	\item \eeFunc{Ms.bp()} Betekent dat de knop net werd ingedrukt. In de volgende update kan de muis misschien ook nog ingedrukt zijn, maar dan zal het resultaat van deze functie false zijn.
+	\item \eeFunc{Ms.b()} Deze functie heeft true als resultaat zolang de knop niet los gelaten wordt.
+\end{itemize}
+
+Het volgende programma maakt dit verschil duidelijk:
+
+\begin{code}
+Vec2 mouse1Pos;
+Vec2 mouse2Pos;
+
+void InitPre()
+{
+   EE_INIT();
+}
+
+bool Init()
+{   
+   return true;
+}
+
+void Shut() {}
+
+bool Update()
+{
+   if(Kb.bp(KB_ESC)) return false;
+   
+   if(Ms.bp(0)) {
+      mouse1Pos = Ms.pos();
+   }
+   
+   if(Ms.b(1)) {
+      mouse2Pos = Ms.pos();
+   }
+   
+   return true;
+}
+
+void Draw()
+{
+   D.clear(BLACK);
+   mouse1Pos.draw(RED  );
+   mouse2Pos.draw(GREEN);
+}
+\end{code}
+
+Het rode punt zal enkel een nieuwe positie krijgen op het moment dat je de linker muisknop indrukt. Het groene punt daarentegen blijft de muis volgen zolang de rechter muisknop ingedrukt blijft. Tijdens het ontwikkelen van een programma zal je steeds moeten kiezen welk van beide functies het meest geschikt is.
+
+\begin{exercise}
+Pas het bovenstaande voorbeeld aan, zodat de tweede muispositie enkel zichtbaar is wanneer de rechter muisknop ingedrukt is.
+\end{exercise} 
+
+
+\subsection{Muiswiel}
+Tegenwoordig heeft een muis meestal ook een wieltje. daarvoor bestaat geen absolute positie, maar esenthel houdt wel bij hoeveel het muiswiel gedraaid werd tijdens de huidige update. Een afstand die binnen een frame werd afgelegd heet een `delta'. Je kan zo spreken over de delta van de tijd, de delta van een beweging enzovoort. De functie die je nodig hebt om de delta van het muiswiel te weten is \eeFunc{Ms.wheel()}. Het resultaat is een float.
+
+Het volgende voorbeeld laat een punt vertikaal bewegen als via het muiswieltje. In de update functie wordt de positie van het punt aangepast. We stellen nu geen nieuwe positie in zoals bij de vorige oefening. We passen slechts de positie op de y as aan. De functie \eeFunc{Ms.wheel()} geeft enkel de verplaatsing weer sinds de vorige update. Als je naar boven beweegt dan is dat een (zeer klein) positief getal. Beweeg je naar beneden, dan is dit getal negatief.
+
+\begin{code}
+Vec2 mousePos;
+
+void InitPre()
+{
+   EE_INIT();
+}
+
+bool Init()
+{   
+   return true;
+}
+
+void Shut() {}
+
+bool Update()
+{
+   if(Kb.bp(KB_ESC)) return false;  
+   mousePos.y += Ms.wheel();  
+   return true;
+}
+
+void Draw()
+{
+   D.clear(BLACK);
+   mousePos.draw(RED);
+}
+\end{code}
+
+\begin{exercise}
+Pas het bovenstaande voorbeeld aan zodat, wanneer de linker muisknop ingedrukt is, de horizontale positie wordt aangepast. Is de rechter muisknop ingedrukt, dan pas je de vertikale positie aan.
+\end{exercise} 
+
+\subsection{Cursor}
+De muiscursor is niets anders dan een afbeelding die op het scherm getoond wordt. Je kan aan het begin van je programma (bijvoorbeeld in de Init functie) die afbeelding wijzigen:
+
+\begin{code}
+  Ms.cursor(Images( --drop hier de afbeelding-- ));
+\end{code}
+
+\begin{exercise}
+Pas de cursor aan in de vorige oefening. Er staan enkele geschikte afbeeldingen in de map gfx $\Rightarrow$ mouse. Toon de afbeelding `BGNormal' wanneer het programma start. In de update functie zorg je er voor dat, enkel wanneer een muisknop ingedrukt is, `BGMove' getoond wordt.
+\end{exercise}
+
+\subsection{Overige functies}
+De class \eeClass{Mouse} bevat nog veel meer functies. We bespreken ze niet allemaal in dit hoofdstuk. Als oefening zoek je zelf uit waar de volgende functies voor dienen: 
+
+\begin{itemize}
+	\item \eeFunc{Ms.hide()}
+	\item \eeFunc{Ms.show()}
+	\item \eeFunc{Ms.eat()}
+\end{itemize}
+
+\section{Keyboard Interacties}
+Ook het toetsenbord wordt dikwijls gebruikt om interactie te sturen. Later, in het hoofdstuk over de GUI, zal je zien hoe we een toetsenbord gebruiken om tekst in te typen. In dit hoofdstuk controleren we enkel de status van de toetsen.
+
+Elke toets heeft een naam. Via die naam kan je een bepaalde toets aanspreken. Hierbij moet je wel voor ogen houden dat die naam overeenkomt met de positie van die toets op een qwerty toetsenbord. Werk je op azerty en je wil de status van de `Z' toets weten, dan zal je naar de status van de `W' toets moeten vragen. Dit lijkt vreemd, maar bij de aansturing van een spel is vooral de positie van de toets belangrijk. Stel je voor dat de typische WASD aansturing de posities op een azerty toetsenbord zou volgen!
+
+Verder is het controleren van een toets op je keyboard net zoals een muis klik. Je zal zien dat de functies bijna gelijk zijn.
+
+\subsection{Key Functions}
+
+Bekijk de volgende functies even:
+
+\begin{code}
+Kb.bp(KB_N) // true als de N toets werd ingedrukt tijdens de huidige frame.
+Kb.br(KB_E) // true als de E toets werd losgelaten tijdens de huidige frame.
+Kb.b (KB_R) // true als de R toets momenteel ingedrukt is
+Kb.bd(KB_D) // true bij een dubbelklik op toets D
+\end{code}
+
+We gebruiken nu het object \eeClass{Kb} in plaats van \eeClass{Ms}, maar de functies zijn precies zoals die voor een muisklik. Waar je bij het \eeClass{Ms} object het nummer van de toets moest ingeven, gebruik je nu een code. Deze code begint steeds met KB\_. Dan volgt meestal een letter of een cijfer. Andere mogelijkheden zijn:
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\multicolumn{1}{|l|}{{\bf Functions}} & \multicolumn{1}{l|}{{\bf Control}} & \multicolumn{1}{l|}{{\bf Modifiers}} & \multicolumn{1}{l|}{{\bf Arrows}} & \multicolumn{1}{l|}{{\bf Numpad}} \\ \hline
+KB\_F1                                & KB\_ESC                            & KB\_LCTRL                            & KB\_LEFT                          & KB\_NPDIV                         \\ \hline
+KB\_F2                                & KB\_ENTER                          & KB\_RCTRL                            & KB\_RIGHT                         & KB\_NPENTER                       \\ \hline
+\ldots                                   & KB\_SPACE                          & KB\_LSHIFT                           & KB\_UP                            & KB\_NP1                           \\ \hline
+KB\_F12                               & KB\_BACK                           & KB\_RSHIFT                           & KB\_DOWN                          & KB\_NP2                           \\ \hline
+                                      & KB\_TAB                            & \ldots                                  &                                   & \ldots                               \\ \hline
+\end{tabular}
+\end{center}
+
+
+
+Een volledig overzicht met alle toetsen vind je in de map Esenthel Engine $\Rightarrow$ Input $\Rightarrow$ Input Buttons.
+
+\begin{exercise}
+Maak een programma met een punt op het scherm. Via de pijltjestoetsen kan je dit punt verplaatsen. Elke keer een pijltjestoets wordt ingedrukt, verplaats je het punt 0.1 units in de gewenste richting.
+
+Het punt zelf teken je in het groen op je scherm, tenzij de spatiebalk ingedrukt is. Dan verschijnt het punt in het rood.
+\end{exercise}
+
+\subsection{Graduele wijzigingen}
+\label{chapter:keyboardInteractie}
+De functie \eeFunc{Kb.bp()} gebruik je vooral voor plotse wijzigingen. Je wil bijvoorbeeld een window openen, een object toevoegen, een menu tonen of het programma verlaten. In het volgende voorbeeld zie je hoe je deze functie zou kunnen gebruiken om een help window te tonen:
+
+\begin{code}
+if(Kb.bp(KB_F1)) HelpWindow.show();
+\end{code}
+
+Stel je voor dat je hier de functie \eeFunc{Kb.b()} zou gebruiken. In elke frame dat de toets F1 ingedrukt is, zou het help window opnieuw getoond worden. Op een snelle computer is dat ongeveer 60 keer per seconde. 
+
+Toch is de twee functie heel bruikbaar, maar dan voor waarden die geleidelijk moeten veranderen. Je blijft een waarde dan wijzigen zolang de toets ingedrukt is:
+
+\begin{code}
+if(Kb.b(KB_RIGHT)) point.x += 0.01;
+\end{code}
+
+De x waarde van het punt zal tijdens elke frame iets groter worden. het punt verplaatst zich dus geleidelijk aan naar rechts.
+
+\begin{exercise}
+Maak een programma aan de hand van het laatste voorbeeld. Zorg dat het punt, via de pijltjestoetsen, in vier richtingen kan bewegen.
+\end{exercise}
+
+\subsection{Delta time}
+De oefening die je hierboven maakte heeft een groot probleem: elke frame wordt de positie aangepast. Stel nu dat je je programma op twee computers test: de eerste computer heeft een snelle grafische kaart en haalt 60FPS. De tweede computer is al wat ouder en haalt slechts 30FPS. De beweging zal op de eerste computer dubbel zo snel verlopen! Voor een kleine oefening is dat geen probleem, maar bij een echte game is dat niet wenselijk.
+
+De oplossing is de \textbf{delta time}. De delta time is gelijk aan de tijd die verstreken is sinds de vorige frame. \textsl{(Denk even terug aan de mouse wheel delta: de afstand die het muiswieltje aflegde sinds de vorige frame.)} De delta time kan je opvragen via de volgende functie:
+
+\begin{code}
+Time.d();
+\end{code}
+
+Wil je een object verplaatsen aan een snelheid van 1 unit per seconde? Dan kan je de volgende code gebruiken:
+
+\begin{code}
+if(Kb.b(KB_RIGHT)) point.x += 1 * Time.d();
+\end{code}
+
+\begin{exercise}
+Plaats de vorige oefening aan, zodat je rekening houdt met de time delta.
+
+\textbf{Uitbreiding:} gebruik in plaats van het getal 1 een float variabele die gelijk is aan 1. Via twee zelf te kiezen toetsen kan je deze waarde verhogen en verlagen.
+\end{exercise}
+
+
+

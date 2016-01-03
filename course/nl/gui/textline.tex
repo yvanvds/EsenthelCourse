@@ -1,0 +1,71 @@
+\chapter{TextLine}
+TextLine is de enige gui class die je kan gebruiken om tekstinvoer van de gebruiker te krijgen. De visuele functies (grootte, positie, zichtbaarheid enzovoort) zijn identiek aan de andere classes die je zag. Maar de functie \eeFunc{func} werkt anders. Je kan daar op dezelfde manier een functie aan koppelen, maar waar bij een button of een checkbox de functie getriggerd wordt door een mouse click, zal een tekstline deze functie uitvoeren bij elke muisklik. Dat valt eenvoudig te demonstreren met de volgende code:
+
+\begin{code}
+Str myText;
+
+// Om dit voorbeeld kort te houden wordt de gui class verder niet uitgewerkt.
+// Je ziet enkel de callback functie.
+
+void MyTextLineFunc(guiClass & obj) {
+  myText = (*obj.myTextLine)();
+}
+
+// .. en de Draw functie
+void Draw() {
+	D.clear(BLACK);
+	D.text(0, 0, myText);
+}
+\end{code}
+
+Als je de invoer enkel wil controleren op een bepaald moment, dan kan je een button gebruiken en pas dan de invoer van de TextLine controleren. Een voorbeeld daarvan vind je in hoofdstuk \ref{chapter:gui_content}.
+
+\section{Tekst omzetten naar een getal}
+
+De inhoud van een TextLine is steeds een tekst, ook al bestaat die tekst uit cijfers. Als je die inhoud als een integer of float wil gebruiken, dan moet je die eerst converteren. Daarvoor bestaan er functies als \eeFunc{TextInt} en \eeFunc{textFlt}. 
+
+\begin{code}
+int   i = TextInt( (*obj.myTextLine)() );
+float f = TextFlt( (*obj.myTextLine)() );
+\end{code}
+
+Let wel op: als je textline niet omgezet kan worden naar een getal, dan krijg je geen foutmelding. Het resultaat is dan steeds 0.
+
+\section{Andere handige functies}
+Wanneer je een tekst in een TextLine wil plaatsen, dan kan dat met de functie \eeFunc{set}. Die aanvaardt een string als argument:
+
+\begin{code}
+Str purpose = "life";
+int meaning = 42;
+
+myTextLine .set(purpose);
+myTextLine2.set(S +  42);
+\end{code}
+
+Met de functie \eeFunc{password} kan je sterretjes in plaats van letters tonen:
+
+\begin{code}
+myTextLine.password(true);
+\end{code}
+
+Via de functie \eeFunc{clear} maak je een textline leeg:
+
+\begin{code}
+myTextLine.clear();
+\end{code}
+
+\begin{exercise}
+TextLine heeft ook een functie \eeFunc{cursor} om de positie van de cursor op te vragen en aan te passen. Maak een programma met een tekstline waarin je een tekst plaatst. Maak ook functies \eeFunc{moveLeft} en \eeFunc{moveRight} die de cursor een positie naar links of naar rechts kunnen verplaatsen. In de \eeFunc{Update} functie van je class zorg je dat de cursor via F1 en F2 naar links en rechts verplaatst kan worden. Via F3 zet je de password modus aan of uit, en via F4 maak je het hele veld leeg.
+
+Tot slot zoek je in de header file op hoe je tekst selecteert. Zorg er voor dat je via F5 de hele tekst selecteert, en via F6 de selectie ongedaan maakt.
+\end{exercise}
+
+
+
+
+
+
+
+
+
+

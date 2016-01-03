@@ -1,0 +1,80 @@
+\chapter{Constanten}
+\section{Globale Constanten}
+Dikwijls gebruik je bepaalde waarden doorheen je hele programma. Zo zou je, in een programma dat veel berekeningen met circels moet doen, vaak het getal pi nodig hebben. Dat getal kan je elke keer opnieuw berekenen, maar dat is niet zo'n goed idee omdat de uitkomst van je berekening steeds hetzelfde is. Je zou daarom een globale variabele pi kunnen declareren:
+
+\begin{code}
+int pi = 3.1415926;
+\end{code}
+
+Nu kan je overal de waarde van pi gebruiken in je berekeningen. Maar stel je voor dat je ergens vergist:
+
+\begin{code}
+int value = 1;
+// ... more code ...
+if(pi = value) {
+  // do something
+}
+\end{code}
+
+Je wil in de bovenstaande code controleren of `value' gelijk is aan pi. Maar je schrijft een enkele in plaats van een dubbele =. Zo'n fout is snel gemaakt en valt op het eerste zicht niet zo op. Het gevolg is dat na de uitvoering van die code het getal pi niet meer gelijk is aan zijn oorspronkelijke waarde. Al je berekeningen zullen dus fout zijn!
+
+Om dit soort fouten te voorkomen voorzien de meeste programmeertalen in een mogelijkheid om een variabele `constant' te maken. Dat wil zeggen dat ze na hun declaratie niet meer aangepast mogen worden. Om dat duidelijk te maken bestaat de afspraak om die variabelen steeds met hoofdletters te schrijven.
+
+Hoe schrijf je zo'n variabele? In C++ doe je dat door voor het type \verb|const| toe te voegen. Esenthel geeft je daarnaast de mogelijkheid om dat af te korten tot \verb|C|. (Net zoals je \verb|this| kan afkorten tot \verb|T|). Je schrijft dus:
+
+\begin{code}
+C PI = 3.1415926;
+\end{code}
+
+Dit heeft twee voordelen:
+
+\begin{enumerate}
+	\item Je kan de waarde van PI niet langer per vergissing aanpassen.
+	\item Als je het getal PI in je code wil aanpassen, dan moet je dat maar op \'e\'en plaats doen. \textsl{(In het geval van PI is dat wel h\'e\'el onwaarschijnlijk, maar bij andere constanten kan dat dikwijls wel. Als je bijvoorbeeld een constante variabele ATTACK\_RANGE gebruikt, dan kan je misschien later beslissen dat die toch iets te groot is.)} 
+\end{enumerate}
+
+\begin{note}
+Omdat PI een nummer is dat alle programmeurs vaak nodig hebben, bestaat er al een constante PI in Esenthel. Niet enkel dat, er zijn ook al varianten voorzien, zoals PI\_2 (de helft van PI) en PI2 (twee maal PI).
+\end{note}
+
+\section{Const Argumenten}
+Er bestaat nog een andere situatie waarin je constanten gebruikt. Bekijk even de volgende functie:
+
+\begin{code}
+float calculateDistance(Vec2 & pos1, Vec2 & pos2);
+\end{code}
+
+Je kan deze functie gebruiken om de afstand tussen twee posities te berekenen. Je leerde al in hoofdstuk \ref{chapter:references} dat we de argumenten van die functie by reference doorgeven om het programma sneller te maken. Dat heeft \'e\'en nadeel. Je zou in principe de waarden van pos1 en pos2 kunnen aanpassen in de functie. En dan zijn ook de originele waarden in je programma aangepast. De naam van de functie laat in dit geval vermoeden dat dat niet zal gebeuren. Maar je weet nooit zeker of de progammeur van die functie zich niet vergist heeft.
+
+Als er dus ergens iets fout gaat met de variabele \verb|pos1| in je programma, dan kan je niet anders dan ook de code van de functie \eeFunc{calculateDistance} nakijken. En misschien gebruikt die functie intern nog een andere functie die eveneens pass by reference argumenten heeft. Dat zou betekenen dat je echt alle onderliggende functies moet nakijken om uit te sluiten dat de fout daar zit.
+
+Zoiets is in grote projecten niet werkbaar. En daarom kunnen we ook een functie argument constant maken, net zoals een globale variabele. Je schrijft de functie dan zo:
+
+\begin{code}
+float calculateDistance(C Vec2 & pos1, C Vec2 & pos2);
+\end{code}
+
+De gevolgen zijn dat:
+
+\begin{enumerate}
+	\item je tijdens het maken van de functie een foutmelding krijgt wanneer je toch zou proberen pos1 of pos2 aan te passen;
+	\item de gebruiker van je functie zeker weet dat de waarde nooit aangepast kan zijn in de functie;
+	\item je bijna zeker weet dat een functie waar de argumenten \textbf{niet} constant zijn, die argumenten zal aanpassen.
+\end{enumerate}
+
+Vanaf nu volg je dus de regel dat je alle functie argumenten als een const reference doorgeeft, tenzij het de bedoeling is dat de aangepaste waarde in het oorspronkelijke programma terecht komt.
+
+Wat is nu een goede reden om een argument aan te passen? Kijk even naar de Esenthel functie:
+\begin{code}
+void Clamp(Vec2 & value, C Vec2 & min, C Vec2 & max);
+\end{code}
+
+Het is de bedoeling dat deze functie de eerste waarde binnen het gevraagde minimum en maximum houdt. Je gebruikt de functie op deze manier:
+
+\begin{code}
+Vec2 pos = Ms.pos();
+Clamp(pos, Vec2(-0.4,-0.4), Vec2(0.4,0.4));
+pos.draw(RED);
+\end{code}
+
+Het tweede en derde argument zijn constant. De functie \eeFunc{Clamp} kan dus niet het minimum of maximum aanpassen. Maar \eeFunc{pos} willen we natuurlijk net wel aanpassen. Hier gebruik je dus geen const reference.

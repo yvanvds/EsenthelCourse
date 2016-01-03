@@ -1,0 +1,203 @@
+\chapter{GameLogic}
+Er rest ons nog \'e\'en class, maar dan wel de belangrijkste. We hebben alle onderdelen voor het spel klaar, maar die moeten nu samengebracht worden zodat het spel zich gedraagt zoals we verwachten. De class \eeClass{gameLogic} dient precies daar voor. Het framework ziet er zo uit:
+
+\begin{code}
+class gameLogic
+{
+private:
+   // blocks in the game
+   block currentBlock;
+   block nextBlock   ;
+
+   float forceDownCounter = 0         ;
+   float slideCounter     = SLIDE_TIME;
+   
+   // to move a block completely down
+   bool  toBottom      = false;
+   float toBottomTimer = 0.05 ; 
+   
+   
+   bool canRotate            (C block & b               ) C {}
+	 bool canMove              (C block & b, DIRECTION dir) C {}
+   void handleBottomCollision()   {}   
+   void changeFocusBlock     ()   {}    
+   void checkLoss            () C {}
+   void handleInput          ()   {}
+    
+public:
+   void create()   {}
+   void update()   {}
+	 void draw  () C {}
+} 
+gameLogic GameLogic;
+\end{code}
+
+Laten we eerst even de variabelen bekijken:
+
+\begin{description}
+	\item[currentBlock] Dit is het blok dat je beweegt tijdens het spel.
+	\item[nextBlock] Dit is het volgende blok, dat klaar staat aan de rechterzijde.
+	\item[forceDownCounter] Wanneer we het blok niet zelf naar beneden bewegen, dan moet dat na een korte tijd vanzelf gebeuren. Met deze timer regelen we hoe lang dat duurt.
+	\item[slideCounter] In tetris kan je wanneer een blok de pile raakt, nog heel even het blok opzij plaatsen. Daar hebben we dus ook een timer voor nodig.
+	\item[toBottom] Wanneer we op de spatiebalk drukken moet het blok helemaal naar beneden bewegen. Maar je moet het wel zien bewegen, dus je mag het niet zomaar in \'e\'en keer beneden plaatsen. Met deze bool houden we bij of het huidige blok snel naar beneden moet.
+	\item[toBottomTimer] En die beweging heeft ook weer een timer nodig voor elke stap.
+\end{description}
+
+\section{De eenvoudige functies}
+\subsection{CheckLoss}
+Een functie die je zonder problemen kan uitwerken is \eeFunc{checkLoss}. Deze functie moet controleren of de speler het spel verloren heeft. Wanneer gebeurt dat? Wanneer in tetris een nieuw blok bovenaan verschijnt en dat blok kan niet naar beneden verplaatst worden, dan heeft de speler verloren. En wanneer kan een blok niet naar beneden verplaatst worden? Wanneer het zou botsen met de \eeClass{Pile}. 
+
+Pile heeft al een functie \eeFunc{collides}. Aan die functie kan je dus het object \eeClass{currentBlock} doorgeven en de gewenste richting. Geeft de functie false als resultaat, dan kan je de \eeFunc{Score.gameIsLost()} uitvoeren.
+
+\subsection{Create}
+De create functie dient om bij de start van een spel alle variabelen een beginwaarde te geven. Je voegt als eerste regel dit toe:
+
+\begin{code}
+Random.randomize();
+\end{code}
+
+De bedoeling van deze regel is het volgende. Computers hebben een groot probleem met willekeurige getallen. Dat concept past eigenlijk niet binnen een computerlogica. We lossen dat op met het \eeFunc{Random} object, maar dat object heeft eigenlijk intern een lijstje met getallen die het \'e\'en voor \'e\'en af gaat. Elke keer je om een random getal vraagt, krijg je gewoon het volgende getal uit de lijst. Zou je dus je programma elke keer laten beginnen aan het begin van dat lijstje, dan krijg je steeds dezelfde `willekeurige' getallen. Dat maakt je spel na verloop van tijd wel erg voorspelbaar. De functie \eeFunc{randomize} zorgt er voor dat je naar een willekeurige plaats in de lijst springt. Zo krijg je steeds een andere reeks getallen.
+
+\begin{note}
+Moest je ooit software ontwikkelen voor een casino, dan zal je nooit de standaard random functies van de programmeertaal mogen gebruiken. Het is namelijk niet zo moeilijk om een programma te schrijven dat, na ingave van de eerste drie resultaten, opzoekt waar de lijst startte. Op dat moment kan je al behoorlijk goed voorspellen wat het volgende getal in de lijst zal zijn. Aangezien een casino toch ook winst wil maken, gebruikt men voor dat soort software een meer complexe random library.
+\end{note}
+
+De volgende statements zorgen voor twee willekeurige blokken:
+
+\begin{code}
+currentBlock.create(STARTPOS, (BLOCK_TYPE)Random(BT_NUM));
+nextBlock   .create(WAITPOS , (BLOCK_TYPE)Random(BT_NUM));
+\end{code}
+
+Je ziet dat we de constanten \verb|STARTPOS| en \verb|WAITPOS| gebruiken om de posities in te stellen. Het tweede argument is het blok type. We willen telkens een willekeurig blok, dus we gebruiken de random functie. Het argument van \eeFunc{Random} bepaalt het hoogste getal. Maar die waarde is niet inclusief: dat wil zeggen dat je, als je bijvoorbeeld \eeFunc{Random(3)} schrijft, het resultaat 0, 1 of 2 kan zijn. Niet 3 dus. Waarom schrijven we hier dan \verb|BT_NUM|? Daarvoor moet je even terug in het bestand `enumerations' kijken. \verb|BT_NUM| is het achtste element in de lijst. Het eerste element is gelijk aan 0, dus het achtste element is gelijk aan 7. De \eeFunc{Random} functie zal hier dus een getal van 0 tot en met 6 teruggeven. En omdat een enumeratie niets anders is dan een naam voor een getal, kunnen we dat getal eenvoudig terug omzetten naar een \verb|BLOCK_TYPE|. Want dat is het type dat de create functie verwacht.
+
+Na deze statements moeten we \eeFunc{forceDownCounter} de waarde 0 geven, en slideCounter gelijk stellen aan \verb|SLIDE_TIME|. Die statements kan je zelf wel verzinnen. Tot slot voer je ook de \eeFunc{init} functies van \eeClass{Pile} en \eeClass{Score} uit.
+
+\subsection{Draw}
+De draw functie van deze class moet drie elementen op het scherm tonen: het huidige blok, het blok in de wachtpositie en de pile. Voeg de statements toe om dat te doen.
+
+\section{Iets moeilijker}
+
+\subsection{Can Rotate}
+We hebben al functies om bij een verplaatsing collisions met de pile of het speelveld te controleren. Nu moeten we ook controleren of het mogelijk is om een blok te roteren. Daarvoor dient de functie \eeFunc{canRotate}.
+
+In deze functie maken we eerst een nieuw blok. We willen namelijk het blok dat we als functie argument binnen krijgen niet roteren, maar enkel controleren of het mogelijk is. Bij dat nieuwe blok voeren we de create functie uit, met als argument het bestaande blok \verb|b|. Daarna roteren we het nieuwe blok.
+
+Nu kunnen we controleren of dit nieuwe blok botst met \eeClass{Wall} of \eeClass{Pile}. Het tweede argument is dan de richting \verb|D_NONE|, want we willen geen verplaatsing controleren. Wanneer een van die functies aangeeft dat er een collision is, dan is het functieresultaat \verb|false|. In het andere geval wordt het \verb|true|.
+
+\subsection{Can Move}
+De functie \eeFunc{canMove} zorgt er voor dat we een verplaatsing in \'e\'en keer kunnen controleren. We moeten namelijk zowel collisions met de wall als met de pile in de gaten houden. Als een van deze functies \verb|false| als resultaat heeft, dan is het functieresultaat ook \verb|false|. Is dat niet zo, dan is het resultaat \verb|true|. De argumenten van de functies kan je gewoon doorgeven aan de collide functies van \eeClass{Wall} en \eeClass{Pile}.
+
+\subsection{Change Focus Block}
+Op het moment dat een blok beneden is, moet je het toevoegen aan de pile en bovenaan een nieuw blok tonen. Het type van de blok moet gelijk zijn aan het blok in de wachtpositie. Daarna moet je ook nog een beslissen wat nu het volgende blok zal worden.
+
+Je kan deze functie in drie stappen uitwerken:
+
+\begin{enumerate}
+	\item Voeg het huidige blok toe aan de pile.
+	\item Voer opnieuw de create functie van het huidige blok uit. Als eerste argument gebruik je de constante \verb|STARTPOS|. Het tweede argument is het type van het blok op de wachtpositie. (Zoek in de class \eeClass{block} naar een functie die je dat type geeft.)
+	\item Voer nu ook opnieuw de create functie van `nextBlock' uit. Die is gelijk aan het statement dat je eerder in de create functie van deze class schreef.
+\end{enumerate}
+
+\subsection{Handle Bottom Collision}
+Deze functie beschrijft wat er moet gebeuren als een blok de pile raakt. Ook dat zijn vier eenvoudige statements:
+
+\begin{enumerate}
+	\item Voer de functie \eeFunc{changeFocusBlock} uit.
+	\item Controleer of er rijen verwijderd kunnen worden uit de Pile.
+	\item Geef het aantal verwijderde lijnen (het resultaat van de vorige regel) door aan het \eeClass{Score} object.
+	\item Controleer via de functie \eeFunc{checkLoss} of het spel gedaan is.
+\end{enumerate}
+
+\subsection{Handle Input}
+We hebben ook een functie nodig die reageert wanneer we een toets indrukken. Dat is de functie \eeFunc{handleInput}. Elke toets die we kunnen indrukken tijdens het spel moet hier behandeld worden. Zo moet, wanneer je de pijltjestoets naar beneden indrukt, eerst gecontroleerd worden of een verplaatsing naar beneden wel mogelijk is. Als dat zo is, dan verplaats je het blok naar beneden en laat je een geluidje horen. Dat kan zo:
+
+\begin{code}
+if(Kb.bp(KB_DOWN))
+{
+	 if(canMove(currentBlock, D_DOWN))
+	 {
+			currentBlock.move(D_DOWN);
+			SoundManager.blip();
+	 }
+}
+\end{code}
+
+De code om een blok naar links of rechts te verplaatsen is gelijkaardig. Die werk je dus weer zelf uit.
+
+De `UP' toets gebruik je in tetris om een blok te roteren. Voeg dus ook code toe om te controleren of deze toets wordt ingedrukt. Dit maal moet je enkel de functie \eeFunc{canRotate} uitvoeren met het huidige blok. Als het resultaat van die functie \verb|true| is, dan roteer je het blok en laat je weer een geluidje horen.
+
+En als laatste is er de spatiebalk. Bij het indrukken van de spatiebalk moet een blok helemaal tot beneden bewegen. Om dat te doen geven we de variabele `toBottom' de waarde \verb|true| en de variabele `toBottomTimer' de waarde 0. En ook hier speelt er weer een geluid.
+
+\section{Update}
+En dan komen we bij de laatste functie, die het centrum van het spel vormt: de functie \eeFunc{update}. Die functie voert achtereenvolgens verschillende controles uit. 
+
+\subsection{Force Down}
+Eerst kijken we of het tijd is om een blok naar beneden te verplaatsen. Daarvoor moeten we de `forceDownCounter' verhogen. Als die hoger is dan de huidige game speed, dan moet het blok een stap naar beneden:
+
+\begin{code}
+forceDownCounter += Time.d();
+if(forceDownCounter > Score.getSpeed())
+{
+	 if(canMove(currentBlock, D_DOWN))
+	 {
+			currentBlock.move(D_DOWN);
+			forceDownCounter = 0;
+	 }
+}
+\end{code}
+
+\subsection{Slide Counter}
+De slide counter dient om het blok nog even opzij te kunnen bewegen wanneer het de pile raakt. Daarom moeten we eerst weten of het blok de pile raakt en dat is het geval als het niet meer naar beneden kan. In dat geval zullen we de waarde van `slideCounter' verlagen. Als de slideCounter nul wordt, dan voeren we de functie \eeFunc{handleBottomCollision} uit.
+
+\begin{code}
+if(!canMove(currentBlock, D_DOWN))
+{
+	 slideCounter -= Time.d();
+} else
+{
+	 slideCounter = SLIDE_TIME;
+}
+
+if(slideCounter <= 0)
+{
+	 slideCounter = SLIDE_TIME;
+	 handleBottomCollision();
+}
+\end{code}
+
+\subsection{To Bottom}
+De bool `toBottom' is \verb|true| wanneer de speler op de spatiebalk drukte. We verplaatsen het blok dan snel naar beneden, maar dat moet nog steeds stap voor stap gebeuren om zichtbaar te zijn. We gebruiken dus een counter met een kleine waarde waar we telkens weer de tijdsdelta van aftrekken. Elke keer dat de counter nul wordt verplaatsen we het blok een positie naar beneden. Als dat niet meer mogelijk is, dan schiet de bovenstaande code (Slide Counter) in actie.
+
+Enkel wanneer het blok niet naar beneden glijdt, controleren we de input van de speler.
+
+\begin{code}
+if(toBottom)
+{
+	 toBottomTimer -= Time.d();
+	 if(toBottomTimer < 0)
+	 {
+			toBottomTimer = 0.05;
+			if(canMove(currentBlock, D_DOWN))
+			{
+				 currentBlock.move(D_DOWN);
+
+			} else
+			{
+				 toBottom = false;
+			}
+	 }
+} else
+{
+	 handleInput();
+}
+\end{code}
+
+Daarmee is ook deze functie af. Het enige wat je nu nog moet doen is de \eeFunc{create}, \eeFunc{update} en \eeFunc{draw} toevoegen aan de Game State. En daarna natuurlijk alle fouten oplossen tot je programma werkt zoals het hoort.
+
+\section{Nabespreking}
+Je hebt nu een volledig project uitgewerkt. Hopelijk zal je onthouden hoe belangrijk het is om alles in classes onder te brengen. Ook het gebruik van testprogramma's is erg belangrijk om een groot project goed uit te werken.
+
+Maar natuurlijk komt deze manier van werken niet helemaal overeen met de realiteit. De auteur van deze cursus wist precies wat er moest gebeuren en in welke volgorde je dat het best kon aanpakken, nog voor je aan deze oefening begon. Als je zelf aan een project begint dan is dat wel anders. Het is heel gewoon dat je de classes die je vooraf maakt meermaals moet aanpassen. Dikwijls blijken er toch nog functies te ontbreken, of schrijf je functies die je uiteindelijk niet nodig blijkt te hebben. Dat is, zeker voor een beginnende programmeur, heel normaal.
+
+Enkel door ervaring leer je steeds beter inschatten welke functies een class nodig zal hebben. En zelfs dan kan je dat niet altijd exact voorspellen.

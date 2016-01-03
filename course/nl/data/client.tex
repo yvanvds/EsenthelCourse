@@ -1,0 +1,220 @@
+\chapter{De Client}
+
+Wat de client betreft beperkt deze cursus zich tot de elementen die betrekking hebben op het netwerk-gedeelte. Andere classes zoals \texttt{detailsGui} zijn tijdens de cursus al meermaals aan bod gekomen.
+
+\section{Main Program Loop}
+
+Een volwaardig programma zal waarschijnlijk uit meerdere application states bestaan. Om dit voorbeeld eenvoudig te houden is enkel de default state aanwezig. Hierin zijn enkel enkel het volgende concept nieuw:
+
+\begin{code}
+if(Network.isConnected())
+{
+	// ...
+}
+\end{code}
+
+Het \texttt{Network} object dat we hieronder uitwerken bevat een functie om te controleren of er een verbinding is. In dit voorbeeld gebruiken wordt het eigenlijke programma niet geupdated of getoond zolang dat niet het geval is. In een echt programma zal je waarschijnlijk wel een loginscherm willen tonen op dat moment.
+
+\section{De Player Class}
+Het programma bevat ook een class voor een player. Net zoals de \texttt{client} class bij de server, wordt ook hier \texttt{netClient} als basis gebruikt. Die bevat immers variabelen voor de naam, de kleur en de positie van de player.
+
+In de \texttt{update()} functie staat, naast een eenvoudige manier om de speler te verplaatsen, ook netwerk-gerelateerde code:
+
+\begin{code}
+if(previousPos != pos)
+{
+	 // notify server of new position
+	 File f;
+	 f.writeMem().putByte(M_CLIENT_POS);
+	 writePosToFile(f);
+	 Network.send(f);
+	 previousPos = pos;
+}
+\end{code}
+
+Deze code wordt uitgevoerd wanneer de positie verandert. In dat geval wordt er een bericht van het type \texttt{M\_CLIENT\_POS} gegenereerd dat via de Network class naar de server verzonden wordt.
+
+Ook van belang is de functie \texttt{setDetails()}, die wordt uitgevoerd wanneer er op de `ok'-knop wordt gedrukt in de gui. Op het moment dat we de naam en de kleur van de speler wijzigen, maken we een bericht van het type \texttt{M\_CLIENT\_FULL} dat we naar de server sturen.
+
+\begin{code}
+void setDetails(C Str & name, C Color & color)
+{
+	T.name = name;
+	T.color = color;
+	
+	// send details to server
+	File f;
+	f.writeMem().putByte(M_CLIENT_FULL);
+	writeDetailsToFile(f);
+	Network.send(f);
+}
+\end{code}
+
+\begin{note}
+In tegenstelling tot de server code voor het versturen van de berichten, voegen we nu niet het id van deze client toe. De server weet immers al van welke client dit komt.
+\end{note}
+
+\section{De `Peer' Classes}
+Met `Peers' bedoelen we andere clients die zich in je buurt bevinden. Gemakkelijkheidshalve gaan we er van uit dat alle actieve clients hier in mekaars buurt zijn. Bij grotere games zal naar de positie van een client gekeken worden. De server beslist dan welke speler dicht genoeg in mekaars buurt zijn om als peer beschouwd te worden.
+
+De class \texttt{peer} heeft, net zoals de player, als base class \texttt{netClient}. In dit geval is er echter geen update nodig. De positie, kleur en naam worden enkel via het netwerk aangepast. Wel moet deze informatie op het scherm getoond worden via een functie \texttt{draw()}.
+
+Aangezien er meer dan \'e\'en peer actief kan zijn, maken we hiervoor een typische manager class. Die bevat een geheugencontainer om peers te onthouden, evenals functies om een peer toe te voegen, te verwijderen of te zoeken. Ook is er een functie voorzien om alle peers in een keer op het scherm te tekenen.
+
+De volgende functie voegt een peer toe aan de container:
+
+\begin{code}
+peer & add(int ID)
+{
+	peer & p = peers.New();
+	p.id = ID;
+	return p;
+}
+\end{code}
+
+We stellen in deze functie dadelijk het ID in van de nieuwe speler, maar geven ook een referentie naar dat nieuwe object terug als functieresultaat. Zo kan de code die deze functie gebruikt de peer verder aanpassen.
+
+Vergelijk dit even met de \texttt{find()} functie:
+
+\begin{code}
+peer * find(int ID) 
+{
+	FREPA(peers)
+	{
+		 if(peers[i].id == ID)
+		 {
+				return &peers[i];
+		 }
+	}	
+	return null;
+}
+\end{code}
+
+Ook hier is het functieresultaat een peer, maar dan wel in de vorm van een pointer in plaats van een referentie. Dat is niet zomaar. Stel je voor dat de functie geen enkele peer vindt met het gevraagde ID. In dat geval kan er geen object afgeleverd worden. Door een pointer als resultaat te gebruiken, hebben we een alternatief. We laten de pointer verwijzen naar `null', een specifiek adres dat gebruikt wordt om aan te duiden dat een pointer niet naar een object verwijst. Bij een referentie \textbf{moet} steeds een object afgeleverd worden, wat hier niet gewenst is.
+
+Het bestand `peerMessages' bevat functies om data van het netwerk te verwerken die bedoeld is om peers aan te passen. Eventueel hadden deze functies ook in de class \texttt{peerManager} kunnen staan. Maar het is wel overzichtelijk om ze netjes samen in \'e\'en bestand te plaatsen.
+
+\begin{code}
+void AddPeer(File & f)
+{
+   int id = f.getInt();
+   peer & p = PeerManager.add(id);
+   p.readDetailsFromFile(f);
+}
+\end{code}
+
+De functie \texttt{AddPeer()} haalt, zoals al deze functies, eerst het id uit het bestand. Vervolgens wordt een nieuwe peer gegenereerd die dan verder de details uit het bestand leest.
+
+\begin{code}
+void GetPeerDetails(File & f)
+{
+   int id = f.getInt();
+   // try to find a peer with this id
+   peer * p = PeerManager.find(id);
+   if(p != null)
+   {
+      p.readDetailsFromFile(f);
+   }
+}
+\end{code}
+
+In het geval van \texttt{GetPeerDetails()} is het mogelijk dat de functie \texttt{find()} null als resultaat heeft. Je moet dan ook controleren of dat zo is, voor je probeert de functie \texttt{readDetailsFromFile()} uit te voeren.
+
+De overige functies spreken voor zichzelf.
+
+\section{De Network Class}
+Tot slot is er de class network, die alles met mekaar verbindt. 
+
+\begin{code}
+class network
+{
+private:
+   Connection connection;
+	 float startTime;
+	 bool connected = false;
+	
+public:
+   // ... more code ...
+}
+network Network;
+\end{code}
+
+Het belangrijkst hier is de class \texttt{Connection} die de engine voorziet. Die gebruik je om een verbinding te maken met een server. Je start deze verbinding in de functie \texttt{create()}.
+
+\begin{code}
+void create()
+{
+	startTime = Time.curTime();
+	SockAddr serverAddress;
+	serverAddress.setIP("127.0.0.1", 65535);
+	connection.clientConnectToServer(serverAddress);
+}
+\end{code}
+
+De \texttt{startTime} stel je gelijk aan de huidige tijd. Dat is belangrijk om later te controleren hoe lang je al op een verbinding wacht. Vervolgens heb je een IP adres nodig. Dit voorbeeld gebruikt het locale adres van je computer, maar dat zal je uiteindelijk aanpassen naar een publiek IP adres. \textsl{(Bij een afgewerkt programma is het zelfs gebruikelijk om eerst ergens op een webserver een bestandje te downloaden dat het huidige IP adres bevat van de game server.)}
+
+De \texttt{update()} functie bestaat uit twee delen. Het eerste deel wordt uitgevoerd wanneer de verbinding nog niet in orde is. Het tweede deel kijkt, in het geval van een geldige verbinding, of er nieuwe messages zijn.
+
+\begin{code}
+void update()
+{
+   if(!connected)
+	 {
+	    // code
+	 } else {
+	    // more code
+	 }
+}
+\end{code}
+
+In het deel waarin er nog geen verbinding is, wordt eerst gekeken of er nieuwe messages zijn. Het eerste bericht dat je de server laat terugsturen is \texttt{M\_HELLO}. Als er een nieuw bericht is, dan controleer je of dat het juiste bericht is en wordt \texttt{connected} gelijk aan \texttt{true}.
+
+Indien er geen verbinding is en er is ook geen nieuw bericht, dan is het tijd om enkele testen uit te voeren. Je controleert of de state van de connectie wel in orde is. In het geval die gelijk is aan \texttt{CONNECT\_INVALID} of \texttt{CONNECT\_VERSION\_CONFLICT} dan is het duidelijk dat de verbinding niet zal lukken. We kunnen dat laten weten aan de gebruiker. Ook als we langer dan 5 seconden wachten op een server kunnen we aannemen dat het niet meer in orde komt. 
+
+\begin{code}
+if(connection.receive(0))
+{
+	if(connection.data.getByte() == M_HELLO) connected = true;
+} else
+{
+	// not connected yet, check for errors
+	if(connection.state() == CONNECT_INVALID || connection.state() == CONNECT_VERSION_CONFLICT)
+	{
+		 Exit("Couldn't connect to server");
+	}
+	
+	if(Time.curTime() - startTime > 5)
+	{
+		 Exit("Connection Timeout");
+	}
+	
+	Time.wait(1); // wait a bit
+}
+\end{code}
+
+Als er w\'el een verbinding is, dan controleren we ook op nieuwe messages. De eerste byte laat je weten om welk bericht het gaat. Daarmee beslis je welke functie je uitvoert en geef je de rest van het bestand \textsl{(connection.data)} door aan die functie:
+
+\begin{code}
+if(connection.receive(0))
+{
+	byte message = connection.data.getByte();
+	switch(message)
+	{
+		 case M_ADD_CLIENT   : AddPeer       (connection.data); break;            
+		 case M_CLIENT_FULL  : GetPeerDetails(connection.data); break;               
+		 case M_CLIENT_POS   : GetPeerPos    (connection.data); break;              
+		 case M_REMOVE_CLIENT: RemovePeer    (connection.data); break;
+	}
+}
+\end{code}
+
+Tot slot is er ook nog de functie \texttt{send()}. Die kan je overal in je programma gebruiken om data naar de server te sturen. Veiligheidshalve wordt de leespositie van de file eerst terug op nul gezet.
+
+\begin{code}
+void send(File & f)
+{
+   f.pos(0); 
+   connection.send(f);
+}
+\end{code}
+

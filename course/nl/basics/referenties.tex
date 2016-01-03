@@ -1,0 +1,144 @@
+\chapter{referenties}
+\label{chapter:references}
+\section{inleiding}
+
+Bekijk even de volgende code:
+
+\begin{code}
+Vec som(Vec pos1, Vec pos2) {
+  return pos1 + pos2;
+}
+
+// someplace else
+Vec p1(0.1, 0.3, 0.5);
+Vec p2(1.9, 2.7, 0.5);
+
+Vec p3 = som(p1, p2); 
+\end{code}
+
+Alhoewel de bovenstaande code werkt zoals je verwacht, is dit helemaal niet optimaal. Je programma moet heel wat werk verrichten om de juiste waarde voor \texttt{p3} te berekenen.
+
+Uit de leerstof van het 5de jaar heb je (hopelijk) onthouden dat een functie niet weet wat wat er in de rest van het programma gebeurt. In dit geval betekent dat dat de functie som enkel twee waarden ontvangt, die bij mekaar optelt en het resultaat ''terugstuurt'' naar het programma. 
+
+Maar hoe kan de functie \texttt{som() p1} en \texttt{p2} optellen als die onzichtbaar zijn voor deze functie? Het antwoord is eenvoudig: op het moment dat \texttt{som()} uitgevoerd moet worden, kopi\"{e}ert de computer de waarden van \texttt{p1} en \texttt{p2} naar \texttt{pos1} en \texttt{pos2} die bestaan in de functie.
+
+Wat terug naar het programma gaat is de waarde na \texttt{return}. Maar ook nu weet de functie niet af van \texttt{p3}. Dus kopi\"{e}ert de computer de waarde na \texttt{return} naar \texttt{p3}.
+
+Maar nu het slechte nieuws: al dat kopi\"{e}eren kost tijd. Hieronder zie je wat er werkelijk gebeurt tijdens het uitvoeren van de functie \texttt{som()}.
+
+\begin{itemize}
+\item kopieer \texttt{p1.x} naar \texttt{pos1.x}
+\item kopieer \texttt{p1.y} naar \texttt{pos1.y}
+\item kopieer \texttt{p1.z} naar \texttt{pos1.z}
+\item kopieer \texttt{p2.x} naar \texttt{pos2.x}
+\item kopieer \texttt{p2.y} naar \texttt{pos2.y}
+\item kopieer \texttt{p2.z} naar \texttt{pos2.z}
+\item reserveer geheugen voor het resultaat (we noemen dit \texttt{result})
+\item tel \texttt{pos1.x} bij \texttt{pos2.x} en sla de som op in \texttt{result.x}
+\item tel \texttt{pos1.y} bij \texttt{pos2.y} en sla de som op in \texttt{result.y}
+\item tel \texttt{pos1.z} bij \texttt{pos2.z} en sla de som op in \texttt{result.z}
+\item kopieer \texttt{result.x} naar \texttt{p3.x}
+\item kopieer \texttt{result.y} naar \texttt{p3.y}
+\item kopieer \texttt{result.z} naar \texttt{p3.z}
+\end{itemize}
+
+En dan gebruikt deze functie nog maar eenvoudige vectoren! Wat als de argumenten containers met 2.000 vectoren zijn? Of misschien gebruik je deze \texttt{som()} functie wel op zoveel plaatsen in je code dat ze uiteindelijk 20.000 keer per seconde gebruikt wordt!
+
+Met andere woorden: \emph{wanneer je performante software wil maken, dan moet je in de eerste plaats vermijden dat je objecten kopi\"{e}ert wanneer dat niet nodig is.}
+
+\section{Pass by reference}
+De manier waarop we tot hiertoe waarden doorgeven naar een functie, noemen we \textbf{pass by value}. We geven letterlijk de waarde van een object door, we maken met andere woorden een \textbf{kopie} van het object (in dit geval een \texttt{Vec}).
+
+Een andere manier waarop je waarden kan doorgeven, heet \textbf{pass by reference}. Daarmee geven we niet de waarden zelf door, maar een \textbf{referentie} (of verwijzing) naar het object dat die waarden bevat.
+
+De code ziet er dan zo uit:
+\begin{code}
+Vec som(Vec & pos1, Vec & pos2) {
+  return pos1 + pos2;
+}
+
+// someplace else
+Vec p1(0.1, 0.3, 0.5);
+Vec p2(1.9, 2.7, 0.5);
+
+Vec p3 = som(p1, p2); 
+\end{code}
+
+Het is dus slechts de \& (ampersand) die het verschil maakt. Dat lijkt misschien niet de moeite, maar het aantal stappen dat nodig is om de functie uit te voeren, kan wel flink dalen:
+
+\begin{itemize}
+\item zet een verwijzing naar \texttt{p1} naar \texttt{pos1}
+\item zet een verwijzing naar \texttt{p2} naar \texttt{pos2}
+\item reserveer geheugen voor het resultaat (we noemen dit \texttt{result})
+\item tel \texttt{pos1.x} bij \texttt{pos2.x} en sla de som op in \texttt{result.x}
+\item tel \texttt{pos1.y} bij \texttt{pos2.y} en sla de som op in \texttt{result.y}
+\item tel \texttt{pos1.z} bij \texttt{pos2.z} en sla de som op in \texttt{result.z}
+\item kopieer \texttt{result.x} naar \texttt{p3.x}
+\item kopieer \texttt{result.y} naar \texttt{p3.y}
+\item kopieer \texttt{result.z} naar \texttt{p3.z}
+\end{itemize}
+
+Het is dus bijna altijd een goed idee om een object als referentie door te geven. Enkel bij eenvoudige variabelen, zoals \texttt{int}, \texttt{float} en \texttt{bool} heeft dit geen zin. Het de referentie zou in dat geval niet even veel of zelfs meer geheugen in beslag nemen dan de waarde.
+
+\section{return by reference}
+Ongetwijfeld word je na het lezen van de bovenstaande tekst helemaal warm vanbinnen en wil je het voorbeeld nog verder verbeteren. Immers, waarom zou je ook bij de return waarde geen ampersand gebruiken?
+
+Dus zo:
+\begin{code}
+Vec & som(Vec & pos1, Vec & pos2) {
+  return pos1 + pos2;
+}
+
+// someplace else
+Vec p1(0.1, 0.3, 0.5);
+Vec p2(1.9, 2.7, 0.5);
+
+Vec p3 = som(p1, p2); 
+\end{code}
+
+Helaas. Dit is geen goed idee. Want \texttt{p3} is nog steeds een gewone \texttt{Vec}, geen referentie naar een \texttt{Vec}. Dus dat zou betekenen:
+
+\begin{itemize}
+\item zet een verwijzing naar \texttt{p1} naar \texttt{pos1}
+\item zet een verwijzing naar \texttt{p2} naar \texttt{pos2}
+\item reserveer geheugen voor het resultaat (we noemen dit \texttt{result})
+\item tel \texttt{pos1.x} bij \texttt{pos2.x} en sla de som op in \texttt{result.x}
+\item tel \texttt{pos1.y} bij \texttt{pos2.y} en sla de som op in \texttt{result.y}
+\item tel \texttt{pos1.z} bij \texttt{pos2.z} en sla de som op in \texttt{result.z}
+\item \textbf{geef een referentie naar \texttt{result} als functie resultaat}
+\item kopieer \texttt{result.x} naar \texttt{p3.x}
+\item kopieer \texttt{result.y} naar \texttt{p3.y}
+\item kopieer \texttt{result.z} naar \texttt{p3.z}
+
+\end{itemize}
+
+\texttt{p3} is een \texttt{Vec}, geen referentie naar een \texttt{Vec}. Dus je moet uiteindelijk de referentie toch nog kopieeren naar \texttt{p3}. Je dacht je code sneller te maken, maar ze wordt zelfs trager. Balen dus.
+
+Maar wacht! Waarom maken we van \texttt{p3} dan niet gewoon een referentie? Ook dat is een no-go. Het probleem is dit: result is een tijdelijk object dat enkel tijdens de uitvoering van de functie bestaat. De \texttt{Vec \& p3} zou dan na de uitvoering van de functie een verwijzing bevatten naar result, maar result bestaat niet meer op dat moment.
+
+Dit kan dus nooit goed gaan. Gelukkig zal de compiler je waarschuwen, mocht je dit willen proberen.
+
+Kan je dan nooit een return by reference gebruiken? Toch wel. Kijk maar eens naar het volgende voorbeeld:
+
+\begin{code}
+Memc<Vec> points;
+Vec & p = points.New();
+p.x = 0.1;
+...
+\end{code}
+
+Waarom kan dit wel? \texttt{points} is een container voor objecten van het type \texttt{Vec}. De functie \texttt{New()} maakt een \texttt{Vec} in die container en geeft een referentie als resultaat. De \texttt{Vec} bestaat dus ook na het uitvoeren van de functie nog steeds, binnen \texttt{points}. In dit geval is \texttt{p} dus een tijdelijke naam voor die \texttt{Vec} in \texttt{points}. Zo'n referentie is heel handig, omdat je via \texttt{p} een object in de container kan wijzigen waar je anders niet bij kan.
+
+Kan dit dan nooit fout gaan? Jawel, maar dan zoek je het zelf. Als je de referentie gebruikt nadat je het object verwijdert, dan gaat het mis:
+
+\begin{code}
+Memc<Vec> points;
+Vec & p = points.New();
+points.clear();
+p.x = 0.1; // auch!
+\end{code}
+
+\begin{exercise}
+Open opnieuw de oefening die je op het eind van hoofdstuk \ref{section:managerClass} maakte. Bekijk \'e\'en voor \'e\'en de functies de je maakte. Vervang waar mogelijk een pass by value door een pass by reference.
+\end{exercise}
+

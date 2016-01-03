@@ -1,0 +1,357 @@
+\chapter{Gui}
+
+Een grafische user interface (Gui) kan je visueel ontwerpen via de gui editor. Maar om je interface te gebruiken in je applicatie zal je wel moeten programmeren.
+Bekijk eerst hoe je de gui editor gebruikt. Je kan daarvoor gebruik maken van deze youtube tutorial:
+
+\url{https://www.youtube.com/watch?v=eFsBxC6pGxE}
+
+\section{Een gui laden}
+
+Voor elk window maak je best een afzonderlijk code bestand, dat houdt het overzichtelijk. In dat bestand begin je een class, die bij voorkeur dezelfde naam heeft als de Gui en het bestand. 
+
+\begin{code}
+// Een class voor een login window
+class loginWindow
+{
+private:
+	 // een GuiObjs object kan een Gui object bevatten
+	 // dat je maakt via de editor.
+   GuiObjs objs;
+   
+public:
+   // Deze create functie zullen we later in het programma
+	 // uitvoeren om het login window te laden.
+   void create()
+   {
+	    // het GuiObjs object kan je gebruiken om een gui te
+			// laden. Met de functie load kan je hier via drag and 
+			// drop een GUI object plaatsen.
+      objs.load( --- Drop Gui Object here --- );
+      
+			// Uiteindelijk voeg je deze gui toe aan de Gui Manager
+      Gui += objs;
+   }
+   
+}
+
+// aangezien je normaal gezien maar 1 object nodig hebt van elke gui class,
+// kan je dat hier al maken.
+loginWindow LoginWindow;
+\end{code}
+
+De bovenstaande code laad je gui in het geheugen en voegt die toe aan de Gui manager. In je programma ga je dan de \texttt{create()} functie uitvoeren en de Gui updaten en tekenen.
+
+\begin{code}
+void InitPre()
+{
+   EE_INIT();
+}
+
+bool Init()
+{
+   // voor elk gui object voer je de create functie uit
+   // tijdens de Init fase
+   LoginWindow.create();
+   return true;
+}
+
+void Shut() {}
+
+bool Update()
+{
+   // Wanneer je een of meerdere gui classes gebruikt, dan 
+   // update je de Gui manager tijdens de applicatie update
+   Gui.update();
+   return true;
+}
+
+void Draw()
+{
+   D.clear(WHITE);
+   
+   // Wanneer je een of meerdere gui classes gebruikt,  dan
+   // laat je de Gui manager alles op het scherm tekenen. Je
+   // doet dit op het einde van de Draw functie,  omdat de 
+   // de Gui boven op de andere objecten hoort.
+   Gui.draw();
+}
+\end{code} 
+
+\begin{exercise}
+Maak een login window (met naam, wachtwoord textlines en een ok en cancel button) en zorg via bovenstaande code dat het in een programma op je scherm verschijnt.
+\end{exercise}
+
+\section{Pointers naar elementen}
+Je hebt nu wel een gui geladen, maar je wil waarschijnlijk ook de elementen van de gui gebruiken. Maar die zitten in \texttt{GuiObjs objs}. Je maakt daarom pointers aan naar elk element waar je iets mee wil doen. Na het laden van de gui zoek je naar de elementen en wijs je die toe aan de gewenste pointer.
+
+\begin{code}
+class loginWindow
+{
+private:
+   GuiObjs objs;
+	 // een pointer naar een Window, met de naam window
+	 Window * window;
+	 // een pointer naar een Button, met de naam buttonClose
+	 Button * buttonClose;
+   
+public:
+
+   void create()
+   {
+      objs.load( --- Drop Gui Object here --- );
+			// zoek in objs naar een Window met de naam "window"
+      window = objs.findWindow("window");
+			// zoek in objs naar een Button met de naam "buttonClose"
+			buttonClose = objs.findButton("buttonClose");
+			
+      Gui += objs;
+   }
+   
+}
+loginWindow LoginWindow;
+\end{code}
+
+Je mag je elementen noemen zoals je wil, maar de naam waar je naar zoekt (met findWindow, findButton, \ldots) moet wel gelijk zijn aan de naam die je het element in de Gui Designer hebt gegeven. Als je toch een verkeerde naam zoekt, dan zal je pointer nergens naar verwijzen. Als je dan later die pointer gebruikt in het programma, dan zal je applicatie crashen.
+
+Eens een pointer verwijst naar een element, kan je hem gebruiken in je code. Het volgende voorbeeld gebruikt de pointer naar het window om dit te tonen en te verbergen:
+
+\begin{code}
+class loginWindow
+{
+private:
+   GuiObjs objs;
+	 Window * window;
+	 Button * buttonClose;
+   
+public:
+
+   void create()
+   {
+      objs.load( --- Drop Gui Object here --- );
+      window = objs.findWindow("window");
+			buttonClose = objs.findButton("buttonClose");
+			
+			// verberg het window na het laden
+			window.hide();
+			
+      Gui += objs;
+   }
+	
+	 // deze functie kan je eender waar in je programma gebruiken
+	 void show() {
+			// dit zorgt voor een fade in van je window	
+	    window.fadeIn();
+   }
+}
+loginWindow LoginWindow;
+\end{code}
+
+De bovenstaande code laat je toe om bijvoorbeeld in de update functie van je applicatie de volgende code te plaatsen:
+
+\begin{code}
+if(Kb.bp(KB_F5)) LoginWindow.show();
+\end{code}
+
+\section{Callback functies}
+Sommige gui elementen, zoals buttons, kan je een functie toewijzen. Die functie wordt dan automatisch uitgevoerd bij een actie. Bij een button is die actie het moment dat iemand klikt op de button. Bij een slider is het het moment waarop de slider verplaatst wordt. Een TextLine heeft dan weer een actie als iemand de waarde aanpast.
+
+De functie die je toewijst aan een element kan eender welke naam hebben, maar het formaat moet wel juist zijn. Je moet de functie declareren als \texttt{static void} en met als argument een referentie naar de class die je maakt. Bijzonder aan een \texttt{static} functie is dat die geen rechtstreekse toegang heeft tot de objecten in je class. Daarom is de referentie naar de class noodzakelijk. Wanneer je de functie doorgeeft aan de button, gebruik je \eeClass{T} om het object door te geven waar de functie bij hoort. Andere functies of elementen van de class moet je dus ook via die referentie benaderen.
+
+\begin{code}
+class loginWindow
+{
+private:
+   GuiObjs objs;
+	 Window * window;
+	 Button * buttonClose;
+    
+	 // Deze functie wordt uitgevoerd wanneer iemand
+	 // op de button klikt.
+   static void myButtonFunction(loginWindow & obj) {
+		  obj.window.fadeOut();
+	 }
+	
+public:
+
+   void create()
+   {
+      objs.load( --- Drop Gui Object here --- );
+      window = objs.findWindow("window");
+			buttonClose = objs.findButton("buttonClose");
+			window.hide();
+			
+			// Wijs de functie hierboven toe aan de button
+			buttonClose.func(myButtonFunction, T);
+      Gui += objs;
+   }
+	
+	 void show() {
+	    window.fadeIn();
+   }
+}
+loginWindow LoginWindow;
+\end{code}
+
+\begin{note}
+Pas op. De editor maakt een fout als je de naam van een functie typt: er komen vanzelf haakjes achter. Wanneer je een functie gebruikt hoort dat zo, maar in dit geval moet je enkel de naam doorgeven. Verwijder de haakjes dus.
+\begin{code}
+buttonClose.func(myButtonFunction(), T); // fout!
+buttonClose.func(myButtonFunction, T);   // juist.
+\end{code}
+\end{note}
+
+\begin{exercise}
+Vul de vorige oefening aan met de mogelijkheid om je login window te tonen en te verbergen via de functietoets F1. Zorg ook dat zowel de ok als de cancelbutton het window terug sluiten.
+\end{exercise}
+
+\section{De inhoud van een element}
+\label{chapter:gui_content}
+Dikwijls heeft een element ook een inhoud. Een \texttt{TextLine} heeft een tekst als inhoud. Een \texttt{Slider} heeft een waarde tussen 0 en 1, afhankelijk van zijn positie. Een \texttt{CheckBox} heeft als inhoud \texttt{true} wanneer aangevinkt, of \texttt{false} indien niet. 
+
+Die inhoud opvragen kan complex zijn. Stel je voor dat we een \texttt{TextLine} hebben:
+
+\begin{code}
+TextLine tl;
+\end{code}
+
+De waarde vragen vraag je dan op met:
+
+\begin{code}
+Str waarde = tl();
+\end{code}
+
+Eenvoudig! Maar\ldots\ meestal hebben we geen \texttt{TextLine} in onze code, maar een \textbf{pointer} naar zo'n element. Dus moet je aangeven dat je wil werken met het element waar die pointer naar verwijst. Dat kan zo:
+
+\begin{code}
+Str waarde = *tl();
+\end{code}
+
+Als je dan ook nog eens vanuit een \texttt{static void} functie werkt, zoals een functie die wordt uitgevoerd wanneer je op een knop klikt, dan moet je ook het object van de class meegeven. Bij de class \texttt{loginWindow} van hierboven wordt dat dan:
+
+\begin{code}
+Str waarde = (*LoginWindow.tl)();
+\end{code}
+
+Je kan de inhoud van een element ook wijzigen. Dat is gelukkig een stuk eenvoudiger:
+
+\begin{code}
+Str waarde = "mijn tekst";
+tl.set(waarde);
+// of in een static void functie
+LoginWindow.tl.set(waarde);
+\end{code}
+
+Een verder uitgewerkt voorbeeld van het loginWindow zou er zo kunnen uitzien:
+
+\begin{code}
+class loginWindow
+{
+private:
+   GuiObjs objs;
+	 Window * window;
+	 Button * buttonLogin;
+   TextLine * tlName;
+	 TextLine * tlPass;
+	
+   static void tryLogin(loginWindow & obj) {
+	    Str name = (*obj.tlName)();
+			Str pass = (*obj.tlPass)();
+			
+			if(Equal(name, "john") && Equal(pass, "secret")) {
+			   obj.window.fadeOut();
+		  }
+	 }
+	
+public:
+
+   void create()
+   {
+      objs.load( --- Drop Gui Object here --- );
+      window = objs.findWindow("window");
+			buttonLogin = objs.findButton("login");
+			tlName = objs.findTextLine("name");
+			tlPass = objs.findTextLine("pass");
+			
+			window.hide();
+			buttonClose.func(tryLogin, T);
+			
+      Gui += objs;
+   }
+	
+	 void show() {
+	    window.fadeIn();
+   }
+}
+loginWindow LoginWindow;
+\end{code}
+
+\begin{exercise}
+Maak een programma met een login window. De achtergrond van het programma is zwart, maar wordt wit wanneer je ingelogd bent. Je toont dan ook de login naam op het scherm via \texttt{D.text()}. Als uitbreiding kan je ook eens naar een andere application state overschakelen na het inloggen.
+\end{exercise}
+
+\section{Data en interface: Never mix!}
+Een belangrijke regel bij het schrijven van een GUI is de volgende:
+
+\begin{note}
+GUI en data houd je strikt gescheiden.
+\end{note}
+
+Een GUI dient om data aan te passen. Maar die data zelf hoort \textbf{NOOIT} (nooit) thuis in de gui class. Je maakt dus steeds een afzonderlijke class voor de data. Je gebruikt dan functies in je gui class om die data te lezen en te wijzigen. Een voorbeeld:
+
+\begin{code}
+// een data class voor een player
+class player {
+private:
+   Str name;
+	 int age;
+
+public:
+   void setName(C Str & name) { T.name = name; }
+	 void setAge (int     age ) { T.age  = age ; }
+	 Str  getName(            ) { return   name; }
+	 int  getAge (            ) { return   age ; }
+	
+	 void draw() {
+	    D.text(0,    0, S + "name: " + name);
+			D.text(0, -0.1, S + "age : " + age );
+	 }
+}
+player Player;
+\end{code}
+
+\begin{code}
+// een GUI class
+class changePlayerGUI {
+private:
+   GuiObjs objs;
+	 Window   * window  ;
+	 TextLine * tlName  ;
+	 TextLine * tlAge   ;
+	 Button   * buttonOK;
+	
+public:
+   void create() {
+	    objs.load( -- drop gui object here ---);
+			window   = objs.findWindow  ("window");
+			tlName   = objs.findTextLine("name"  );
+			tlAge    = objs.findTextLine("age"   );
+			buttonOK = objs.findButton  ("ok"    );
+			
+			buttonOK.func(changeData, T);
+			tlName  .set(        Player.getName() );
+			tlAge   .set(TextInt(Player.getAge ())); // converteer int naar Str met TextInt()
+			
+			Gui += objs;
+   }
+	
+	 static void changeData(changePlayerGUI & obj) {
+	    Str name = (*obj.tlName)();
+	 	  Str age  = (*obj.tlAge )();
+	 	  int ageInt = TextInt(age);
+	 	  Player.setName(name  );
+	 	  Player.setAge (ageInt);
+   }
+}
+
+changePlayerGUI ChangePlayerGUI;
+\end{code}

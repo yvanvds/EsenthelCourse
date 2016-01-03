@@ -1,0 +1,226 @@
+\chapter{Pointers (Uitbreiding)}
+
+\section{Inleiding}
+Alhoewel references dikwijls heel handig zijn, zijn ze niet in alle omstandigheden bruikbaar. Om het gebruik van een reference zou gemakkelijk mogelijk te maken, verplicht de compiler je om de verwijzing te linken aan
+een echte variabele op het moment dat ze gemaakt wordt.
+
+Meestal is dat geen probleem. Zo bijvoorbeeld in dit voorbeeld:
+
+\begin{code}
+Vec som(Vec & pos1, Vec & pos2) {
+  return pos1 + pos2;
+}
+
+// someplace else
+Vec p1(0.1, 0.3, 0.5);
+Vec p2(1.9, 2.7, 0.5);
+
+Vec p3 = som(p1, p2); 
+\end{code}
+
+Op het moment dat je de functie som gebruikt, ken je dadelijk p1 toe aan de reference pos1 en p2 aan de reference pos2. So far so good. Maar wat met dit voorbeeld?
+
+\begin{code}
+class players {
+  Memc<Player> list;
+	
+  Circle &  add(Vec2 & pos, Str & name) {
+    Player & p = list.add();
+    p.set(pos, name);
+    return p;
+  }	  
+
+  Circle & findByName(Str & name) {
+    FREPA(list) {
+      if(Equal(list[i].getName(), name) {
+        return list[i];
+      }
+    }
+  }	
+}
+// globaal object
+players Players;
+
+// ergens in je programma 
+Players.add(Vec2(1,1), "niceGuy");
+player & vriend = Players.findByName("coolGuy");
+\end{code}
+
+De functie \texttt{add()} kan je geen problemen geven. De referentie argumenten kunnen niet anders dan bestaan wanneer je de functie gebruikt. Die functie geeft ook de nieuwe player als reference. Die kan in dit geval ook niet anders dan bestaan, want we hebben die net gemaakt.
+
+De functie \texttt{findByName()} geeft ook een referentie naar een player als resultaat. Dat gaat goed zolang die player ook bestaat. Maar wat als er geen player bestaat met de naam die we zoeken? Dan is er geen resultaat, maar een referentie die niet dadelijk een waarde krijgt, geeft een fout. En dat is nu het geval met \texttt{player \& vriend}.
+
+We zouden dit kunnen oplossen door een andere player als resultaat te geven. Maar dan krijgen we de verkeerde informatie, het is immers niet de player die we zochten. In zo'n geval zou het dus beter zijn als er geen resultaat was, maar dat kan niet met een referentie.
+
+\section{Pointers dus\ldots}
+Ook een pointer is een verwijzing naar een variabele. Maar wel met een ander symbool: de asterisk (*). Maar waar de compiler een oogje in het zeil houdt wanneer je references gebruikt, ben je bij pointers volledig op jezelf aangewezen. Pointers zijn niets meer dan een variabele waarin je een geheugenadres kan opslaan.
+
+Stel je voor dat je een kast hebt met lades die allemaal precies 1 item kunnen bevatten. Je steekt je GSM in lade 1. Later verplaats je je GSM naar lade 2 en legt in lade 1 een briefje dat je GSM in lade 2 ligt.
+
+Lade 1 is nu een ``pointer'' naar lade 2. We kunnen nu ook in lade 3 een pointer naar lade 2 steken. Lade 1 en lade 3 verwijzen nu beiden naar lade 2. Maar waarom niet gewoon lade 2 onthouden? In dit geval is het gebruikte systeem met pointers niet zo zinvol, maar het kan wel zinvol zijn.
+
+Stel je voor dat we in alle laden, te beginnen bij 2, een GSM leggen. In lade 1 leggen we een verwijzing naar de GSM in lade 2. Iedereen die moet bellen, doet lade 1 open, en ziet dat de GSM die hij hoort te gebruiken in lade 2 ligt.
+
+Na de GSM in lade twee een tijd gebruikt te hebben, merken we dat hij geen belkrediet meer heeft. We vervangen nu de pointer in lade 1 door een pointer naar lade 3. Iedereen weet nu dat de te gebruiken GSM in lade 3 ligt. Totdat die natuurlijk ook geen belkrediet meer heeft en we een pointer naar lade 4 in lade 1 steken.
+
+In deze situatie heeft de verwijzing, of pointer, al veel zin. Niemand moet nog zoeken naar een bruikbare GSM, tenzij wanneer je de eerste bent die ontdekt dat de huidige GSM geen belkrediet meer heeft.
+
+\section{Basisbewerkingen}
+\subsection{Een pointer declareren}
+Een pointer is een variabele, net zoals een andere. Alleen, in een pointer variabele sla je geen data op, maar een geheugenadres van data. 
+
+Een pointer declareer je zo:
+
+\begin{code}
+int * p1;
+int* p2;
+int *p3;
+Str * textPtr;
+Player * playerPtr;
+\end{code}
+
+Je ziet dat je nogal wat vrijheid hebt. De eerste drie pointer variabelen zijn identiek. Ze kunnen verwijzen naar een integer. Waar de asterisk staat maakt dus niet uit.
+
+De vierde pointer is een pointer naar een \texttt{Str} (string), terwijl de vijfde pointer naar een object van de eigen klasse \texttt{Player} verwijst.
+
+\subsection{Een adres toekennen aan een pointer.}
+Wanneer we een referentie declareren, dan moeten we die dadelijk een waarde geven. Bij een pointer is dat niet nodig.
+
+Maar je weet dat wanneer we een integer gebruiken die we nooit een waarde gegeven hebben, die eender welke waarde kan hebben. Daarom is het een goed idee om een integer dadelijk te initialiseren, bijvoorbeeld met:
+
+\begin{code}
+int i = 0;
+\end{code}
+
+Ook bij een pointer kan je dat doen. Want zonder initialisatie kan een pointer naar om het even welk geheugenadres verwijzen. En als je vervolgens via de pointer de waarde in dat geheugen wijzigt, dan kan je programma crashen.
+
+Maar je kan niet zomaar het volgende schrijven:
+\begin{code}
+int i = 42;
+int * p = i;
+\end{code}
+
+In de code hierboven kennen we de inhoud van i, dus de waarde 42, toe aan p. Maar p verwacht een adres. Je laat p dus het geheugenadres 42 onthouden, niet het adres van i. Om aan te geven dat we het adres --en niet de waarde zelf-- willen doorgeven, gebruik je een ampersand (\&). Dus\ldots
+
+\begin{code}
+int   i = 42;
+int * p = &i; // declaratie en initialisatie
+int * p;      // enkel declaratie
+p       = &i; // enkel initialisatie
+p       =  i; // Fout! Het adres is nu 42 
+\end{code}    
+
+\ldots betekent: sla het adres van i op in p. Je ziet dat je dit dadelijk bij het declareren kan doen, maar ook later in het programma. De laatste regel is trouwens een waar je voor moet uitkijken. De compiler zal deze toewijzing niet verbieden, maar je programma zal waarschijnlijk crashen.
+
+\subsection{Een variabele wijzigen via een pointer}
+Wat nu als we i willen wijzigen via de pointer p? \texttt{p = i;} is fout, dat zagen we hierboven. We moeten aanduiden dat we niet p willen wijzigen, maar het geheugen waar p naar verwijst. Om dat aan te duiden hebben we een extra symbool nodig: de asterisk (*).
+
+\begin{code}
+int   i = 42;
+int * p = i ; // het adres in p wordt het adres van i
+*p      = 43; // de waarde op het adres in p wordt 43
+\end{code}
+
+We zetten de twee mogelijkheden nog eens op een rijtje:
+
+\begin{code}
+p = &i; // slaat het adres van i op in p
+*p = i; // slaat de waarde van i op in het adres waar p naar verwijst.
+\end{code}
+
+En het kan nog leuker! Indien p1 en p2 beiden pointers naar integers zijn, kan je de waarde waar p2 naar verwijst, opslaan in het adres waar p1 naar verwijst:
+
+\begin{code}
+*p1 = *p2;
+\end{code}
+
+\subsection{pointers naar null}
+Maar wat met een pointer die nergens naar verwijst? Zonder initialisatie verwijst die naar een willekeurig adres in het geheugen. Dikwijls is het nodig dat je programma weet of een pointer toegewezen is of niet. Daarom bestaat er een speciale waarde die aangeeft dat de pointer nergens naar wijst. We noemen dat een ``null pointer''. Je kan dat zo schrijven:
+
+\begin{code}
+int * p1 = null;
+\end{code}
+
+We zouden nu de code aan het begin van dit hoofdstuk kunnen herschrijven:
+
+\begin{code}
+class players {
+  Memc<Player> list;
+  
+  // referenties geven hier geen probleem, dus blijven we die gebruiken	
+  Circle &  add(Vec2 & pos, Str & name) {
+    Player & p = list.add();
+    p.set(pos, name);
+    return p;
+  }	  
+
+  // pointer result in plaats van een reference	
+  Circle * findByName(Str & name) {
+    FREPA(list) {
+      if(Equal(list[i].getName(), name) {
+        return &list[i]; // notice the ampersand!
+      }
+    }
+    // geen player gevonden met deze naam
+    return null;
+  }	
+}
+// globaal object
+players Players;
+
+// ergens in je programma 
+Players.add(Vec2(1,1), "niceGuy");
+player * vriend = Players.findByName("coolGuy");
+
+// misschien is coolGuy niet online?
+if(vriend != null) {
+  Greet(vriend); // veronderstel Greet(player * p);
+}
+\end{code} 
+
+In dit geval kunnen we verder met als de functie \texttt{findByName()} geen speler vond. Met een referentie kon dat niet. Maar je moet dan wel controleren of je geen null als resultaat kreeg.
+
+\begin{note}
+Sommige geheugencontainers, zoals Memc, kunnen tijdens de uitvoering van het programma verplaatst worden. Bijvoorbeeld omdat er op die plaats in het geheugen niet genoeg ruimte was om nieuwe players toe te voegen. Het programma zal dan de hele container verplaatsen naar een andere plaats in het geheugen. De opgevraagde pointer is dan niet meer geldig. Vraag dus elke keer opnieuw het adres aan. Als dat niet kan, of als je zo voortdurend opnieuw hetzelfde adres moet opvragen, dan gebruik je een ander soort container, zoals Memx. Die geeft de garantie dat een gegeven adres nooit wijzigt.
+\end{note} 
+
+\section{Alles op een rijtje}
+Het is je al opgevallen dat pointers en references beiden de symbolen \& en * gebruiken. En ze hebben een andere betekenis, afhankelijk van de situatie. hieronder zie je een overzicht van de mogelijkheden.
+
+Aangenomen dat de volgende variabelen reeds bestaan:
+
+\begin{code}
+int   j   = 43;
+int & ref = j ;
+int * ptr = &j;
+\end{code}
+
+kunnen we de volgende code gebruiken:
+
+\begin{myTable}{references en pointers}{l||l|l}
+  & reference & pointer \\ 
+\hline Declaratie     &      & \lstinline|int * i;| \\ 
+\hline Declaratie en Initialisatie  & \lstinline|int & i = j;|  & \lstinline|int * i = &j;|\\ 
+\hline Initialisatie &  & \lstinline| i = &j;| \\
+\hline\hline Waarde aanpassen & \lstinline|i = 42;| & \lstinline|*i = 42;| \\
+\hline Waarde aanpassen & \lstinline|i = j;| & \lstinline|*i = j;| \\
+\hline Waarde aanpassen via ref & \lstinline|i = ref;| & \lstinline|*i = ref;| \\
+\hline Waarde aanpassen via ptr & \lstinline|i = *ptr;| & \lstinline|*i = *ptr;| \\
+\hline\hline Adres aanpassen &  & \lstinline| i = &j;| \\
+\hline Adres aanpassen via ref &  & \lstinline| i = &ref;| \\
+\hline Adres aanpassen via ptr &  & \lstinline| i = ptr;| \\ 
+ 
+\end{myTable} 
+
+Zoals je ziet ogen de references een stuk eenvoudiger. Maar het valt ook op dat die references veel minder mogelijkheden hebben. Daarom is het soms echt noodzakelijk om pointers te gebruiken.
+
+\begin{exercise}
+\begin{enumerate}
+  \item Maak een programma met 5 cirkels, gespreid over de onderkant van je scherm. Je gebruikt best een memory container om de cirkels in op te slaan.
+	\item Als je muis zich boven een cirkel bevindt, dan verplaats je die langzaam naar boven.
+	\item Maak een functie die als resultaat een pointer geeft naar de hoogste cirkel. Je voert deze functie uit in update en houdt het resultaat bij een een pointer variabele.
+	\item In Draw teken je alle cirkels op het scherm. Vergelijk voor het tekenen van de cirkel het adres met de pointer variabele die het adres van de hoogste cirkel bevat. Als die gelijk zijn, teken je de cirkel groen, anders rood..
+\end{enumerate}
+\end{exercise}
+
+	

@@ -1,0 +1,68 @@
+\chapter{Rendering}
+3D beelden worden door een computer opgebouwd in verschillende stappen, afhankelijk van wat er gevraagd wordt. Zo zijn er afzonderlijke stappen voor transparante objecten, schaduw en licht.
+
+De coordinatie van al die stappen gebeurt door de \texttt{Renderer()} functie. Maar die functie weet niet wat jij allemaal wil tonen in je applicatie. Daarom maak je ook een eigen functie, die we meestal \texttt{Render()} noemen en waar in staat welke 3D elementen getekend moeten worden, en in wanneer.
+
+Aangenomen dat je een eenvoudige wereld gemaakt hebt, zou je de Renderer zo kunnen gebruiken om die wereld op het scherm te tonen:
+
+\begin{code}
+void InitPre()
+{
+   EE_INIT();
+   Cam.at.set(16, 0, 16);
+}
+
+bool Init()
+{
+   Physics.create(EE_PHYSX_DLL_PATH);
+   Game.World.New("Worlds\Sample"); 
+   Game.World.update(Cam.at); 
+   return true;
+}
+
+void Shut() {}
+
+bool Update()
+{
+   if(Kb.bp(KB_ESC))return false;
+   if(Ms.b(1)) {
+      CamHandle(0.1, 100, CAMH_ZOOM | CAMH_MOVE);
+   } else {
+      CamHandle(0.1, 100, CAMH_ZOOM | CAMH_ROT);
+   }
+
+   Game.World.update(Cam.at); // update the world to given position
+   return true;
+}
+
+void Render()
+{
+   Game.World.draw();
+}
+
+void Draw()
+{
+   Renderer(Render);
+}
+
+\end{code}
+
+Je ziet dat de introductie van de Renderer nog enkele nieuwigheden met zich meebrengt. Vooreerst heb je het \texttt{Cam} object: de camera. \texttt{Cam.at} is de plaats waar de camera naar kijkt.
+
+Verder heb je \texttt{Game.World}. Een game wereld kan je maken met de editor en vervolgens in het programma laden. Maar omdat werelden oneindig groot kunnen zijn, wordt niet de hele wereld in het geheugen geladen. Met \texttt{Game.World.update(Cam.at);} geef je aan welk deel van de wereld geupdate dient te worden. Het deel waar de camera naar kijkt, dus.  
+
+\texttt{CamHandle()} is een wat primitieve manier om de Camera te hanteren. Later zien we meer mogelijkheden.
+
+Verder moet je ook nog de physics engine starten wanneer je een game wereld laadt. In dit geval gebeurt daar verder niets mee, maar het laden is noodzakelijk.
+
+\section{Environment}
+Wanneer je een game wereld maakt, dan kan je ook de omgeving instellen. Daarmee bedoelen we de kleur van het licht, de vorm van de zon, etc.
+
+Deze instellingen kan je ook in je programma gebruiken, via de volgende code:
+
+\begin{code}
+if(Game.World.settings().environment) {
+   Game.World.settings().environment->set();
+}
+\end{code}
+

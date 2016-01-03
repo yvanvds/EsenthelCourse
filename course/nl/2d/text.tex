@@ -1,0 +1,131 @@
+\chapter{Tekst}
+
+Ongetwijfeld wil je in een programma ook tekst op het scherm tonen. Voor letters, woorden en zelfs hele zinnen bestaat er de class \eeClass{Str}. Om het duidelijk te houden spreek je dat uit als `string'.
+
+Je kan op de volgende manieren tekst in een \eeClass{Str} plaatsen:
+
+\begin{code}
+Str tekst("hello world"); // via de constructor
+tekst  = "hello "; // via toekenning
+tekst += "world" ; // via de plus assignment operator
+\end{code}
+
+\textit{De tekst tussen de quotes noemen we in het vakjargon een `string literal': een letterlijke string. Als je niets moet aanpassen aan een tekst, dan kan je dikwijls rechtstreeks met string literals werken.}
+
+\section{Tekst op het scherm tonen}
+Nu wil je een tekst dikwijls op het scherm tonen. In tegenstelling tot de class \eeClass{Vec2}, heeft \eeClass{Str} geen `draw' functie. Tekst op het scherm plaatsen gaat daarom via het object \eeClass{D}:
+
+\begin{code}
+Str myString;
+myString = "hello world";
+D.text(Vec2(0, 0), myString); // plaatst een tekst in het midden van het scherm
+D.text(Vec2(0, -0.1), "Een string literal"); // het kan dus ook zonder Str
+\end{code}
+
+Het tweede argument van de functie \eeFunc{text} is de tekst die je op het scherm wil zetten. Het eerste argument is de positie. Je weet ondertussen genoeg over co\"ordinaten om te begrijpen waarom dit een \eeClass{Vec2} is.
+
+\begin{exercise}
+Maak om dit in te oefenen een programma dat de woorden `links', `rechts', `boven' en `onder' op een logische plaats op het scherm plaatst.
+\end{exercise}
+
+\begin{exercise}
+Maak een programma dat de muis verbergt en op de positie van de muis het woord `mouse' toont.
+\end{exercise}
+
+\section{Getallen en tekst combineren}
+Je kan getallen en tekst niet zomaar combineren. Voor je computer zijn 42 en ``42'' iets helemaal anders. Het eerste is een getal, het tweede een tekst die toevallig de characters 4 en 2 bevat. Dat zie je ook in de volgende code:
+
+\begin{code}
+int i = 42;
+Str myString;
+mystring = i; // dit genereert een foutmelding
+myString = 42; // dit is nogmaals een foutmelding
+myString = "42"; // dit is ok!
+D.text(Vec2(0, 0), i); // dit is weer fout: je kan geen integer gebruiken als het programma een string verwacht
+\end{code}
+
+Toch wil je vaak ook de waarde van een variabele op het scherm. Hoe pak je dat dan aan? Wel, je kan een getal wel toevoegen aan een \eeClass{Str} object:
+
+\begin{code}
+int i = 42;
+Str myString;
+myString += i; // dit is correct
+myString += 42; // dit ook
+myString += 0.4; // dit ook. De myString bevat nu de tekst "42420.4"
+D.text(Vec2(0, 0), myString); // toont de tekst op het scherm
+\end{code}
+
+Maar we zijn nog niet helemaal klaar. Dikwijls wil je tekst en getallen combineren. Maar kijk eens naar de volgende code:
+
+\begin{code}
+Str myString;
+myString = "score: " + 42; // fout!
+myString = "score: ";
+myString += 42; // correct!
+\end{code}
+ 
+De eerste versie werkt niet omdat je 42 wil toevoegen aan een string literal. De compiler zal proberen om eerst 42 toe te voegen aan ``score: ''. Pas dan wordt de combinatie van die twee in `myString' geplaatst. Bij het combineren van die twee gaat het dus fout, want ``score: '' is geen \eeClass{Str} maar een string literal.
+
+De tweede versie werkt wel, omdat je eerst de string literal in een \eeClass{Str} object plaats, en pas dan het getal aan dat object toevoegt.
+
+Omdat je een string en een getal vaak gecombineerd worden, bestaat er een shortcut: een \eeClass{Str} object \eeClass{S}. Dit is een lege string.
+
+\begin{code}
+Str myString;
+myString = S + "score: " + 42; // correct!
+\end{code}
+
+Hoe komt het dat dit wel werkt? S is een lege \eeClass{Str}. De string literal wordt toegevoegd aan S. Daarna wordt 42 toegevoegd aan S. Tenslotte wordt S in de variabele `myString' geplaatst.
+
+Een dergelijk object kan je ook doorgeven aan \eeClass{D.text()}. De volgende statements zijn dus helemaal in orde:
+
+\begin{code}
+int myScore = 10;
+D.text(Vec2(0, 0), S + "score: " + myScore);
+
+// iets complexer
+D.text(Vec2(0, 0), S + "score: " + myScore + " op tien");
+\end{code}
+
+\begin{exercise}
+Maak een programma met een int `score'. Telkens als je op de spatiebalk drukt, dan verhoogt de score met \'e\'en punt. Je toont de score ook op het scherm.
+\end{exercise}
+
+\section{Een Vec2 als tekst weergeven}
+Om de werking van je programma te controleren is het soms handig om de x- en y-co\"ordinaat van een Vec2 op het scherm te zetten. Aangezien dat getallen zijn, kan je dat op de volgende manier doen:
+
+\begin{code}
+Vec2 pos = Ms.pos();
+D.text(Vec2(0, 0), S + "x: " + pos.x + " y: " + pos.y);
+\end{code}
+
+Maar omdat elke programmeur zoiets regelmatig nodig heeft, beschikt de class \eeClass{Vec2} ook over een functie die dat eenvoudiger maakt:
+
+\begin{code}
+Vec2 pos = Ms.pos();
+D.text(Vec2(0, 0), S + pos.asText());
+// of ook rechtstreeks:
+D.text(Vec2(0, 0), Ms.pos().asText());
+\end{code}
+
+\begin{exercise}
+Maak nog eens een programma met een punt dat je via de pijltjestoetsen kan aanpassen. Toon de positie van dat punt op het scherm.
+\end{exercise}
+
+\section{Tekstopmaak}
+\label{chapter:tekstopmaak}
+Waarschijnlijk wil je de standaardweergave van tekst wel aanpassen als je een eigen game maakt. Dat is op zich niet moeilijk. Je maakt daarvoor een nieuw font, door rechts te klikken in de filetree en `New Font' te kiezen. Als je dat font opent kan je zowat alles aanpassen. Het meest belangrijke is daar de naam in het vak `System Font'.
+
+Vervolgens maak je een nieuwe textStyle. Daarmee kan je de kleur en aligment van je font wijzigen. \textsl{(In een textStyle zie je onderaan een dropdown menu `Font'. Daar kan je aangeven welk van je font dat deze stijl moet gebruiken.)} Je kan ook meer dan \'e\'en textStyle maken van hetzelfde font.
+
+Als je nu je eigen textStyle wil gebruiken om tekst op het scherm te tonen, dan kan je een twee versie van \eeFunc{D.text()} gebruiken:
+
+\begin{code}
+D.text(*TextStyles( -- drop style here -- ), Vec2(0, 0), "tekst");
+\end{code}
+
+Je sleept je textStyle tussen de haakjes van TextStyles(). Onthoud ook dat er een asterisk voor TextStyles staat. Later leer je waarom dat zo moet, maar het werkt in ieder geval niet als je die vergeet.
+
+\begin{exercise}
+Experimenteer met de verschillende mogelijkheden om tekst vorm te geven. Zet minstens vier teksten op het scherm, en gebruik voor elke tekst een andere stijl.
+\end{exercise}

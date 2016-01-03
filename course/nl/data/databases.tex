@@ -1,0 +1,229 @@
+\chapter{Databases}
+
+\section{Database Servers}
+Data kan je niet enkel in gewone bestanden opslaan, je kan ook een database gebruiken. De meest voorkomende standaard voor het werken met databases is SQL (sequel). Esenthel Engine ondersteunt 3 verschillende databases: Microsoft SQL, MySQL en SQLite. Elk van deze databases heeft voor- en nadelen.
+
+\begin{itemize}
+\item \textbf{Microsoft SQL:} De database server is zeer performant, maar je hebt wel een Windows OS nodig. Tijdens de ontwikkeling zal dit waarschijnlijk geen probleem zijn, maar wanneer je een server voor je programma laat hosten dan is een Windows host duurder.
+\item \textbf{MySQL:} Dit is waarschijnlijk de meest gebruikte SQL server. MySQL draait op zowat elk OS, is gratis en open source. De installatie en het onderhoud zijn niet erg moeilijk, en de performantie is OK.
+\item \textbf{SQLite:} SQLite gebruikt een gewoon bestand als database. Er moet dus geen server ge\"installeerd worden. Vooral tijdens de ontwikkelfase kan dat een voordeel zijn, maar het zorgt er wel voor dat SQLite heel wat trager is dan een `echte' database server. SQLite kan ook een goede oplossing zijn als je aan de client side data wil opslaan in een database, zonder dat je daarvoor de gebruiker verplicht om een database server te installeren.
+\end{itemize}
+
+Een belangrijk voordeel van de database class in Esenthel is dat je makkelijk van database kan wisselen. Je kan dus tijdens het ontwikkelen voor SQLite kiezen en pas achteraf overschakelen op een MySQL of MS SQL database.
+
+\section{Een Database Gebruiken}
+\subsection{De Verbinding}
+Alvorens je een database kan gebruiken, moet je een verbinding maken. De \texttt{SQL} class laat je toe een verbinding te maken met elk soort database. In het geval van een SQLite database is de naam van een bestand voldoende, maar bij een echte server zal je de host, de naam van de database, een gebruiker en een wachtwoord moeten voorzien. MS SQL en MySQL laten je ook nog toe een pointer naar een string mee te geven. Indien de verbinding niet lukt, zal die string de foutmelding van de database server bevatten.
+
+\begin{code}
+SQL sql;
+Str messages;
+
+// voor Microsoft SQL
+if (!sql.connectMSSQL("LocalHost\\SQLExpress", "test_db", "", "", &messages)) {
+  // verbinding mislukt
+	Exit(S + "Database error: " + messages);
+}
+
+// voor MySQL
+if (!sql.connectMySQL("localhost", "test_db", "user", "password", &messages)) {
+  // verbinding mislukt
+	Exit(S + "Database error: " + messages);
+}
+
+// voor SQLite
+if (!sql.connectSQLite("test.db")) {
+  Exit(S + "Database error");
+}
+\end{code}
+
+\subsection{Een tabel maken}
+Je programma kan bestaande tabellen gebruiken, of je kan met een andere tool je de tabellen in je database aanmaken. Een derde optie is dat je de database aanmaakt op het moment dat je je programma start. Ook dit kan weer handig zijn tijdens de ontwikkelfase: je controleert of een tabel al bestaat, en indien niet dan laat je je programma die tabel maken. Eventueel kan je er ook via je code wat data in zetten. Op die manier kan je je programma eenvoudig testen. En als je de structuur van je data wil wijzigen, dan verwijder je gewoon de hele database zodat die opnieuw aangemaakt wil worden.
+
+Zoals je weet bestaat een tabel uit kolommen met een naam en een type. Bovendien moet in elke tabel \'e\'en kolom de primary key zijn, eventueel met auto-increment. Je kan ook voor elke kolom een default waarde instellen, maar dat is niet verplicht.
+
+\begin{code}
+if(!sql.existsTable("accounts")) {
+  // maak een tabel voor accounts
+	
+	Memc<SQLColumn> columns;
+	columns.New().set("ID", SDT_INT).mode = SQLColumn.PRIMARY_AUTO;
+	columns.New().set("name", SDT_STR, 32); // een string met maximaal 32 tekens
+	columns.New().set("password", SDT_STR, 32);
+	columns.New().set("active", SDT_BOOL);
+	columsn.New().set("score", SDT_INT).default_val="0";
+	
+	if(!sql.createTable("accounts", columns, &messages)) {
+	  Exit(S + "Can't create table for accounts: \n" + messages);
+	}
+	
+	// voeg test data toe
+	SQLValues values;
+	values.New("name", "freddy");
+	values.New("password", "kamerplant");
+	values.New("active", true);
+	if(!sql.newRow("accounts", values, &messages)) {
+	  Exit(S + "Can't add data to table accounts: \n" + messages);
+	}
+}
+\end{code}
+
+\subsection{Data Lezen}
+Als je eenvoudig alle data uit een tabel wil lezen, dan kan dat met de functie \texttt{getAllRows()}. Je wil die data dan waarschijnlijk wel ergens in het geheugen houden, dus daar gebruik je best een class en een memory container voor. Met de table ``accounts'' als voorbeeld zou je een class \texttt{account} kunnen maken om een rij uit de database in het geheugen te zetten.
+
+\begin{code}
+class account {
+  // Om het voorbeeld kort te houden zijn alle variabelen public.
+	// In een echt programma kan je meestal beter set en get functies gebruiken.
+	int ID;
+	Str name;
+	bool active;
+	int score;
+}
+\end{code}
+
+De functie \texttt{getAllRows()} gebruik je eenvoudigweg met de naam van een tabel. Na het uitvoeren van de functie bevat het \texttt{sql} object alle rijen van de gevraagde tabel. Met de functie \texttt{getNextRow()} kan je dan een rij met gegevens opvragen totdat er geen volgende rij meer is. Vervolgens kan je de functie \texttt{getCol()} gebruiken om de waarde van een kolom te verkrijgen. 
+
+\begin{note}
+Vraag de kolommen van een rij steeds op in de volgorde waarin ze in de tabel staan. Je kan wel kolommen overslaan, maar niet terug gaan naar een vorige kolom.
+\end{note}
+
+\begin{code}
+Memc<account> accounts;
+sql.getAllRows("accounts");
+
+for( ;sql.getNextRow(); ) {
+  account & a = accounts.New();
+	sql.getCol(0, a.ID);
+	sql.getCol(1, a.name);
+	// skip loading the password in column 2
+	sql.getCol(3, a.active);
+	sql.getCol(4, a.score);
+}
+\end{code}
+
+Je wil niet steeds alle data uit een tabel in het geheugen laden. Dikwijls ben je maar ge\"interesseerd in een of in enkele records. In dat geval gebruik je de functie \texttt{getRows()}. Als argument kan je bij deze functie een voorwaarde opgeven, net zoals je dat in een SQL statement zou doen:
+
+\begin{code}
+sql.GetRows("accounts", "name='freddy'");
+if(sql.getNextRow()) {
+	// load column data
+}
+\end{code}
+
+Dikwijls zal je dergelijke code in een functie gebruiken, en een bepaalde waarde als resultaat geven. Stel je voor dat we van een account de score willen weten. De functie zou er dan zo kunnen uitzien:
+
+\begin{code}
+int getScore(C Str & name) {
+  int result = 0;
+	sql.GetRows("accounts", S+ "name='" + name + "'");
+	if(sql.getNextRow()) {
+	  sql.getCol(4, result);
+	}
+	return result;
+}
+\end{code}
+
+\begin{note}
+Bij het opstellen van een voorwaarde moet elke waarde tussen enkele quotes staan. Als je dan ook nog variabelen toevoegt aan de vergelijking, dan moet je goed uitkijken dat de quotes op de juiste plaats staan.
+\end{note}
+
+Maar je zou ook een hele account als referentie kunnen doorgeven. Dat is vooral bruikbaar in het geval je een volledige record wil laden. We zouden dan eerst de class \texttt{account} uitbreiden:
+
+\begin{code}
+class account {
+	int ID;
+	Str name;
+	Str password;
+	bool active;
+	int score;
+	
+	bool load(C Str & name) {
+		T.name = name;
+	  return loadAccount(T);
+	}
+}
+\end{code}
+Via de functie load kunnen we een account uit de database halen door een naam mee te geven. De return waarde laat ons ook weten of dat gelukt is. De functie \texttt{loadAccount()} kunnen we dan zo uitwerken:
+
+\begin{code}
+bool loadAccount(account & a) {
+  sql.GetRows("accounts", S+"name='"+a.name+"'");
+	if(sql.getNextRow()) {
+		sql.getCol(0, a.ID);
+		sql.getCol(2, a.password);
+		sql.getCol(3, a.active);
+		sql.getCol(4, a.score);
+		return true;
+  }
+	return false;
+}
+\end{code}
+
+\subsection{Records tellen}
+Het gebeurt dat je niet in de inhoud van een record ge\"interesseerd bent, maar enkel wil weten of een record bestaat. Wil je eenvoudigweg weten hoeveel records een tabel bevat, dan gebruik je de functie \texttt{getAllRowsNum()}.
+
+\begin{code} {
+int accountsInDB() {
+  return sql.getAllRowsNum("accounts");
+}
+\end{code}
+
+Vaker wil je het aantal accounts dat aan een voorwaarde voldoet. Bijvoorbeeld het aantal actieve accounts. Dan gebruik je de functie \texttt{getRowsNum}, die weer een conditie als argument heeft, net zoals \texttt{getRows()}.
+
+\begin{code}
+int activeAccountsInDB() {
+  return sql.getRowsNum("accounts", "active='true'");
+}
+\end{code}
+
+Met zo'n voorwaarde kan je ook te weten komen of een combinatie van gegevens bestaat. Zo kan je bijvoorbeeld controleren of een wachtwoord juist is.
+
+\begin{code}
+bool validate(C Str & name, C Str & password) {
+  int count = sql.getRowsNum("accounts", S + "name='" + name + "' AND password='" + password + "'");
+	return (count > 0);
+}
+\end{code}
+
+\subsection{Data Opslaan}
+Je zal vrijwel nooit alle gegevens in een database willen overschrijven. Wel wil je regelmatig een record die je aangepast hebt, terug opslaan. Dat kan zo:
+
+\begin{code}
+void save(account & a) {
+  SQLValues values;
+	values.New("name", a.name);
+	values.New("password", a.password);
+	values.New("active", a.active);
+	values.New("score", a.score);
+	
+	Str messages;
+	if(!sql.setRow("accounts", S + "ID='" + a.ID + "'", values, &messages)) {
+	  Exit(S + "Error saving account: \n" + messages);
+	}
+}
+\end{code}
+
+Je hoeft ook niet steeds alle data op te slaan. Enkel de waarden die je in \texttt{SQLValues} opneemt, worden aangepast. Zo kan je bijvoorbeeld enkel het wachtwoord opslaan.
+
+\begin{code}
+void savePassword(account & a) {
+  SQLValues values;
+	values.New("password", a.password);
+	sql.setRow("accounts", S + "ID='" + a.ID + "'", values);
+}
+\end{code}
+
+
+\begin{note}
+Pas nooit de primary key van een record aan!
+\end{note}
+
+\subsection{Data Verwijderen}
+Tot slot zal je ook records willen verwijderen die je niet meer nodig hebt. Daar kan je de functie \texttt{delRow} voor gebruiken. 
+
+\begin{code}
+void removeAccount(int ID) {
+  sql.delRow("accounts", S + "ID='" + ID + "'");
+}
+\end{code}

@@ -1,0 +1,93 @@
+\chapter{Enumeratie}
+\section{Zo moet het niet...}
+Enumeraties of enum's maken het mogelijk om getallen als tekst weer te geven. Als voorbeeld gebruiken we een class enemy. Die enemy kan een warrior, een rogue of een priest zijn, en afhankelijk daarvan moet er een andere afbeelding getoond worden. Je zou boolean's kunnen gebruiken om te onthouden class de enemy heeft:
+
+\begin{code}
+class enemy {
+  bool warrior = false;
+	bool rogue   = false;
+	bool priest  = false;
+	Rect r;
+	
+	void setWarrior() {
+		warrior = true ;
+		rogue   = false;
+		priest  = false;
+	}
+	
+	// de functies setRogue en setPriest zijn gelijkaardig
+	// ...
+	
+	void draw() {
+	  if     (warrior) Images(=== warriorImage ===).draw(r);
+		else if(rogue  ) Images(=== rogueImage   ===).draw(r);
+		else if(priest ) Images(=== priestImage  ===).draw(r);
+	}
+}
+\end{code}
+
+Alhoewel bovenstaande code werkt, is ze niet erg efficient. Nu gaat het nog maar om 3 classes, maar hoe meer mogelijkheden je hebt, hoe meer variabelen je moet aanpassen bij het selecteren van een class. Veel beter zou zijn om slechts \'e\'en variabele te gebruiken, want een enemy kan tenslotte maar 1 class hebben.
+
+\section{Dit is niet veel beter.}
+Je zou kunnen beslissen dat een warrior het cijfer 0 krijgt, een rogue het cijfer 1 en een priest het cijfer 2. Dan wordt de code al veel eenvoudiger.
+
+\begin{code}
+class enemy {
+  int type = -1;
+	Rect r;
+	
+	void setType(int type) {
+		T.type = type;
+	}
+	
+	void draw() {
+		switch(type) {
+			case 0: Images(=== warriorImage ===).draw(r); break;
+			case 1: Images(=== rogueImage   ===).draw(r); break;
+			case 2: Images(=== priestImage  ===).draw(r); break;
+	  }
+	}
+}
+\end{code}
+
+De bovenstaande code is beter dan de eerste versie, maar het is nogal onwaarschijnlijk dat je niet vergeet welk nummer voor welke class staat. Of misschien gebruik je ergens een getal waarvoor geen class is voorzien. 
+
+\section{Enumeration time!}
+De oplossing voor dit probleem zijn enum's. Enumeraties zijn lijsten van woorden. Intern wordt het eerste woord gelijk aan 0 en krijgt elk volgend woord een hoger nummer. Je kan echter steeds die woorden gebruiken in plaats van dat nummer. 
+
+\begin{code}
+enum ENEMY_TYPE {
+	ET_NONE   ,
+  ET_WARRIOR,
+  ET_ROGUE  ,
+	ET_PRIEST , 
+}
+
+class enemy {
+  ENEMY_TYPE type = ET_NONE;
+	Rect r;
+	
+	void setType(ENEMY_TYPE type) {
+		T.type = type;
+	}
+	
+	void draw() {
+		switch(type) {
+			case ET_WARRIOR: Images(=== warriorImage ===).draw(r); break;
+			case ET_ROGUE  : Images(=== rogueImage   ===).draw(r); break;
+			case ET_PRIEST : Images(=== priestImage  ===).draw(r); break;
+		}
+	}
+}
+\end{code}
+
+Het voordeel van deze code is dat je overal in je programma de waarden \texttt{ET\_WARRIOR} of \texttt{ET\_ROGUE} kan gebruiken. Je kan de functie setType ook geen getal meegeven van een class die niet bestaat. En bovendien zie je op elk moment duidelijk over welke vrucht je het hebt. 
+
+De waarden van een enum schrijven we in hoofdletters. Dit is niet verplicht, maar wel een conventie. Je kan immers nooit het getal waar een enumeratie waarde voor staat, aanpassen. Iets als \texttt{ET\_WARRIOR = 3} is dus onmogelijk. Aangezien \texttt{ET\_WARRIOR} het tweede woord in de rij is, is zijn waarde steeds 1.
+
+Het is ook niet nodig om elke waarde met \texttt{ET\_} te beginnen, maar in een groter programma is het dikwijls handig om een afkorting van de enumeratie te gebruiken. ``ENEMY\_TYPE'' wordt zo ET. Op die manier kan de autocomplete je helpen met het kiezen van een naam zodra je \texttt{ET\_} getypt hebt.
+
+\begin{note}
+Esenthel bevat ook een \textsl{enumeration editor}. Hiermee kan je grafisch de waarden van een enumeratie type ingeven. Deze waarden zijn dan bruikbaar in zowel je code als de world editor.
+\end{note}
+

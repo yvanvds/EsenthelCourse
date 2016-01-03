@@ -1,0 +1,224 @@
+\chapter{Classes in de praktijk}
+
+Je weet nu hoe je in class maakt. Maar hoe ga je er in praktijk mee om? In dit hoofdstuk zie je veel gebruikte classfuncties en bekijken we wat je best samen in een class plaatst.
+
+\section{Wat hoort samen?}
+De bedoeling van een class is dat je variabelen en functies die samen horen, groepeert. Neem het voorbeeld van een score in een spel. Volgende items horen dan duidelijk samen:
+
+\begin{itemize}
+\item een variabele om de score te onthouden
+\item een variabele om de highScore te onthouden
+\item een functie om de score aan te passen
+\item een functie om de score te resetten
+\item een functie om te zien of de huidige score groter is dan de highScore
+\item een functie om de score op te vragen
+\item \ldots
+\end{itemize}
+
+Afhankelijk van de complexiteit van je spel kan je hier nog veel aan toevoegen. Maar wat er bijvoorbeeld niet bij hoort is een functie om de score op het scherm te tonen. We maken per definitie steeds een onderscheid tussen classes die intern berekeningen doen, en classes die iets op het scherm tonen. Die twee mengen brengt je dikwijls in de problemen.
+
+Wanneer een class duidelijk bedoeld is voor iets dat op het scherm verschijnt, zoals een avatar of een voorwerp, dan hoort die dat natuurlijk wel te doen.
+
+Zo zou het best kunnen dat je de score tijdens het spel op een andere manier toont dan tijdens een game-over. Daarom werk je met afzonderlijke classes om iets op het scherm te tonen. Die classes gebruiken dan wel steeds de functie om de score op te vragen die in het score object zit. Bijvoorbeeld zo:
+
+\begin{code}
+class score {
+  int points = 0;
+  
+  void reset() {
+    points = 0;
+  }
+  
+  void getPoints() {
+    return points;
+  }
+  
+  void addPoint() {
+    points++;
+  }
+}
+
+score Score; // object
+
+// de volgende class wordt gebruikt om informatie weer te geven
+// tijdens het spel
+class overlay {
+  void draw() {
+    D.text(Vec2(0, 0.9), S + "Score: " + Score.getPoints());
+  }
+}
+
+// de volgende class geeft informatie weer wanneer er geen spel actief is
+class gameOver {
+  void draw() {
+    D.text(Vec2(0,0), S + "Score: " + Score.getPoints());
+  } 
+}
+\end{code}
+
+\section{Set en Get Functies}
+
+Om variabelen in een class aan te passen of op te vragen, gebruiken we set en get functies. Daarbij gelden de volgende regels:
+
+\begin{itemize}
+\item De naam van deze functies is steeds de naam van de variable, voorafgegaan door set of get.
+\item De functie past de variabele aan met dezelfde naam dan de functienaam.
+\item De set functie is een void functie met als argument de nieuwe waarde voor de variabele.
+\item De get functie heeft als resultaat het type van de variabele die ze hoort terug te geven.
+\end{itemize}
+
+In dit voorbeeld hebben we een class score met set en get functies voor de variabele points, van het type int.
+
+\begin{code}
+class score {
+  int points;
+  
+  int getPoints() {
+    return points;
+  }
+  
+  void setPoints(int points) {
+    this->points = points;
+  } 
+}
+\end{code}
+
+\section{public en private}
+In het vorige voorbeeld is het nog steeds mogelijk om de variabele points rechtstreeks aan te passen, zonder dat je de get functie gebruikt. Dat is niet zo veilig. Stel je voor dat je ook een counter hebt die bijhoudt hoeveel keer de punten aangepast zijn. Je kan die verhogen telkens wanneer je de functie setPoints gebruikt. Maar wanneer iemand de punten rechtstreeks aanpast, dan klopt je counter niet meer. Aangezien iedereen zich vroeg of laat wel eens vergist, is het beter dat we dit onmogelijk maken. Daarom zullen we meestal de variabelen in een class 'private' maken. Ze kunnen dan enkel binnen deze class gebruikt worden. De functies maken we 'public' zodat die wel buiten de class werken.
+
+\begin{code}
+class score {
+private:
+  int points  = 0;
+  int counter = 0;
+  
+public:  
+  int getPoints() {
+    return points;
+  }
+  
+  void setPoints(int points) {
+    this->points = points;
+    counter++;
+  } 
+}
+score Score;
+
+// ergens in je programma
+Score.points = 3; // dit werkt niet meer
+Score.setPoints(3); // dit werkt wel
+\end{code}
+
+\section{Globale objecten}
+Er zijn classes waar je tijdens je programma verschillende objecten van nodig hebt, denk bijvoorbeeld aan een class Vec2. Andere classes zijn slechts bedoeld om \'e\'en object van te maken, zoals de class score in het voorbeeld. In dit laatste geval is het de gewoonte om het object te maken in hetzelfde bestand als je class. Zo zie je hierboven onder de class score de definitie van het object Score.
+
+\section{Manager classes}
+\label{section:managerClass}
+Wanneer je een class maakt met bewegende cirkels, bijvoorbeeld omdat je veel bewegende cirkels in je programma nodig hebt, dan is het dikwijls handig om daarnaast ook een 'manager' class te maken. Een dergelijke class is dan verantwoordelijk voor het maken van nieuwe cirkels, voor het updaten van alle cirkels of voor het tekenen van deze cirkels op het scherm.
+
+Die zou er zo kunnen uitzien:
+
+\begin{code}
+class myCircle {
+private:
+  Circle c;
+  
+public:
+  void update() {
+    // update code komt hier
+  }
+  
+  void draw() {
+    // draw code komt hier
+  }  
+}
+
+class myCircleManager {
+private:
+  Memc<myCircle> list;
+  
+public:
+  void createCircle() {
+    myCircle & temp = list.New();
+    // doe nog iets met de nieuwe cirkel
+  }
+  
+  void update() {
+    for(int i = 0; i < list.elms(); i++) {
+      list[i].update();
+    }
+  }
+  
+  void draw() {
+    for(int i = 0; i < list.elms(); i++) {
+        list[i].draw();
+      }
+    }
+  }
+}
+
+myCircleManager MyCircleManager;
+
+// ergens in het bestand main (dit is een voorbeeld,
+// geen volledig uitgewerkt programma!)
+void init() {
+  MyCircleManager.createCircle();
+}
+
+void update() {
+  MyCircleManager.update();
+}
+
+void draw() {
+  MyCircleManager.draw();
+}
+
+\end{code}
+
+\begin{exercise}
+\begin{enumerate}
+\item Maak een class `movingCircle'. Die bevat een cirkel, een Vec2 `direction' en een float `speed'. 
+\item Voorzie een functie `create' die de cirkel een straal en een beginpositie geeft. Voor de variabele `direction' geef je een random float tussen -1 en 1 aan zowel de x als de y waarde. Speed krijgt een waarde tussen 0.5 en 2.
+\item Voorzie een functie `update' die direction, vermenigvuldigd met \eeFunc{Time.d()} en `speed', optelt bij de positie van de cirkel. Daarna voer je een controle uit op de nieuwe positie. Wanneer de absolute waarde van de y-coordinaat van de cirkel groter is dan de hoogte van het scherm, dan keer je het teken van de y-coordinaat om. Voor de x-coordinaat doe je hetzelfde, maar dan met de breedte van het scherm.
+\item Maak een functie `draw' die de cirkel op het scherm toont. 
+\item In je programma maak je een object van de class `movingCircle'. Je zorgt ook dat de `create', `update' en `draw' functies op de juiste plaats staan om te controleren of je cirkel werkt zoals het hoort.
+
+\item Maak een nieuwe class `circleManager' met een memory container voor `movingCircle'.
+\item Voorzie in deze class een functie `add' die een cirkel toevoegt aan de container.
+\item Maak een functie `update' die de functie `update' van elke cirkel in de container uitvoert.
+\item Maak een functie `draw' die alle cirkels op het scherm toon.
+\item Aangezien je van de class meer \'e\'en object nodig hebt, maak je dat object onderaan in het bestand, net na de class. Je geeft dit object de naam `CM'.
+
+\item Verwijder het object van de class `movingCircle' uit je programma. \textsl{(Verwijder ook alle functies die je van dat object gebruikte.)}
+\item In de update functie van je programma voer je de `add' functie van CM uit wanneer je op de spatiebalk drukt.
+\item Ook in de update functie voer je de update functie van CM uit. De draw functie zet je in de `Draw' functie van je programma.
+
+\item Uitbreiding: Voeg een functie `remove' toe aan de circleManager. Deze functie heeft als argument een positie. De circle manager controleert of er een cirkel op die positie staat en verwijdert die cirkel.
+\end{enumerate}
+\end{exercise}
+
+\section{Werken aan bestaande code}
+Wanneer je iets moet aanpassen aan code die al bestaat, dan is het begin dikwijls het moeilijkst. Hierbij enkele hulpmiddelen.
+
+\begin{itemize}
+\item Zorg eerst dat je de weet wat waar staat. Bekijk de verschillende classes in het programma en zorg dat je weet welke class wat doet.
+\item Kijk van welke classes er globale objecten bestaan.
+\item Zoek naar management classes en onthoudt bij welke class die horen.
+\item Zijn er nog andere classes die duidelijk samen horen?
+\item Het kan geen kwaad om op een blad papier notities te nemen van het voorgaande. Dat helpt je om alles te onthouden en te structureren.
+\end{itemize}
+
+Wanneer je dan aan de code werkt, houdt dan het volgende in de gaten:
+\begin{itemize}
+\item Welke variabelen heeft deze class? Welke informatie heb ik nodig om een functie te laten doen wat ze moet doen?
+\item Welke andere functies heeft deze class? Kan ik een van deze functies gebruiken?
+\item Indien de class een ander object moet wijzigen, welke functies heeft die class al? Moet je er misschien een toevoegen voor dat je kan doen wat je wil doen?
+\item Wordt er een set of get functie gevraagd? In dat geval zijn er regels die het je gemakkelijk maken.
+\end{itemize}
+
+
+
+
+
+
+

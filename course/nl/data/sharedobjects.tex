@@ -1,0 +1,48 @@
+\section{Gedeelde classes}
+Je app zal data structuren nodig hebben die zowel bij de client als bij de server bekend zijn. Dat kan bijvoorbeeld een class voor de player zijn, met minstens een naam en een positie. Het zou ook een item in de game wereld kunnen zijn, een chat bericht of een quest. 
+
+Aan de andere kant zijn er ook steeds verschillen tussen de client en de server. Zo zal een player bij de client op het scherm moeten verschijnen, en zal de gebruiker hem kunnen verplaatsen via de muis of het toetsenbord. Bij de server is dat niet wenselijk, maar moet een player wel in een database opgeslagen kunnen worden.
+
+We maken voor dit soort classes een zogenaamde `base class' in de library `Shared'. Het voorbeeld bevat een dergelijke class voor een speler, die we \texttt{netClient} noemen:
+
+\begin{code}
+class netClient
+{
+   int id;
+   Str name = "Player";
+   Color color = RED;
+   Vec2 pos;
+
+   void writePosToFile(File & f)
+   {
+      f.putFlt(pos.x);
+      f.putFlt(pos.y);
+   }
+   
+   void readPosFromFile(File & f)
+   {
+      pos.x = f.getFlt();
+      pos.y = f.getFlt();
+   }
+      
+   void writeDetailsToFile(File & f)
+   {
+      f.putStr(name);
+      f.putByte(color.r).putByte(color.g).putByte(color.b);
+      writePosToFile(f);
+   }
+   
+   void readDetailsFromFile(File & f)
+   {
+      name = f.getStr();
+      color.r = f.getByte(); color.g = f.getByte(); color.b = f.getByte();
+      readPosFromFile(f);
+   }
+}
+\end{code}
+
+Naast data zoals id, naam, kleur en positie bevat de class ook functies. Als we een bericht over het netwerk versturen, zullen we steeds deze functies gebruiken om de gewenste data aan een \texttt{File} toe te voegen. Zo zijn we zeker dat de client en de server dezelfde data verwachten. Mocht je in een later stadium bijvoorbeeld de snelheid van een speler willen onthouden en die ook meesturen in een `Details' bericht, dan moet je dat enkel hier aanpassen. 
+
+\begin{note}
+Het is soms verleidelijk om deze data rechtstreeks in de client of server applicatie naar een bestand te schrijven. Vroeg of laat zal je je echter vergissen, door bijvoorbeeld de volgorde van de data door mekaar te halen. Dat soort fouten is erg moeilijk te debuggen. Maak er daarom een gewoonte van om een gedeelde base class te maken. 
+\end{note}

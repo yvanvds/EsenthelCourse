@@ -1,0 +1,60 @@
+\chapter{Gui Buttons}
+
+De meest gebruikte functie van de class button is \eeFunc{func()}. Daarmee koppel je een callback functie aan de button. Die functie wordt dan uitgevoerd wanneer je op de button klikt. In de inleiding werd dit al besproken, maar denk er aan dat dit een statische functie moet zijn, die dus los staat van het eigenlijke object. Alhoewel het niet strikt noodzakelijk is, geef je dus best altijd een referentie naar het huidige object door aan de button. 
+
+Enkele andere handige functies zijn:
+
+\begin{description}
+	\item[\eeFunc{enabled(bool enabled)}] laat je toe om op bepaalde momenten een button non-actief te maken.
+	\item[\eeFunc{setText(C Str \&text)}] wijzigt de tekst van een button.
+	\item[\eeFunc{bool sound}] door deze eigenschap op `true' te zetten, wordt er een geluid afgespeeld wanneer je op deze button drukt. Het geluid zelf kan je instellen via \eeClass{Gui.click\_sound\_id}. Standaard is dat geluid leeg, maar je kan er eender welk geluidsbestand aan toewijzen. (Let op, dit is geen functie maar een property!)
+\end{description}
+
+\begin{exercise}
+Pas de vorige oefening aan, zodat de buttons in je dialog een geluid afspelen.
+\end{exercise}
+
+\section{Toggle Buttons}
+Een button kan ook gebruikt worden als toggle button. In dat geval gedraagt die zich net iets anders. Een enkele toggle button kan je als alternatief voor een checkbox gebruiken. Bijvoorbeeld om bepaalde elementen op het scherm te tonen. Hieronder zie je een voorbeeld van een toggle button die een crosshair aan of uit zet.
+
+\begin{code}
+class crossHair
+{
+private:
+   Button button;
+   bool on = false;
+   
+   static void buttonFunc(crossHair & obj)
+   {
+      obj.on = obj.button();
+   }
+   
+public:
+   void create()
+   {
+      button.create(Rect(-D.w() + 0.1, D.h() - 0.2, -D.w() + 0.6, D.h() - 0.1), "cross on/off");
+      button.mode = BUTTON_TOGGLE;
+      button.set(false);
+      button.func(buttonFunc, T);
+      Gui += button;
+   }
+   
+   void draw()
+   {
+      if(!on) return;
+      Circle(0.1).draw(RED, false);
+      Edge2(0, -0.12, 0, 0.12).draw(RED);
+      Edge2(-0.12, 0, 0.12, 0).draw(RED);
+   }
+}
+
+crossHair CrossHair;
+\end{code}
+
+Enkele zaken vallen wellicht op in deze class. Ten eerste wordt de gui editor niet gebruikt. Om slechts \'e\'en button op het scherm te tonen zou dat wat omslachtig zin. Daarom is de Button geen pointer, maar een echt object. We dienen dan wel zelf de functie \eeFunc{create} uit te voeren, met als argument een rechthoek en een tekst.
+
+Daarna wordt de mode aangepast, zodat we een toggle button krijgen. En via de set functie zetten we de huidige stand op `uit'. De statische functie \eeFunc{buttonFunc} geeft de stand van de button door aan de bool `on'. Via haakjes na de naam van de button kom je dus zijn huidige stand te weten. Dit is enkel zinvol bij toggle buttons. Een gewone button heeft immers geen stand.
+
+\begin{exercise}
+Voeg deze code toe aan een programma. Kies zelf een geschikte positie voor de button. Wanneer je tijdens de create functie de button zou inschakelen met \eeFunc{button.set(true)} dan zal de crosshair niet toch niet getoond worden. Zoek uit hoe dat komt en hoe je dat kan oplossen.
+\end{exercise}

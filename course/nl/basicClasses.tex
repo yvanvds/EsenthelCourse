@@ -1,0 +1,69 @@
+\chapter{Classes: the basics}
+
+Gegevens die samen horen, hoor je te groeperen. Zo heeft \eeClass{Vec2} (eigenlijk een class!) twee float variabelen x en y om een positie te onthouden. Zonder het bestaan van \eeClass{Vec2} zou je voor elke positie twee afzonderlijke float variabelen moeten maken. Nu maak je er slechts 1: een \eeClass{Vec2}.
+
+De ontwerper van de Esenthel engine voorzag dat een class voor een positie, met een x en een y waarde, heel veel gebruikt zou worden. Dus maakte hij die alvast zelf. De meest eenvoudige versie zou er zo kunnen uitzien:
+
+\begin{code}
+class Vec2 {
+	float x;
+	float y;
+}  
+\end{code}
+
+Indien deze code bestaat, kan je die overal in je programma gebruiken:
+
+\begin{code}
+Vec2 pos;
+Vec2 pos2 = pos; // wijst de waarden van pos toe aan pos2.
+pos.x = 3;       // past de x waarde van pos aan.
+pos.y = pos2.x;  // geeft de x waarde van pos2 aan de y waarde van pos
+\end{code}
+
+Hetzelfde kan je bereiken met je eigen classes. Je hoort classes te maken voor zo ongeveer elk aspect van je code. 
+
+\begin{note}
+Wanneer twee of meer objecten of variabelen samen horen, dan zet je ze samen in één class.
+\end{note}
+
+Merk op dat er een verschil is tussen een class en een object. In het voorbeeld hierboven is \eeClass{Vec2} een class, maar pos en pos2 zijn objecten van de class Vec2. Je kan \eeClass{Vec2} dus niet gebruiken als een object, maar je kan er wel objecten mee maken:
+
+\begin{code}
+Vec2.x = 3; // dit is fout!
+Vec2 pos;
+pos.x = 3; // dit is correct.
+\end{code}
+
+\section{Een eigen class maken}
+Stel je voor dat je een bewegende cirkel wil in je programma. Om de cirkel tegen een vaste snelheid laten te bewegen heb je een variabele speed nodig. Die hoort duidelijk bij je cirkel, maar een cirkel heeft zelf geen variabele speed omdat cirkel niet altijd bedoeld zijn om te laten bewegen. Je maakt dus bijvoorbeeld de volgende class:
+
+\begin{code}
+class movingCircle {
+  Circle c;
+  Vec2 speed;
+}
+
+movingCirle mc;
+
+// in de functie init
+mc.c.set(0.1, Vec2(-0.4, -0.3));
+mc.speed = Vec2(0.3, 0.5);
+
+// in de functie update
+mc.c.pos += mc.speed * Time.d();
+\end{code}
+
+Eenmaal je de class \eeClass{movingCirle} hebt, kan je zoveel cirkels maken als je wil, die allemaal hun eigen snelheid onthouden. (Verder in de cursus zie je hoe dit nog eenvoudiger kan.)
+
+
+\begin{exercise}
+\begin{enumerate}
+  \item Maak een container voor de class movingCircle. Telkens je op de spatiebalk drukt, voeg je hier een object aan toe, op een willekeurige positie op het scherm. Elke cirkel geef je ook een willekeurige snelheid.
+	\item Zorg dat alle cirkels bewegen. Wanneer een cirkel buiten het scherm komt, zet je hem terug in het midden.
+	\item Breidt de class \eeClass{movingCirle} uit zodat die ook een kleur kan onthouden. Elk object geef je een willekeurige kleur, die je gebruikt wanneer je het op het scherm zet.
+	\end{enumerate}
+\end{exercise}
+
+\begin{note}
+In het volgende hoofdstuk werk je verder aan deze oefening. Sla ze dus op!
+\end{note}

@@ -1,0 +1,283 @@
+\chapter{Functies}
+
+Functies zijn instructies die je kan toevoegen aan een eigen class. \textit{(In principe kan je ook functies buiten een class gebruiken, maar in regel probeer je dat best te vermijden.)} Met functies kan je duidelijke opdrachten maken die betrekking hebben op je class. Het is eigenlijk de bedoeling dat je de variabelen in je class nooit rechtstreeks gebruikt buiten de class. Als je ze nodig hebt, of wanneer je ze wil aanpassen, dan schrijf je daar een functie voor.
+
+\section{Functies zonder argumenten of resultaat}
+
+De meest eenvoudige functie doet steeds hetzelfde. Als we even terugdenken aan de class movingCircle, dan zou die misschien een functie kunnen gebruiken die de cirkel terug in het midden van je scherm zet:
+
+\begin{code}
+class movingCircle {
+  Circle c;
+  Vec2 speed;
+  
+  void reset() {
+    c.pos = Vec2(0);
+  }
+}
+
+// ergens in je programma
+movingCircle mc;
+mc.reset();
+
+\end{code}
+
+De functie reset in het vorige voorbeeld zet de cirkel terug in het midden. De functie bestaat uit de volgende delen:
+
+\begin{description}
+\item[void]Een aanduiding dat de functie geen resultaat heeft. (Daarover zodadelijk meer.)
+\item[reset]De naam van de functie. Deze mag je zelf kiezen.
+\item[()]Tussen deze haakjes kunnen argumenten staan. Deze eenvoudige functie heeft geen argumenten, dus hier staat niets.
+\end{description}
+
+\begin{exercise}
+Voeg aan de class die je voor de vorige oefening maakte een functie \eeFunc{reset()} toe, die de cirkel in het van het scherm plaatst. Vervang in de Update functie van je programma de code om een cirkel in het midden te plaatsen door deze functie.
+
+Voeg in dezelfde class ook een functie \eeFunc{draw()} toe. Deze functie kan je cirkel dadelijk in de juiste kleur tonen. In je programma vervang je weer de code om de cirkel te tonen door deze functie.
+\end{exercise}
+
+\section{Functies met een argument}
+Je kan een functie ook een argument geven. Dit is handig omdat je dat argument kan gebruiken om een waarde door te geven aan een functie. De functie reset in het vorige voorbeeld heeft geen waarde nodig. We weten dat we met reset de cirkel in het midden zetten. Wil je hem op een andere plaats zetten, dan zou je wel moeten zeggen welke plaats dat dan is. Dat zou zo kunnen:
+
+\begin{code}
+class movingCircle {
+  Circle c;
+  Vec2 speed;
+  
+  void setPos(Vec2 pos) {
+    c.pos = pos;
+  }
+}
+
+// ergens in je programma
+movingCircle mc;
+Vec2 p(0.1, 0.4);
+mc.setPos(p);
+
+\end{code}
+
+Nu geef je tussen de haakjes mee dat de functie gebruikt moet worden met een \eeClass{Vec2} als argument. De \eeClass{Vec2} die je meegeeft bepaalt dan de nieuwe positie van de cirkel. Je ziet ook dat de \eeClass{Vec2} `p' die we in het programma gebruiken een andere naam heeft dan \eeClass{Vec2} pos die we in de functie gebruiken. Je geeft enkel de waarde van de functie door en niet de naam. 
+
+\begin{exercise}
+Voeg een functie \eeFunc{setPos} zoals hierboven toe aan je oefening. In het programma zorg je dat, wanneer je op F1 drukt, alle cirkels een nieuwe random positie krijgen.
+\end{exercise}
+
+\section{Functies met meer argumenten}
+Het is niet nodig om je tot een enkel argument te beperken. Je kan er ook meer gebruiken, gescheiden door komma's:
+
+\begin{code}
+class movingCircle {
+  Circle c    ;
+  Vec2   speed;
+  
+  void init(float r, Vec2 pos, Vec2 speed) {
+    c.r     = r    ;
+    c.pos   = pos  ;
+    T.speed = speed;
+  }
+}
+
+// ergens in je programma
+movingCircle mc;
+Vec2 p(0.1, 0.4);
+mc.init(0.1, p, Vec2(0.3, -0.5));
+\end{code}
+
+Ook hier enkele nieuwigheden:
+\begin{description}
+\item[T] Met \eeClass{T} duiden we aan dat we het over de variabele van de class hebben. Immers, zowel de class als de functie hebben een variabele speed, en we moeten duidelijk maken welke we bedoelen. Je zou ook beide variabelen een andere naam kunnen geven, maar dat is minder duidelijk. 
+\item[argumenten doorgeven] Bij het gebruik van de init functie gebruiken we een vooraf gedefinieerde \eeClass{Vec2} om de positie door te geven. Maar voor de snelheid maken we een \eeClass{Vec2} op het moment zelf. Beide opties zijn ok.
+\end{description}
+
+\begin{exercise}
+Voeg ook een functie init toe aan je class. 
+\end{exercise}
+
+\section{Functies met een resultaat}
+We stelden in het begin van dit hoofdstuk dat je variabelen van een class eigenlijk niet rechtstreeks zou mogen gebruiken buiten die class. We hebben ondertussen gezien hoe je zo'n waarde aanpast, maar hoe kom je buiten de class te weten wat de huidige waarde van een variabele is? Wel, je maakt een functie met een resultaat:
+
+\begin{code}
+class movingCircle {
+  Circle c;
+  Vec2 speed;
+  
+  void init(float r, Vec2 pos, Vec2 speed) {
+    c.r         = r    ;
+    c.pos       = pos  ;
+    this->speed = speed;
+  }
+  
+  Vec2 getPos() {
+    return c.pos;
+  }
+}
+
+// ergens in je programma
+movingCircle mc;
+mc.init(0.1, p, Vec2(0.3, -0.5));
+Vec2 pos = mc.getPos();
+
+\end{code}
+
+De \eeClass{Vec2} zal na de laatste regel de waarde 0.1 hebben. Een functie met resultaat maak je op de volgende manier:
+
+\begin{itemize}
+\item In plaats van void zet je voor de functienaam het soort resultaat dat de functie zal geven. De positie van een cirkel is een \eeClass{Vec2}, dus in dit geval staat daar \eeClass{Vec2}.
+\item In je functie geef je de instructie `return' gevolgd door de waarde je je wil als resultaat. Die waarde zal dan doorgegeven worden op de plaats waar je de functie gebruikt.
+\end{itemize}
+
+\begin{exercise}
+Voeg deze functie toe aan je class. Vervang in je programma de code om de functie van je cirkel op te vragen door de nieuwe functie.
+\end{exercise}
+
+\section{Functies met argumenten en een resultaat}
+Ook de combinatie van argumenten en een resultaat is mogelijk. Let wel op: alhoewel een functie meer dan een argument kan hebben, kan er slechts \'e\'en resultaat zijn.
+
+In het volgende voorbeeld maken we een functie 'move'. Deze functie verplaatst de cirkel door de positie in het argument op te tellen bij de huidige positie. Maar ze doet dat enkel wanneer de nieuwe positie binnen het scherm past. Met een boolean resultaat (true of false) laat de functie weten of dat gelukt is.
+
+\begin{code}
+class movingCircle {
+  Circle c    ;
+  Vec2   speed;
+  
+  void init(float r, Vec2 pos, Vec2 speed) {
+    c.r         = r    ;
+    c.pos       = pos  ;
+    this->speed = speed;
+  }
+  
+  float getRadius() {
+    return c.r;
+  }
+  
+  bool move(Vec2 pos) {
+    if(Cuts(c.pos + pos, D.viewRect())) {
+      c.pos += pos;
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+// ergens in je programma
+movingCircle mc;
+Vec2 p(0, 0);
+mc.init(0.1, p, Vec2(0.3, -0.5));
+if( !mc.move(mc.speed * Time.d()) ) {
+  // doe iets wanneer dit niet gelukt is
+}
+\end{code}
+
+\begin{exercise}
+Pas nogmaals je class aan en voeg de functie move toe. In je programma kan je nu deze functie gebruiken om de cirkel te verplaatsen. Omdat de functie zelf aangeeft of dat al dan niet gelukt is, kan je nu ook de controle op de grenzen van het scherm weglaten. Wanneer de functie false als resultaat heeft, zet jet de cirkel terug in het midden.
+
+Je kan nu de functie `move' nog verder vereenvoudigen. We weten immers dat we altijd op dezelfde manier willen bewegen. Je kan met andere woorden een functie move ook zonder argument maken en de berekening verplaatsen naar de functie.
+\end{exercise}
+
+\section{De oplossing}
+Hieronder zie je de volledige oefening zoals je die tot hier toe moest uitwerken. Vergelijk deze code met je eigen uitwerken en vraag uitleg wanneer iets je niet duidelijk is.
+
+De class movingCircle:
+\begin{code}
+class movingCircle
+{
+   Circle c    ;
+   Vec2   speed;
+   Color  color;
+   
+   void create(float radius, Vec2 pos, Vec2 speed, Color color)
+   {
+      c.r     = radius;
+      c.pos   = pos   ;
+      T.speed = speed ;
+      T.color = color ;
+   }
+   
+   bool move()
+   {
+      Vec2 newPos = c.pos + speed * Time.d();
+      if(Cuts(newPos, D.viewRect()))
+      {
+         c.pos = newPos;
+         return true;
+      } else return false;
+   }
+   
+   Vec2 getPos()
+   {
+      return c.pos;
+   }
+   
+   void setPos(Vec2 pos)
+   {
+      c.pos = pos;
+   }
+   
+   void reset()
+   {
+      c.pos = 0;
+   }
+   
+   void draw()
+   {
+      c.draw(color);
+   }
+}
+\end{code}
+
+Het programma:
+\begin{code}
+Memc<movingCircle> circles;
+
+void InitPre()
+{
+   EE_INIT();
+}
+
+bool Init()
+{ 
+   return true;
+}
+
+void Shut() {}
+
+bool Update()
+{
+   if(Kb.bp(KB_ESC)) return false;
+  
+   if(Kb.bp(KB_SPACE))
+   {
+      circles.New().create(RandomF(0.05, 0.1), 
+                           Vec2(0), 
+                           Vec2(RandomF(-1, 1), RandomF(-1, 1)), 
+                           Color(Random(255), Random(255), Random(255))
+                           );
+   }
+   
+   if(Kb.bp(KB_F1))
+   {
+      REPA(circles)
+      {
+         circles[i].setPos(Vec2(RandomF(-D.w(), D.w()), RandomF(-D.h(), D.h())));
+      }
+   }
+   
+   REPA(circles)
+   {
+      if(!circles[i].move()) circles[i].reset();
+   }
+   
+   return true;
+}
+
+void Draw()
+{
+   D.clear(BLACK);
+  
+   REPA(circles)
+   {
+      circles[i].draw();
+   }
+}
+\end{code}

@@ -1,0 +1,219 @@
+\chapter{Map}
+Tot hier toe gebruikten we steeds een Memory container om een reeks objecten van hetzelfde type op te slaan. Dat is niet altijd de beste oplossing. De objecten in een container kan je enkel via een volgnummer gebruiken. Het object dat je eerst toevoegde heeft nummer 0, dan nummer 1, etc\ldots 
+
+In dit hoofdstuk zal je zien hoe je een object een `tag' kan geven, zodat je ze via die tag terug kan vinden. Zo moet je niet meer onthouden op welke plaats in de container dat object stond.
+
+\section{Zo moet het niet}
+
+Als voorbeeld nemen we een management class die verantwoordelijk is voor drie cirkels. Die cirkels staan links, midden en rechts op het scherm. De management class laat toe om een van die cirkels tijdelijk zichtbaar te maken. We starten met een eerste uitwerking, zonder memory container.
+
+\begin{code}
+class circleManager {
+  Circle left;
+  Circle middle;
+  Circle right;
+  
+  float leftTimer = -1;
+  float rightTimer = -1;
+  float middleTimer = -1;
+  
+  void create() {
+    left.set(0.1, -0.5, 0);
+    middle.set(0.1, 0 , 0);
+    right.set(0.1, 0.5, 0);
+  }
+  
+  void update() {
+    leftTimer -= Time.ad();
+    middleTimer -= Time.ad();
+    rightTimer -= Time.ad();
+  }
+  
+  void draw() {
+    if (leftTimer > 0) left.draw(GREEN);
+    if (middleTimer > 0) middle.draw(RED);
+    if (rightTimer > 0) right.draw(BLUE);
+  }
+  
+  void showLeft() {
+    leftTimer = 1;
+  }
+  
+  void showMiddle() {
+    middleTimer = 1;
+  }
+  
+  void showRight() {
+    rightTimer = 1;
+  }
+}
+circleManager CM;
+\end{code}
+
+De manager gebruiken is eenvoudig:
+
+\begin{code}
+if (Kb.bp(KB_M)) CM.showMiddle();
+\end{code}
+
+
+\section{Slightly Better}
+Maar alhoewel deze code makkelijk is in gebruik, is ze niet eenvoudig te onderhouden. Wat als we gevraagd worden nog drie cirkels te voorzien? Of het worden uiteindelijk 20 cirkels? En misschien is tonen en verdwijnen niet genoeg: het is best mogelijk dat we gevraagd worden om de cirkels geluid te laten maken, een salto te laten doen of wat kan je opdrachtgever allemaal verzinnen?
+
+Ten eerste zou je de logica voor de timer beter bij in de cirkel steken:
+
+\begin{code}
+class timedCircle  {
+  float timer = -1;
+  Circle circle;
+  Color color;
+  
+  void create(C Vec2 & pos, C Color & color) {
+    circle.set(0.1, pos);
+    T.color = color;
+  }
+  
+  void update() {
+    timer -= Time.ad();
+  }
+  
+  void draw() {
+    if(timer > 0) circle.draw(color);
+  }
+  
+  void show() {
+    timer = 1;
+  }
+}
+\end{code}
+
+De manager class kan zo op de vertrouwde manier uitgewerkt worden:
+
+\begin{code}
+class circleManager {
+  Memc<timedCircle> list;
+  
+  void create() {
+    list.New().create(Vec2(-0.5,0), GREEN);
+    list.New().create(Vec2(0,0), RED);
+    list.New().create(Vec2(0.5,0), BLUE);
+  }
+  
+  void update() {
+    REPA(list) list[i].update();
+  }
+  
+  void draw() {
+    REPA(list) list[i].draw();
+  }
+  
+  void showLeft() {
+    list[0].show();
+  }
+  
+  void showMiddle() {
+    list[1].show();
+  }
+  
+  void showRight() {
+    list[2].show();
+  }
+}
+\end{code}
+
+De nieuwe manager class heeft als voordeel dat er geen timers moeten bijgehouden worden voor elke cirkel. Ook de update an draw functies worden niet langer als er meer cirkels nodig zijn. Wel moet er voor elke cirkel een `show' functie toegevoegd worden en bestaat er een grote kans dat iemand zich ooit van nummer vergist. Want list[1], was dat nu weer die cirkel links of in het midden?
+
+\section{Getting There}
+
+Om dit op te lossen kunnen we een \textsl{enumeratie} maken. Enumeraties zijn toch niets anders dan woorden die voor een nummer staan. De eerste entry in een enum is eigenlijk gelijk aan 0, net zoals het eerste item in een container. Maken we dus de volgende enumeratie:
+
+\begin{code}
+enum TIMED_CIRCLE {
+  TC_LEFT,
+  TC_MIDDLE,
+  TC_RIGHT,
+};
+\end{code}
+
+\ldots dan kunnen we nu een `show' functie al duidelijker maken:
+
+\begin{code}
+void showLeft() {
+  list[TC_LEFT].show();
+}
+\end{code}
+
+De kans dat we ons nu van cirkel vergissen is weeral een stuk kleiner geworden. Toch zitten we nog steeds met een afzonderlijke show functie voor elke cirkel. Wat een probleem kan worden als we plots gevraagd worden om deze class uit te breiden naar twintig cirkels! E\'en enkele functie voor show, waarbij we via een argument kunnen aangeven welke cirkel we bedoelen, biedt de oplossing.
+
+\begin{code}
+void show(TIMED_CIRCLE circle) { // show a certain circle for one second
+  list[circle].show();
+}
+\end{code}
+
+Deze code kan je nu erg eenvoudig gebruiken:
+\begin{code}
+CM.show(TC_LEFT);
+CM.show(TC_MIDDLE);
+\end{code}
+
+Ook het uitbreiden naar meerdere cirkels wordt weeral eenvoudiger. En als extraatje hebben we een korte comment voorzien na de declaratie van de functie. Die comment wordt ook getoond door de code helper, terwijl we de naam van de functie typen. Handig!
+
+\section{Pick Me! (Map example)}
+
+Tot slot is nog \'e\'en verbetering mogelijk. We moeten nog altijd goed in de gaten houden dat de volgorde van de enum's gelijk is aan de volgorde waarin we de objecten aan de container toevoegen. Niets houd ons tegen om met de voorgaande enum de volgende create functie te schrijven:
+
+\begin{code}
+  void create() {
+    list.New().create(Vec2(-0.5,0), GREEN);
+    list.New().create(Vec2(0.5,0), RED); // <- deze cirkel staat nu rechts
+    list.New().create(Vec2(0,0), BLUE);
+  }
+\end{code}
+
+Het lijkt misschien onwaarschijnlijk, maar als je nog tien (of honderd) keer een cirkel moet toevoegen, dan ga je je wel eens vergissen. In plaats van een gewone container kunnen we daarom ook een `\textbf{map}' gebruiken. \textsl{Een map is een lijst waarin elk object via een willekeurige sleutel kan opgezocht worden.} Bij een gewone container is die sleutel steeds een getal, en staan alle objecten in volgorde. Je hebt dus achtereenvolgens list[0], list[1], list[2], etc.
+
+Met een map wordt het veel makkelijker. Je bepaalt zelf de sleutel van elk element. We kiezen hier een \texttt{int} als sleutel, en een \texttt{timedCircle} als data element. Dat kan zo:
+
+\begin{code}
+Map<int, timedCircle> list;
+\end{code}
+
+Nu is er wel een klein probleem: de map weet niet hoe hij zijn data moet ordenen. Daar moet je hem een \textsl{sorteerfunctie} voor geven. Zo'n functie kan complex zijn, maar meestal kan je gewoonweg de volgende gebruiken:
+
+\begin{code}
+static int compare(C int & a, C int & b)
+{
+	if(a > b) return 1;
+	if(b > a) return -1;
+	return 0;
+}
+\end{code}
+
+Met andere woorden: je gebruikt als argument het type van de sleutel, geeft 1 als resultaat wanneer de eerste sleutel het grootst is, en -1 wanneer de tweede het grootst is. Hebben ze dezelfde waarde, dan is het resultaat 0. Je moet deze functie zelf nergens gebruiken, maar je map gebruikt ze vanzelf.
+
+Om een map te kunnen gebruiken, moeten we ook de naam van die sorteerfunctie meegeven. Aangenomen dat je sorteerfunctie `compare' heet, ziet de correcte declaratie van de map er dus zo uit:
+
+\begin{code}
+Map<int, timedCircle> list(compare);
+\end{code}
+
+Bekijk nu even de \textsl{create()} functie:
+
+\begin{code}
+void create() {
+	list(TC_LEFT).create(Vec2(-0.5, 0), GREEN);
+	list(TC_MIDDLE).create(Vec2(0 , 0), RED);
+	list(TC_RIGHT).create(Vec2(0.5, 0), BLUE);
+	// add new elements if they're added to TIMED_CIRCLE (order does not matter)
+}
+\end{code}
+
+Nu wordt het grote voordeel van \texttt{Map} duidelijk! We vragen een element op via zijn sleutel. Maar wanneer dat element nog niet bestaat, dan wordt het dadelijk gemaakt. \texttt{List.New()} wordt dus overbodig. Bovendien moeten we ons geen zorgen meer maken over de volgorde. Je kan elementen toevoegen zoals je wil.
+
+De overige functies hebben slechts een kleine aanpassing nodig. We gebruiken vierkante haakjes om elementen in een container aan te spreken, maar ronde haakjes om elementen in een Map aan te spreken. Dus \texttt{list[i].update()} wordt nu \texttt{list(i).update()}.
+
+\section{Tot Slot}
+Met een slim gebruik van maps kan je een class maken waarin je vele gelijkaardige elementen op een ordelijke manier beheert. De kans dat je fouten maakt terwijl je programma groeit, is klein. Bovendien kan je een handige interface voorzien om je class te gebruiken.
+
+

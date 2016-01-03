@@ -1,0 +1,105 @@
+\chapter{Gui Window}
+Alhoewel je gui elementen ook direct op het scherm kan zetten, plaats je ze meestal in een window. Zelfs al wil je dat window niet tonen (je kan het later onzichtbaar maken) is dit de meest eenvoudige manier om elementen bij mekaar te houden. Wil je bijvoorbeeld verschillende elementen samen tonen of verbergen, dan plaats je ze best samen in een window.
+
+\section{Definitie}
+Kijk eens naar de definitie van een \eeClass{Window}:
+
+\begin{code}
+const_mem_addr struct Window : GuiObj // Gui Window !! must be stored in constant memory address !!
+{
+   Byte      flag       ,
+   ...
+\end{code}
+
+De commentaar en ook het eerste woord \eeFunc{const\_mem\_addr} laten je weten dat een window een vast geheugen adres nodig heeft. Wat betekent dat? Wel, je mag een window nooit opslaan in een gewone container. De elementen van een \eeClass{Memc} kunnen wel eens naar een andere locatie in het geheugen verplaatst worden zonder dat je dat zelf merkt. Voor GUI elementen mag zoiets niet gebeuren.
+
+Nu is dat meestal geen probleem. Wanneer je een GUI ontwerpt dan wil je van elk window en de elementen daarin meestal maar \'e\'en object maken en dat doe je dan onder de declaratie van de class die je daarvoor maakt. (In het vorige hoofdstuk was dat \verb|loginWindow LoginWindow|). Op die manier heb je automatisch een vast geheugen adres. Heb je toch een container met meerdere objecten van deze class nodig? Gebruik dan de container \eeClass{Memx} of \eeClass{Meml}.
+
+Wat ook opvalt is het laatste woord: \eeClass{GuiObj}. Dat betekent dat een Window gebaseerd is op de class \eeClass{GuiObj}. Alle eigenschappen van deze class zijn dus ook beschikbaar in \eeClass{Window}. We zeggen daarom dat \eeClass{GuiObj} de base class van \eeClass{Window} is.
+
+\section{Class Methods}
+Als je verder in de definitie van de class \eeClass{Window} kijkt, dan zie je heel wat lidfuncties. En daar komen ook de lidfuncties van \eeClass{GuiObj} nog bij. Zolang je je gui ontwerpt met de gui editor, zal je de meeste van deze functies niet zo vaak nodig hebben. We bespreken hier enkele functies die toch handig kunnen zijn:
+
+\begin{description}
+	\item[\eeFunc{setTitle(C Str \&title)}] Via deze functie kan je de titel van het window wijzigen.
+	\item[\eeFunc{fadeIn()}] Samen met de functie \eeFunc{fadeOut()} bepaal je de zichtbaarheid van een window.
+	\item[\eeFunc{showing()}] Samen met de functie \eeFunc{hiding()} controleer je de zichtbaarheid van een window. Je kan bijvoorbeeld de pijltjestoetsen enkel gebruiken om je avatar te bewegen wanneer een window niet zichtbaar is.
+	\item[\eeFunc{button[3]}] is geen functie. Een window bevat altijd die buttons met een specifiek doel: minimize, maximize en close. De typische buttons die je vaak in de rechterbovenhoek ziet. Als je deze buttons wil tonen, dan kan je na het laden van je window de \eeFunc{show()} functie van de gewenste buttons uitvoeren.
+\end{description}
+
+\begin{exercise}
+Maak in programma waarin je een window toont zolang de spatiebalk ingedrukt is. Wanneer het window zichtbaar is, dan stel je de titel van het window gelijk aan de tijd dat je programma loopt. (Gebruik de functie \eeFunc{Time.appTime()}.)
+\end{exercise}
+
+Er is nog een functie die bijzondere aandacht verdient: de functie \eeFunc{pos(C Vec2 \&pos)} van de base class \eeClass{GuiObj}. Deze functie komt vaak van pas om de positie van je window te corrigeren. Je kan in de gui editor wel de positie van een window bepalen, maar dat is vaak niet voldoende. Je wil bijvoorbeeld een window aan de linkerkant van het scherm, maar niet ieder scherm heeft dezelfde aspect ratio. Daarom bereken je best de positie voordat je een window toont. Voor de linkerbovenhoek zou dat er zo uit zien:
+
+\begin{code}
+void show() {
+   window.pos(Vec2(-D.w(), D.h());
+	 window.fadeIn();
+}
+\end{code}
+
+Andere posities vragen dikwijls iets meer werk. Dan moet je immers ook de afmetingen van het window in rekening brengen. Gelukkig kan dat eenvoudig via de lidfunctie \eeFunc{rect()}. Die geeft je informatie over de grootte van je window, dat natuurlijk een rechthoek is. In dit voorbeeld zie je hoe je een window aan de linkeronderhoek van het scherm plaatst. 
+
+\begin{code}
+void show() {
+   Vec2 pos;
+	 pos.x = -D.w();
+	 pos.y = -D.h() + window.rect().h();
+   window.pos(pos);
+	 window.fadeIn();
+}
+\end{code}
+
+\begin{exercise}
+Plaats een window aan de rechterkant van het scherm, in het midden. Maak ook een tweede functie \eeFunc{showCentered()} die het window in het midden van het scherm toont.
+\end{exercise}
+
+\section{Dialogs}
+Esenthel bevat ook enkele windows met en meer specifiek doel. Een daarvan is de class \eeClass{Dialog}. Als je naar de declaratie van die class kijkt, dan zie je dat een \eeClass{Dialog} de class \eeClass{Window} als basis heeft. Dat betekent dat ook de functies van \eeClass{GuiObj} beschikbaar zijn.
+
+Een dialog zal je niet een de gui editor ontwerpen. De lidfunctie \eeFunc{autoSize()} wordt gebruikt om na het instellen van de tekst en de buttons alle elementen voldoende plaats te geven. Dat betekent dat je in dit geval geen \eeClass{GuiObjs} en ook geen pointers gebruikt. Hier een voorbeeld:
+
+\begin{code}
+class confirmExit {
+private:
+   Dialog dialog;
+   
+   static void cancelFunc(confirmExit & obj)
+   {
+      obj.dialog.fadeOut();
+   }
+   
+   static void proceedFunc(confirmExit & obj)
+   {
+      Exit();
+   }
+      
+public:
+   void create() {
+      Mems<Str> buttonTexts;
+      buttonTexts.New() = "cancel";
+      buttonTexts.New() = "proceed";
+      dialog.create("Exit?", "Ben je zeker dat je dit programma wil sluiten?", buttonTexts);
+      dialog.autoSize();
+      dialog.hide();
+      
+      dialog.buttons[0].func(cancelFunc, T);
+      dialog.buttons[1].func(proceedFunc, T);
+      
+      Gui += dialog;
+   }
+   
+   void show() {
+      dialog.fadeIn();
+   }
+}
+
+confirmExit ConfirmExit;
+\end{code}
+
+\begin{exercise}
+Voeg deze class toe aan een programma en toon de dialog wanneer de gebruikt op escape drukt, in plaats van daar dadelijk het programma af te sluiten.
+\end{exercise}
+
