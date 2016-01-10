@@ -37,6 +37,10 @@ if (!sql.connectSQLite("test.db")) {
 }
 \end{code}
 
+\begin{exercise}
+Maak een class \eeClass{database} met een functie \eeFunc{create}. In deze functie maak je een verbinding met een SQLite database met de naam `mydata.db'. Je voegt een je programma een object van de class toe en je voert de functie create uit. Na het uitvoeren van je programma ga je op zoek naar het bestand `mydata.db'. Op het bestand met een SQLite browser, te downloaden via \url{http://sqlitebrowser.org} . (Je zal een foutmelding krijgen omdat de database leeg is.)
+\end{exercise}
+
 \subsection{Een tabel maken}
 Je programma kan bestaande tabellen gebruiken, of je kan met een andere tool je de tabellen in je database aanmaken. Een derde optie is dat je de database aanmaakt op het moment dat je je programma start. Ook dit kan weer handig zijn tijdens de ontwikkelfase: je controleert of een tabel al bestaat, en indien niet dan laat je je programma die tabel maken. Eventueel kan je er ook via je code wat data in zetten. Op die manier kan je je programma eenvoudig testen. En als je de structuur van je data wil wijzigen, dan verwijder je gewoon de hele database zodat die opnieuw aangemaakt wil worden.
 
@@ -47,11 +51,11 @@ if(!sql.existsTable("accounts")) {
   // maak een tabel voor accounts
 	
 	Memc<SQLColumn> columns;
-	columns.New().set("ID", SDT_INT).mode = SQLColumn.PRIMARY_AUTO;
-	columns.New().set("name", SDT_STR, 32); // een string met maximaal 32 tekens
+	columns.New().set("ID"      , SDT_INT    ).mode = SQLColumn.PRIMARY_AUTO;
+	columns.New().set("name"    , SDT_STR, 32); // een string met maximaal 32 tekens
 	columns.New().set("password", SDT_STR, 32);
-	columns.New().set("active", SDT_BOOL);
-	columsn.New().set("score", SDT_INT).default_val="0";
+	columns.New().set("active"  , SDT_BOOL   );
+	columns.New().set("score"   , SDT_INT    ).default_val="0";
 	
 	if(!sql.createTable("accounts", columns, &messages)) {
 	  Exit(S + "Can't create table for accounts: \n" + messages);
@@ -59,14 +63,19 @@ if(!sql.existsTable("accounts")) {
 	
 	// voeg test data toe
 	SQLValues values;
-	values.New("name", "freddy");
+	values.New("name"    , "freddy"    );
 	values.New("password", "kamerplant");
-	values.New("active", true);
+	values.New("active"  , true        );
+	
 	if(!sql.newRow("accounts", values, &messages)) {
 	  Exit(S + "Can't add data to table accounts: \n" + messages);
 	}
 }
 \end{code}
+
+\begin{exercise}
+Breidt de functie \eeFunc{create} uit de vorige oefening uit met de bovenstaande code. Voer het programma opnieuw uit en bekijk de database achteraf opnieuw via de SQLite browser. Voeg daarna een extra kolom `lives' toe. Controleer of deze kolom na het uitvoeren ook in de tabel staat.
+\end{exercise}
 
 \subsection{Data Lezen}
 Als je eenvoudig alle data uit een tabel wil lezen, dan kan dat met de functie \texttt{getAllRows()}. Je wil die data dan waarschijnlijk wel ergens in het geheugen houden, dus daar gebruik je best een class en een memory container voor. Met de table ``accounts'' als voorbeeld zou je een class \texttt{account} kunnen maken om een rij uit de database in het geheugen te zetten.
@@ -75,10 +84,10 @@ Als je eenvoudig alle data uit een tabel wil lezen, dan kan dat met de functie \
 class account {
   // Om het voorbeeld kort te houden zijn alle variabelen public.
 	// In een echt programma kan je meestal beter set en get functies gebruiken.
-	int ID;
-	Str name;
+	int  ID    ; 
+	Str  name  ;
 	bool active;
-	int score;
+	int  score ;
 }
 \end{code}
 
@@ -94,13 +103,25 @@ sql.getAllRows("accounts");
 
 for( ;sql.getNextRow(); ) {
   account & a = accounts.New();
-	sql.getCol(0, a.ID);
-	sql.getCol(1, a.name);
+	
+	sql.getCol(0, a.ID    );
+	sql.getCol(1, a.name  );
 	// skip loading the password in column 2
 	sql.getCol(3, a.active);
-	sql.getCol(4, a.score);
+	sql.getCol(4, a.score );
 }
 \end{code}
+
+\begin{exercise}
+	\begin{enumerate}
+		\item Maak een class \eeClass{account}.
+		\item Maak een class \eeClass{accountManager} waarin je een container voor alle accounts voorziet. 
+		\item Voorzie een functie \eeFunc{create} die alle records uit de database leest en toevoegt aan de container. 
+		\item Voeg aan de class een integer `currentAccount' toe die je op nul zet. 
+		\item Via de functies \eeFunc{next} en \eeFunc{previous} kan je het huidige account wijzigen. Zorg er wel voor dat dit niet kleiner dan nul kan worden, en ook niet groter dan het aantal accounts.
+		\item Voorzie een functie draw die de inhoud van het huidige account op het scherm toont.
+	\end{enumerate}
+\end{exercise}
 
 Je wil niet steeds alle data uit een tabel in het geheugen laden. Dikwijls ben je maar ge\"interesseerd in een of in enkele records. In dat geval gebruik je de functie \texttt{getRows()}. Als argument kan je bij deze functie een voorwaarde opgeven, net zoals je dat in een SQL statement zou doen:
 
@@ -132,11 +153,11 @@ Maar je zou ook een hele account als referentie kunnen doorgeven. Dat is vooral 
 
 \begin{code}
 class account {
-	int ID;
-	Str name;
-	Str password;
-	bool active;
-	int score;
+	int  ID      ;
+	Str  name    ;
+	Str  password;
+	bool active  ;
+	int  score   ;
 	
 	bool load(C Str & name) {
 		T.name = name;
@@ -144,7 +165,8 @@ class account {
 	}
 }
 \end{code}
-Via de functie load kunnen we een account uit de database halen door een naam mee te geven. De return waarde laat ons ook weten of dat gelukt is. De functie \texttt{loadAccount()} kunnen we dan zo uitwerken:
+
+Via de functie load kunnen we een account uit de database halen door een naam mee te geven. De return waarde laat ons ook weten of dat gelukt is. De functie \eeFunc{loadAccount()} kunnen we dan zo uitwerken:
 
 \begin{code}
 bool loadAccount(account & a) {
@@ -160,6 +182,14 @@ bool loadAccount(account & a) {
 }
 \end{code}
 
+\begin{exercise}
+	\begin{enumerate}
+		\item Voeg aan de class \eeClass{database} een de functie \eeFunc{loadAccount} toe.
+		\item Maak een Gui class met een TextLine waarin we een naam kunnen schrijven. Voeg ook een Button en Text objects toe om de ID, wachtwoord en score te tonen.
+		\item Voorzie een functie die, wanneer de gebruiker op de button klikt, zoekt naar een account met de naam in TextLine en dat account toont in de gui.
+	\end{enumerate}
+\end{exercise}
+
 \subsection{Records tellen}
 Het gebeurt dat je niet in de inhoud van een record ge\"interesseerd bent, maar enkel wil weten of een record bestaat. Wil je eenvoudigweg weten hoeveel records een tabel bevat, dan gebruik je de functie \texttt{getAllRowsNum()}.
 
@@ -168,6 +198,10 @@ int accountsInDB() {
   return sql.getAllRowsNum("accounts");
 }
 \end{code}
+
+\begin{exercise}
+Voeg aan de class \eeClass{database} een functie toe die telt hoeveel accounts er zijn. Toon dit ergens op je scherm.
+\end{exercise}
 
 Vaker wil je het aantal accounts dat aan een voorwaarde voldoet. Bijvoorbeeld het aantal actieve accounts. Dan gebruik je de functie \texttt{getRowsNum}, die weer een conditie als argument heeft, net zoals \texttt{getRows()}.
 
@@ -185,6 +219,10 @@ bool validate(C Str & name, C Str & password) {
 	return (count > 0);
 }
 \end{code}
+
+\begin{exercise}
+Maak een login gui waarin de gebruiker een naam en een wachtwoord kan ingeven. Zorg (met de bovenstaande code als voorbeeld) dat je kan kontroleren of de combinatie correct is en toon dat op het scherm.
+\end{exercise}
 
 \subsection{Data Opslaan}
 Je zal vrijwel nooit alle gegevens in een database willen overschrijven. Wel wil je regelmatig een record die je aangepast hebt, terug opslaan. Dat kan zo:
@@ -204,6 +242,8 @@ void save(account & a) {
 }
 \end{code}
 
+
+
 Je hoeft ook niet steeds alle data op te slaan. Enkel de waarden die je in \texttt{SQLValues} opneemt, worden aangepast. Zo kan je bijvoorbeeld enkel het wachtwoord opslaan.
 
 \begin{code}
@@ -214,10 +254,13 @@ void savePassword(account & a) {
 }
 \end{code}
 
-
 \begin{note}
 Pas nooit de primary key van een record aan!
 \end{note}
+
+\begin{exercise}
+Voeg een Gui toe waarmee de gebruiker zijn wachtwoord kan aanpassen.
+\end{exercise}
 
 \subsection{Data Verwijderen}
 Tot slot zal je ook records willen verwijderen die je niet meer nodig hebt. Daar kan je de functie \texttt{delRow} voor gebruiken. 
@@ -227,3 +270,4 @@ void removeAccount(int ID) {
   sql.delRow("accounts", S + "ID='" + ID + "'");
 }
 \end{code}
+
