@@ -72,8 +72,12 @@ Tot slot is er de \texttt{Draw()} functie die ons wat informatie geeft over de s
 In dit voorbeeld gebruiken we het lokale IP adres van de server. Daarmee kan je een client op hetzelfde netwerk verbinden met de server, maar externe verbindingen zijn zo niet mogelijk. Wanneer het tijd is om de toepassing te testen over het internet, dan moet je het globale IP adres gebruiken. Het is mogelijk dat je daarvoor ook de router correct moet configureren.
 \end{note}
 
+\begin{exercise}
+Voeg de functies hierboven toe aan het bestand `main'.
+\end{exercise}
+
 \section{De server Class}
-De server zelf moet je niet zelf ontwikkelen. Esenthel voorziet een base class voor je server, waar je je eigen functies aan toevoegt. Meestal heb je maar enkele functies nodig. We overlopen even het voorbeeld.
+De server zelf moet je niet zelf ontwikkelen. Esenthel voorziet een base class voor je server, waar je je eigen functies aan toevoegt. Meestal heb je maar enkele functies nodig. We overlopen stap voor stap wat er in deze class dient te staan. Ten eerste is er de class zelf:
 
 \begin{code}
 class server : connectionServer
@@ -85,12 +89,16 @@ server Server;
 
 De \texttt{server} class heeft als base class \texttt{connectionServer}. Die laatste wordt voorzien door de engine. Aangezien er maar \'e\'en server object actief zal zijn, kunnen we er dadelijk een object van maken. 
 
+\subsection{De Constructor}
+
 Een eerste functie binnen de server class is de constructor:
 \begin{code}
 server() { clients.replaceClass<client>(); }
 \end{code}
 
 Constructors komen vaak voor in C++, maar in Esenthel schrijf je ze meestal niet zelf. Het betreft een functie met dezelfde naam als de class, die automatisch wordt uitgevoerd bij het maken van een object. De class \texttt{connectionServer} bevat een container clients waarin elke actieve client onthouden wordt. De class van die clients willen we vervangen door onze eigen `client' class die we zodadelijk zullen ontwerpen. Met de functie \texttt{replaceClass} laten we dat weten aan de \texttt{connectionServer}.
+
+\subsection{Data verzenden}
 
 \begin{code}
 void sendToClients(File & f, client & sender)
@@ -127,24 +135,58 @@ Het verzenden van die File bestaat uit twee stappen. We beginnen met de positie 
 Een functie die data uit een File leest, doet dat vanaf de huidige positie en verplaatst die positie stap voor stap \textsl{(of beter bit voor bit)} naar het eind van de file. Indien een bestand nogmaals gelezen wordt, moet je de positie dus terug op nul zetten.
 \end{note}
 
+\subsection{Info voor nieuwe clients}
+Telkens een nieuwe speler zich aanmeld bij de server, heeft die informatie nodig over alle andere spelers. We voorzien daarom een functie \eeFunc{sendAllClientDetails}. De functie ziet er zo uit:
+
+\begin{code}
+void sendAllClientDetails(client & destination)
+{
+	clients.lock();
+	FREPA(clients)
+	{
+		 client & c = (client&) clients.lockedData(i);
+		 if(&c != &destination) // don't send the client itself
+		 {
+				File f;
+				f.writeMem();
+				f.putByte(M_ADD_CLIENT);
+				f.putInt(c.id);
+				c.writeDetailsToFile(f);
+				f.pos(0);
+				destination.connection.send(f);
+		 }
+	}
+	clients.unlock(); 
+}
+\end{code}
+
+Zoals je ziet wordt ook hier het `lock' mechanisme gebruikt. Ditmaal is er maar een bestemming: de nieuwe client. Voor alle andere clients maken we een file met de details van die clients. Die file sturen we naar de client `destination'. Aangezien de inhoud voor elke client anders is, kunnen we niet zoals bij de vorige functie telkens dezelfde file versturen. We maken dus een nieuwe file voor elke client. 
+
+\begin{exercise}
+Voeg alle code hierboven samen tot de class \eeClass{server} in het bestand met dezelfde naam.
+\end{exercise}
+
 \section{De Client Class}
 
 Wanneer de server ontdekt dat een nieuwe client een verbinding aanvraagt, zal er automatisch een object van de class \texttt{client} gemaakt worden. Ook de update functie van die client zal door de server automatisch uitgevoerd worden. Tenzij je wil dat die client absoluut niets doet, zal je wel een eigen class voor die client moeten voorzien. Deze class heeft twee base classes nodig: enerzijds \textbf{moet} de class gebaseerd zijn op \texttt{ConnectionServer.Client} om dat ze anders niet de standaard client class kan vervangen, anderzijds willen we ook de shared base class \texttt{netClient} gebruiken.
 
 \begin{code}
+int NextClientID = 0;
+
 class client : ConnectionServer.Client, netClient 
 {
-   // add code here
+  bool sentHello = false; 
+	// add code here
 }
 \end{code}
 
 \begin{note}
-Alhoewel de class leeg lijkt, bevat ze op dit moment reeds alle functies en variabelen van zowel \texttt{ConnectionServer.Client} als \texttt{netClient}.
+Voor de eigenlijke class staat een \eeClass{int} `NextClientID'. Dat is een globale variabele die we gebruiken om elke speler een uniek ID te geven. Daarna begint de class. Alhoewel die leeg lijkt, bevat ze op dit moment reeds alle functies en variabelen van zowel \texttt{ConnectionServer.Client} als \texttt{netClient}. Een variabele die je alvast bovenaan in de class kan toevoegen is de bool `sentHello'. Die gebruiken we later in de update functie om te controleren of dit een nieuwe client is.
 \end{note}
 
 \subsection{De Create Functie}
 
-Vervolgens moet er een create functie voorzien worden. De server class zal bij het maken van een nieuwe client automatisch proberen de create functie uit te voeren, maar die moet dan wel dezelfde argumenten hebben als de base class \texttt{ConnectionServer.Client}. Als je een create functie maakt zonder die argumenten, zal de server je functie niet gebruiken en gewoon de create functie van de base class uitvoeren.
+Vervolgens moet er in deze class een create functie voorzien worden. De server class zal bij het maken van een nieuwe client automatisch proberen de create functie uit te voeren, maar die moet dan wel dezelfde argumenten hebben als de base class \texttt{ConnectionServer.Client}. Als je een create functie maakt zonder die argumenten, zal de server je functie niet gebruiken en gewoon de create functie van de base class uitvoeren.
 
 \begin{code}
 void create(ConnectionServer &server)
@@ -173,7 +215,7 @@ In praktijk zal je de gegevens van een client meestal pas naar andere clients st
 Bijna alles gebeurt verder in de update functie. Die is verantwoordelijk voor drie zaken:
 \begin{itemize}
 \tick indien de client nog geen connectie heeft, moet die opgezet worden;
-\tick wanneer de client een bericht naar de server stuurt, moet dat afgehandeld worden;
+\tick wanneer de client een bericht naar de server stuurt, moet dat bericht behandeld worden;
 \tick wanneer de client de verbinding verbreekt, moet hij verwijderd worden.
 \end{itemize}
 
@@ -185,23 +227,23 @@ bool update()
   if(super.update()) {
 	  // still connected, do something
 		return true;
-	} else {
-	  // connection is lost
-		return false;
-	}
+	} 
+	
+	// connection is lost if this point is reached
+	return false;	
 }
 \end{code}
 
 Een \texttt{return true} laat de server weten dat deze client nog steeds actief is. Bij \texttt{return false} veronderstelt de server dat de client offline is, en wordt deze client verwijderd uit het geheugen.
 	
-Indien een client niet meer actief is, dan willen we dat aan de andere clients laten weten. Daarvoor moet weer een bericht gemaakt en verstuurd worden:
+Indien een client niet meer actief is, dan willen we dat aan de andere clients laten weten. Dat gebeurt net voor de lijn `return false'. Op die plaats moet dit bericht gemaakt en verstuurd worden:
 \begin{code}
 File f;
 f.writeMem().putByte(M_REMOVE_CLIENT).putInt(id);
 Server.sendToClients(f, T);
 \end{code}
 
-Zolang \texttt{super.update()} lukt, blijft de verbinding actief. Het eerste wat dan, bij een nieuwe verbinding, moet gebeuren is de client laten weten dat de verbinding geslaagd is. We controleren in dat geval of de status van de verbinding gelijk is aan \texttt{CONNECT\_GREETED}. Als dat zo is, dan sturen we een kort `Hello' bericht terug naar de client. Op dat moment informeren we de client ook over de andere clients die al actief zijn. \textsl{Hiervoor voegen we een functie \texttt{sendAllClientDetails()} toe aan de server class.}
+Zolang \texttt{super.update()} lukt, blijft de verbinding actief. Het eerste wat dan, bij een nieuwe verbinding, moet gebeuren is de client laten weten dat de verbinding geslaagd is. We hebben om deze reden de bool `sentHello' toegevoegd aan de class. Standaard is die false, wat wil zeggen dat dit een nieuwe client is. We controleren in dat geval of de status van de verbinding gelijk is aan \texttt{CONNECT\_GREETED}. Als dat zo is, dan sturen we een kort `Hello' bericht terug naar de client. Op dat moment informeren we de client ook over de andere clients die al actief zijn. \textsl{Hiervoor voegen we een functie \texttt{sendAllClientDetails()} toe aan de server class.}
 
 \begin{code}
 if(!sentHello)
@@ -222,7 +264,7 @@ if(!sentHello)
 Vervolgens controleren we tijdens elke update of er nieuwe berichten binnenkomen. Als er data ontvangen is, dan zit die in de file `connection.data'. De eerste byte van elk bericht geeft aan over wat voor bericht het gaat, via een enumeratie `MESSAGE'. Voor elk van de berichten die een client kan versturen voorzien we dan een functie om het bericht te verwerken, waarbij we `connection.data' meesturen als bestand.
 
 \begin{code}
-if(connection.receive(0)) // if data is recieved
+REP(8) if(connection.receive(0)) // if data is recieved
 {
 	// first byte is type of message
 	byte message = connection.data.getByte();
@@ -236,8 +278,10 @@ if(connection.receive(0)) // if data is recieved
 }
 \end{code}
 
-\subsection{Message Handlers}
-Rest ons nog om functies te schrijven die een bericht afhandelen. Als voorbeeld hieronder de positie update. Op het moment dat de functie uitgevoerd wordt, weten we dat de data die in het bestand zit, gelezen kan worden via \texttt{netClient.readPosFromFile()}. Dat moet dan ook eerst gebeuren. In het geval van deze update willen we dat de positie ook verstuurd wordt naar alle andere clients. We maken dus nu op de server een bericht bijna gelijk aan het binnenkomende bericht. Met dit verschil dat ook de id van deze client opgenomen wordt. Zo weten de andere clients over welke client het gaat.
+\subsection{HandlePosUpdate}
+Nu dienen we nog de functies te maken om deze messages effectief te verwerken. We beginnen met de functie \eeFunc{handlePosUpdate}, een lidfunctie van de client class. 
+
+Op het moment dat de functie uitgevoerd wordt, weten we dat de data die in het bestand zit, gelezen kan worden via \texttt{netClient.readPosFromFile()}. Dat moet dan ook eerst gebeuren. In het geval van deze update willen we dat de ontvangen positie verstuurd wordt naar alle andere clients. We maken dus nu op de server een nieuw bericht, bijna zoals het binnenkomende bericht. Met dit verschil dat ook de id van deze client opgenomen wordt. Zo weten de andere clients over welke client het gaat.
 
 \begin{code}
 void handlePosUpdate(File & data)
@@ -254,6 +298,24 @@ void handlePosUpdate(File & data)
 
 Een bericht doorsturen naar andere clients is meestal niet moeilijker dan het voorbeeld hierboven. Soms zal er wel meer moeten gebeuren, zoals het aanpassen van gegevens in een database. In dat geval zal je de tijd moeten nemen om een nieuwe functie uit te schrijven.
 
+\subsection{HandleFullUpdate}
+Er is nog een andere message mogelijk: \eeFunc{handleFullUpdate}. De client zal dit bericht sturen als de speler zijn naam of kleur heeft aangepast. De behandeling van dit bericht is ongeveer gelijk aan de vorige functie: we lezen de binnenkomende data, en sturen ze door naar alle andere clients.
 
+\begin{code}
+void handlePosUpdate(File & data)
+{
+	readPosFromFile(data);
+	
+	// send to other clients
+	File f;
+	f.writeMem().putByte(M_CLIENT_POS).putInt(id);
+	writePosToFile(f);
+	Server.sendToClients(f, T);
+}
+\end{code}
+
+\begin{exercise}
+Voeg alle code hierboven samen tot de class \eeClass{client} in het bestand met dezelfde naam.
+\end{exercise}
 
  

@@ -25,7 +25,11 @@ Daarnaast zie je ook een folder `enums'. Deze folder is w\'el beschikbaar voor e
 
 Ook is er een library (groene folder) met de naam `Shared'. In deze folder plaatsen we alle code die zowel bij de client als de server hoort.
 
-\begin{note}
+\begin{exercise}
+Maak een nieuw project aan. Daarin maak je alvast alle folders en bestanden zoals in de afbeelding hierboven.
+\end{exercise}
+
+\section{Messages}
 Data verzenden over het netwerk doe je via \texttt{Files}. Denk hierbij niet aan grote bestanden zoals op een harde schijf: elk bericht dat je verstuurt over het netwerk is in feite in klein bestandje. 
 
 Aangezien je bij een file dient te vermelden hoe je het wil noemen, voordat je er data in kan zetten, moet je bij een netwerkfile aangeven dat het enkel om het bestand in het geheugen gaat. En omdat de ontvanger van het bericht moet weten over wat voor bericht het gaat, stuur als eerste byte steeds een enum met het type bericht. Hieronder zie je een voorbeeld van een dergelijk bestand, ditmaal om de positie van een speler te verzenden.
@@ -37,4 +41,18 @@ f.putByte(M_CLIENT_POS);
 f.putFlt(pos.x);
 f.putFlt(pos.y);
 \end{code}
-\end{note}
+
+Alle netwerkfuncties in de client en de server zullen dus steeds naar de eerste byte van een bericht kijken om te bepalen welke functie het bericht verder zal afhandelen. Je maakt best een enumeratie die alle mogelijke berichten bevat. In een groot programma kan ook een tweede byte geschakeld worden om een verdere onderverdeling te maken.
+
+\begin{exercise} 
+Maak in je project een enum `MESSAGE' met de volgende waarden: 
+\begin{itemize}
+	\item M\_CLIENT\_FULL
+	\item M\_CLIENT\_POS
+	\item M\_HELLO
+	\item M\_ADD\_CLIENT
+	\item M\_REMOVE\_CLIENT
+\end{itemize}
+\end{exercise}
+
+
