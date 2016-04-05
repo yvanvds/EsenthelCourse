@@ -1,0 +1,289 @@
+\chapter{Images and Sound}
+\section{Images}
+A modern 2D game will almost always contain images. Whatever happens on the screen, it mostly comes down to showing and manipulating images. And because every image is a rectangle, you will use the \eeClass{Rect} class to show them on the screen.
+
+\begin{code}
+Images(=== drop image here ===).draw(Rect(-0.1, -0.1, 0.1, 0.1));
+\end{code}
+
+You can use \eeClass{Images()} to refer to any image in your project. The image in question can be dropped as the function argument, between the parentheses. Once that is done, you use the function \eeFunc{draw} with a \eeClass{Rect} argument to show the image on the screen. It is very easy to make your image move this way. The only thing your application has to remember is the current position. The actual rectangle can be derived from that point.
+
+\begin{code}
+Vec2 ship(0, -0.8);
+
+// during update:
+if(Kb.b(KB_LEFT )) ship.x -= Time.d();
+if(Kb.b(KB_RIGHT)) ship.x += Time.d();
+
+// during draw:
+Images(=== spaceship ===).draw(Rect(ship - 0.1,  ship + 0.1));
+\end{code}
+
+\begin{note}
+When you're looking for images like the one in this example, just use google images. Mostly you will want images with a transparent background. This will be an image in GIF or PNG format. But Esenthel doesn't support GIF, so PNG is your target of choice. The search tools on Google Images allow you to search specifically for transparent images. Can't find what you're looking for? Try adding the term `icon' or `sprites' to your query.
+
+Just remember this is great while you're experimenting. But once you're working on a real game you should not use images which aren't yours, unless you really verified their license permits the use you intend.
+\end{note}
+
+To add realism to your game it is a good idea to use variations on an image. In the next example, two alternate versions of the same image are used during movement.
+
+\begin{code}
+if(Kb.b(KB_LEFT))
+{
+	Images(=== spaceship ===      ).draw(Rect(ship - 0.1,  ship + 0.1));
+} else if(Kb.b(KB_RIGHT))
+{
+	Images(=== spaceship_left === ).draw(Rect(ship - 0.1,  ship + 0.1));
+} else
+{
+	Images(=== spaceship_right ===).draw(Rect(ship - 0.1,  ship + 0.1));
+}
+\end{code}
+
+Another way to add some dimension is by varying the image over time. You actually create a little animation by rotating through a list of images all the time. The following example presents a player class with three variations for every direction.
+
+\begin{code}
+class player
+{
+private: 
+   Vec2 pos;
+   float timer = 0.4; 
+   DIR_ENUM dir = DIRE_DOWN;
+   
+public:    
+   void update()
+   {
+      // adjust direction
+      if(Kb.bp(KB_UP   )) dir = DIRE_UP   ;
+      if(Kb.bp(KB_DOWN )) dir = DIRE_DOWN ;
+      if(Kb.bp(KB_LEFT )) dir = DIRE_LEFT ;
+      if(Kb.bp(KB_RIGHT)) dir = DIRE_RIGHT;
+      
+      // update position
+      switch(dir)
+      {
+         case DIRE_UP   : pos.y += Time.d() * 0.5; break;
+         case DIRE_DOWN : pos.y -= Time.d() * 0.5; break;
+         case DIRE_LEFT : pos.x -= Time.d() * 0.5; break;
+         case DIRE_RIGHT: pos.x += Time.d() * 0.5; break;
+      }
+      
+      // animation timer
+      timer -= Time.d();
+      if(timer < 0) timer = 0.4;
+   }
+   
+   void draw()
+   {
+      // pointer to an image
+      ImagePtr current;
+      
+      // evaluate direction
+      switch(dir)
+      {
+         case DIRE_UP:
+         {
+            // pick an image according to time (changes between 1 - 2 - 3 - 2)
+            if      (timer > 0.3) current = Images(=== back1 ===);
+            else if (timer > 0.2) current = Images(=== back2 ===);
+            else if (timer > 0.1) current = Images(=== back3 ===);
+            else                  current = Images(=== back2 ===);
+            break;
+         }
+         
+         case DIRE_DOWN:
+         {
+            if      (timer > 0.3) current = Images(=== front1 ===);
+            else if (timer > 0.2) current = Images(=== front2 ===);
+            else if (timer > 0.1) current = Images(=== front3 ===);
+            else                  current = Images(=== front2 ===);
+            break;
+         }
+         
+         case DIRE_LEFT:
+         {
+            if      (timer > 0.3) current = Images(=== left1 ===);
+            else if (timer > 0.2) current = Images(=== left2 ===);
+            else if (timer > 0.1) current = Images(=== left3 ===);
+            else                  current = Images(=== left2 ===);
+            break;
+         }
+         
+         case DIRE_RIGHT:
+         {
+            if      (timer > 0.3) current = Images(=== right1 ===);
+            else if (timer > 0.2) current = Images(=== right2 ===);
+            else if (timer > 0.1) current = Images(=== right3 ===);
+            else                  current = Images(=== right2 ===);
+            break;
+         }
+      }
+      
+      // show the current image on the screen
+      current->draw(Rect(pos - 0.05, pos + 0.05));
+   }   
+}
+\end{code}
+
+\begin{exercise}
+The example above can be found in the course template. Create an object of the player class and use it in an application to see the result of this code.
+\end{exercise}
+
+\begin{note}
+On line 39 there's an object `current' of the class \eeClass{ImagePtr}. this class is a `pointer' to an \eeClass{Image}. The code below that line will make the pointer `point' to the image we want to show next. At the bottom, \verb|current->draw()| is used to draw that image. Note the arrow instead of the dot. This is a sign that current is not a real image object, but just points to one. (Don't worry if you find this hard to grasp. You will learn more about pointers in another chapter.)
+\end{note}
+
+\subsection{Exercises}
+The \eeClass{Image} class in Esenthel contains a whole bunch of functions. Most of them you will not need any time soon, but it is good to remember that whatever you want to do with your image, there's a good chance there is a function which has you covered.
+
+For now, experiment a bit with the functions below to learn about their intent.
+
+\begin{itemize}
+\item \eeFunc{draw} has a version which allows you to pass some colors as an argument. Try this out. (Hint: the second color will very often be \eeFunc{TRANSPARENT})
+\item Draw an image using \eeFunc{drawFit}. How does this differ from \eeFunc{draw}?
+\item Draw an image using \eeFunc{drawRotate}. Try rotating the image with the arrow keys.
+\item Draw an image using \eeFunc{drawFS}
+\item (a bit harder) Load an image, apply a blur and export as PNG. Can you do it?
+\end{itemize}
+
+\section{Sound}
+To make your game a bit more attractive you will want to add sound. Generally speaking, there are two groups: music and effects (FX). Music will mostly be played in the background while FX is linked to certain actions like pressing a button or dying horrably.
+
+\subsection{Music}
+A soundtrack can be played with the class \eeClass{Sound}:
+
+\begin{code}
+Sound soundtrack;
+
+void InitPre()
+{
+   EE_INIT();
+}
+
+bool Init()
+{
+   soundtrack.create(=== drop your audio file here ===);
+   return true;
+}
+
+void Shut() {}
+
+bool Update()
+{
+   if(Kb.bp(KB_ESC)) return false;
+   
+   if(Kb.bp(KB_SPACE))
+   {
+      if(soundtrack.playing())
+      {
+         soundtrack.pause();
+      } else
+      {
+         soundtrack.play();
+      }
+   }
+   return true;
+}
+\end{code}
+
+There's a few things to remember, though:
+
+\begin{itemize}
+\item Before you can use a sound, it must be loaded from disk. This is done with the \eeFunc{create()} function. It needs at least one argument: the audio file. Like with images, you can simply drag the file from your resources on to your function. You will want to do this inside of the \eeFunc{Init()} function, because you don't want to load your file from disk at every update.
+\item \eeFunc{play()} will cause the sound to start playing.
+\item \eeFunc{pause()} will pause the sound. Who would have guessed, right? When you use play after pause, the sound will continue right where it left off. 
+\item Instead of \eeFunc{pause()} you can also use \eeFunc{stop()}. Now when you start playing again, the sound will start from the beginning.
+\end{itemize}
+
+The \eeFunc{create()} function also has a few optional arguments. Here's an example with all of them:
+
+\begin{code}
+soundtrack.create(=== audio file ===, true, 0.8, VOLUME_MUSIC);
+\end{code}
+
+But what do they mean, little grasshopper?
+
+\begin{enumerate}
+\item The first argument is known. That's the audio file.
+\item the second argument is the loop value. It can be true or false and is used to indicate if you'd like the sound to `loop'. (Which mean it will start from the top when it is finished.) The default value is false.
+\item Next comes the volume. Volume scales from zero to one, with a default of 1.
+\item The last argument is a `channel'. Esenthel has several channels for playing audio. If you don't use this argument, the sound will use the channel `VOLUME\_FX'. It is generally a good idea to use several channels for different types of sounds, because the volume of a channel can be changed. It makes it easy to implement volume changes for music, fx or voices.
+\end{enumerate}
+
+\subsection{exercise}
+Create an application which loads a soundtrack. Draw a green, an orange and a red circle on the screen. The track should start playing when you click the green circle, pause when you click the orange circle and stop when you click the red one.
+
+\textbf{Extra:} Search the header file of the sound class for a method to retrieve the current playing position within a sound file. Draw this position on the screen. 
+
+\textbf{Extra:} This will be a bit harder. Use the functions \eeFunc{fadeInFromSilence()} and \eeFunc{fadeOut()} to apply a fade of 3 seconds instead of an immediate start and stop.
+
+\subsection{Playlists (Extra)}
+To play music, you can also use playlists. This will bring more variation to your soundtrack, and also allows you to switch between playlists when the mood of the game changes. Just examine the code below to see how it works:
+
+\begin{code}
+// defined play lists
+Playlist Battle , // this is battle playlist used for playing when battles
+         Explore, // exploring playlist
+         Calm   ; // calm playlist
+
+void InitPre()
+{
+   EE_INIT();
+}
+
+bool Init()
+{
+   if(!Battle.songs())                         // create 'Battle' playlist if not yet created
+   {
+      Battle += (drop hier dramatische track); // add "battle0" track to 'Battle' playlist
+      Battle += (hier ook                   ); // add "battle1" track to 'Battle' playlist
+   }
+   if(!Explore.songs())                        // create 'Explore' playlist if not yet created
+   {
+      Explore+= (hier een rustige track     ); // add "explore" track to 'Explore' playlist
+   }
+   if(!Calm.songs())                           // create 'Calm' playlist if not yet created
+   {
+      Calm   += (Hier nog een rustige track ); // add "calm" track to 'Calm' playlist
+   }
+   return true;
+}
+
+void Shut()
+{
+}
+
+bool Update()
+{
+   if(Kb.bp(KB_ESC))return false;
+   if(Kb.c('1'))Music.play(Battle );
+   if(Kb.c('2'))Music.play(Explore);
+   if(Kb.c('3'))Music.play(Calm   );
+   if(Kb.c('4'))Music.play(null   );
+   return true;
+}
+
+void Draw()
+{
+   D.clear(TURQ);
+
+   if(Music.playlist()) // if any playlist playing
+   {
+      D.text(0, 0, S+"time " +Music.time()+" / "+Music.length()+" length");
+   }else
+   {
+      D.text(0, 0, "No playlist playing");
+   }
+   D.text(0, -0.2, "Press 1-battle, 2-explore, 3-calm, 4-none");
+}
+\end{code}
+
+\subsection{FX}
+Short sounds can also be played with the method \eeFunc{SoundPlay()}. This will play the sound directly, without requiring you to create an object of the class \eeClass{Sound}. Because there is no object you won't have any control over the sound after you started it. Therefore this technique will mostly be used for very short effects, such as footsteps. 
+
+\begin{exercise}
+In the template project you will find a few sounds in the folder `sound'. Create an application that plays back a `blip' every time you push the arrow-down key. Use the `rotate' sound for arrow-left and arrow-right. And last, play back the `down' sample when you press the space bar.
+
+\textbf{Extra:} Add the soundtrack again, but this time control the volume of the track with the mouse wheel.
+\end{exercise}
+ 

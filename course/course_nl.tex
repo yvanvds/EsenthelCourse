@@ -1,0 +1,77 @@
+%!TEX program = xelatex
+
+\documentclass[11pt, oldfontcommands, oneside, a4paper]{memoir}
+\usepackage{etoolbox}
+
+\input{layout/template}
+
+\setmainlanguage{dutch}
+\PolyglossiaSetup{dutch}{indentfirst=false}
+
+\graphicspath{ {images/} }
+
+
+
+\title{Learning C++ with Esenthel}
+\begin{document}
+\titleGM
+\tableofcontents
+
+%\part{C++ en Esenthel}
+%\input{../parts/introduction}
+
+\part{2D Concepts}
+\input{nl/2d/positions}
+\input{nl/2d/interaction}
+\input{nl/2d/text}
+\input{nl/2d/shapes}
+\input{nl/2d/images}
+
+\part{Basics}
+\input{nl/basics/random}
+\input{nl/basics/containers}
+\input{nl/basicClasses}
+\input{nl/functions}
+\input{nl/classes}
+\input{nl/basics/referenties}
+\input{nl/basics/pointers}
+\input{nl/basics/enumeratie}
+\input{nl/basics/constants}
+\input{nl/basics/gamestates}
+
+\part{Tetris}
+\input{nl/tetris/inleiding}
+\input{nl/tetris/objects}
+\input{nl/tetris/interface}
+\input{nl/tetris/gamestates}
+\input{nl/tetris/gamelogic}
+
+\part{Gui}
+\input{nl/gui/introduction}
+\input{nl/gui/window}
+\input{nl/gui/button}
+\input{nl/gui/checkbox}
+\input{nl/gui/slider}
+\input{nl/gui/textline}
+\input{nl/gui/translations}
+
+\part{Data}
+\input{nl/data/textfiles}
+\input{nl/data/databases}
+\input{nl/data/aboutclientserver}
+\input{nl/data/sharedobjects}
+\input{nl/data/server}
+\input{nl/data/client}
+
+\part{3D Worlds}
+\input{nl/3DWorlds/introduction}
+\input{nl/3DWorlds/manipulating_objects}
+\input{nl/3DWorlds/object_parameters}
+\input{nl/3DWorlds/animations}
+\input{nl/3DWorlds/dynamic_objects}
+\input{nl/3DWorlds/inventory}
+
+\printindex
+
+\end{document}
+

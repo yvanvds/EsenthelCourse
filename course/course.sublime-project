@@ -1,0 +1,29 @@
+{
+	"folders":
+	[
+		{
+			"file_exclude_patterns":
+			[
+				"*.pdf",
+				"*.tcp",
+				"*.synctex",
+				"*.toc",
+				"*.aux",
+				"*.tps",
+				"*.log",
+				"*.idx",
+				"*.nav",
+				"*.out",
+				"*.snm"
+			],
+			"path": "."
+		},
+		{
+			"path": "C:\\Users\\yvan\\Desktop\\How-to-use-SQLite-Database-in-Swift-master\\DbDemoExampleSwift\\ViewController"
+		}
+	],
+	"settings":
+	{
+		"TEXroot": "course_nl.tex"
+	}
+}

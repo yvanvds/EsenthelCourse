@@ -64,7 +64,7 @@ public:
       if(Kb.bp(KB_LEFT )) dir = DIRE_LEFT ;
       if(Kb.bp(KB_RIGHT)) dir = DIRE_RIGHT;
       
-      // positie upate
+      // positie update
       switch(dir)
       {
          case DIRE_UP   : pos.y += Time.d() * 0.5; break;
@@ -130,7 +130,9 @@ public:
 }
 \end{code}
 
+\begin{exercise}
 De bovenstaande code vind je ook terug in de template. Maak een object van de class player en gebruik die in je programma om te zien wat het resultaat is van deze code.
+\end{exercise}
 
 \begin{note}
 Op regel 39 zie je een object `current' van de class \eeClass{ImagePtr}. Deze class is een `pointer' naar een \eeClass{Image}. Via de code die volgt stellen we die pointer gelijk aan de image die we op dat moment willen tonen. Daarna gebruiken we \verb|current->draw()|. Het pijltje wil zeggen dat we van de image waar de pointer naar verwijst, de functie \eeFunc{draw()} uitvoeren. In een volgend hoofdstuk leer je meer over pointers.

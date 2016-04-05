@@ -1,0 +1,56 @@
+\chapter{Animations}
+De class \eeClass{Game.Chr} voorziet een aantal standaard animaties. Die zijn echter zelden genoeg. In dit hoofdstuk zie je hoe je deze animaties aanpast, en hoe je nieuwe animaties toevoegt.
+
+Esenthel maakt een onderscheid tussen standaard animaties and custom animaties. De standaard animaties worden automatisch toegepast aan de hand van enkele variabelen in \eeClass{Game.Chr}. Als je de header file van deze class opent, dan zie je binnen de class een struct \eeClass{Input}. Deze class regelt hoe je avatar over het scherm beweegt. Je ziet properties zoals crouch, walk, jump en dodge.
+
+Het is eenvoudig om deze waarden aan te passen. Je hebt dat trouwens al gedaan in een van de vorige hoofdstukken. Denk aan code zoals:
+
+\begin{code}
+input.turn.x = Kb.b(KB_Q) - Kb.b(KB_E);
+input.turn.y = Kb.b(KB_T) - Kb.b(KB_G);
+input.move.x = Kb.b(KB_D) - Kb.b(KB_A);
+\end{code}
+
+\begin{exercise}
+De avatar heeft, naast een run animatie, ook een walk animatie. Die wordt op dit moment niet gebruikt. Pas de code in \eeFunc{player.update} aan zodat je avatar standaard wandelt, maar wel loopt wanneer de linker ctrl toets ingedrukt is. Zoek in de struct \eeClass{Input} op welke property je hier voor aanpast.
+\end{exercise}
+
+\section{Jump}
+Vreemd genoeg bevat \eeClass{Input} wel een property jump die de avatar tijdelijk omhoog beweegt, maar bestaat er geen standaard animatie voor jump. Dat wil zeggen dat je een custom animatie moet gebruiken. Om dit te doen heb je een \eeClass{Motion} object nodig. Voeg alvast dit object toe aan de class \eeClass{Player}.
+
+\begin{code}
+Motion jumpMotion;
+\end{code}
+
+In de functie \eeFunc{update} kan je de huidige `jump' code aanvullen:
+
+\begin{code}
+// jumping
+input.jump = Kb.bp(KB_SPACE) ?  3.5 :  0;
+if(Kb.bp(KB_SPACE))
+{
+  jumpMotion.set(skel, === drop jump animation ===);
+}
+jumpMotion.updateAuto(5, 5, 1);
+\end{code}
+
+Het eerste statement stond al in je code. Dat bepaalt of je avatar al dan niet even omhoog gaat. Daarna stel je de animatie in wanneer de speler op de spatiebalk drukt. Het eerste argument is het skeleton waarop de animatie van toepassing is. De waarde `skel' is skeleton dat al aanwezig is in \eeClass{Game.Chr}. Het tweede argument is de verwijzing naar de animatie. Drop daar de jump animatie die je vindt in Assets $\Rightarrow$ characters  $\Rightarrow$ samurai.
+
+Tijdens elke update moeten ook alle \eeClass{Motion} object geupdated worden. In dit geval is dat jumpMotion. Je kan de \eeFunc{updateAuto} functie gebruiken om het eenvoudig te houden. De eerste twee argumenten bepalen hoe snel je overschakelt van de standaard animatie naar de jump animatie en omgekeerd. Het derde argument is de algemene snelheid waarmee de animatie getoond wordt.
+
+Wanneer je nu de game uitvoert, zal je zien dat de jump animatie niet gebruikt wordt. We moeten eerst de aanwezige functie \eeFunc{animate} van \eeClass{Game.Chr} overschrijven. Die functie voert nu enkel de standaard animaties uit. Omdat dit een virtuele functie is (kijk in de header file!) moet je daarin ook de oorspronkelijke functie uitvoeren. \textit{(Tenzij je echt niet wil dat de standaard animaties gebruikt worden.)} Voeg daarom de volgende functie toe aan je player class:
+
+\begin{code}
+virtual void animate()
+{
+  super.animate();
+  skel.animate(jumpMotion, true);
+}
+\end{code}
+
+Deze functie voert eerst de standaard animaties uit. Daarna wordt de \eeClass{jumpMotion} toegevoegd. Het extra argument `replace' bepaalt dat de vorige animaties overschreven moeten worden. Wanneer je `false' gebruikt, zal de impact van de vorige animaties veel groter zijn.
+
+\begin{exercise}
+Pas de waarden in \eeFunc{updateAuto} aan een bekijk het resultaat. Bekijk ook hoe anders de animatie is wanneer je \eeFunc{skel.animate(jumpMotion, false)} gebruikt.
+\end{exercise}
+
