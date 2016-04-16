@@ -1,0 +1,249 @@
+\chapter{Interaction}
+Most interactions in an application are triggered by keyboard and mouse. (Mobile devices mostly use touches, and we'll discuss those later.) In this chapter we'll talk about how to handle them.
+
+\section{Mouse Interaction}
+You can find the class \eeClass{Mouse} in Esenthel Engine $\Rightarrow$ Input $\Rightarrow$ Mouse. Operating systems cannot handle more than one mouse pointer, which is why Esenthel already has a mouse object defined: \eeClass{Ms}. You do not need to declare an instance of \eeClass{Mouse}.
+
+When you look at the functions provided in this class, you'll see a lot of them. Most of the time you will be interested in clicks and positions.
+
+\subsection{Position}
+The position of the mouse pointer on the screen is a \eeClass{Vec2}. The function \eeFunc{Ms.pos()} returns the current position. The following code example shows the current mouse position on the screen. 
+
+
+\begin{code}
+Vec2 mousePos;
+
+void InitPre()
+{
+   EE_INIT();
+}
+
+bool Init()
+{   
+   return true;
+}
+
+void Shut() {}
+
+bool Update()
+{
+   if(Kb.bp(KB_ESC)) return false;  
+   mousePos = Ms.pos();  
+   return true;
+}
+
+void Draw()
+{
+   D.clear(BLACK);
+   mousePos.draw(RED);
+}
+\end{code}
+
+\begin{exercise}
+Use the example above, but instead of showing this position in the middle of the screen, show it a little bit below the current mouse position.
+\end{exercise} 
+
+\subsection{Clicks}
+You can use the \eeClass{Ms} object to access anything related to the mouse. Most computer mouses have more than one button, which is why you need to indicate which button you'ld like to query. The left button has an index of 0, the right button an index of 1. If the mouse wheel can also be pressed, it will be index 2. Here are some examples: 
+
+\begin{code}
+Ms.bp(0); // true if the left button was pressed in this frame
+Ms.br(1); // true if the right button was released in this frame
+Ms.b (0); // true as long as the left button is held down
+Ms.bd(0); // true when a double click is detected in this frame
+\end{code}
+
+There is a subtle difference between \eeFunc{Ms.bp()} and \eeFunc{Ms.b()}:
+\begin{itemize}
+	\item \eeFunc{Ms.bp()} Is only true on the moment the button is pressed. The button might still be held down in the next fram, but the function will return false by then.
+	\item \eeFunc{Ms.b()} This function will return true as long as you don't release the button.
+\end{itemize}
+
+The next example will illustrate this difference:
+
+\begin{code}
+Vec2 mouse1Pos;
+Vec2 mouse2Pos;
+
+void InitPre()
+{
+   EE_INIT();
+}
+
+bool Init()
+{   
+   return true;
+}
+
+void Shut() {}
+
+bool Update()
+{
+   if(Kb.bp(KB_ESC)) return false;
+   
+   if(Ms.bp(0)) {
+      mouse1Pos = Ms.pos();
+   }
+   
+   if(Ms.b(1)) {
+      mouse2Pos = Ms.pos();
+   }
+   
+   return true;
+}
+
+void Draw()
+{
+   D.clear(BLACK);
+   mouse1Pos.draw(RED  );
+   mouse2Pos.draw(GREEN);
+}
+\end{code}
+
+The red dot will only update its position on the moment you press the left button. In contrast, the green point will update as long as the right button is pressed. While working on an application, you will often have to decide which approach is best for the action at hand.
+
+\begin{exercise}
+Starting with this example, make it so that the second mouse position is shown only when the right mouse button is being held down.
+\end{exercise} 
+
+
+\subsection{Mouse Wheel}
+Most recent mouse have a wheel. The wheel can be turned, but it doesn't have an absolute position. Esenthel can only tell you how much the wheel was turned since the last update. This distance is called a 'delta'. In general, a delta value indicates the difference between the previous and the current value. There are delta values for time, position changes, mouse wheel changes and so on. For the mouse wheel you will need the function \eeFunc{Ms.wheel()}. The result is a float value.
+
+The next example shows a dot on the vertical axis, controlled by the mouse wheel. The function \eeFunc{Ms.wheel()} only returns the change since the previous update, which means it cannot be assigned to the position directly. You will have to add it to the current value. This change is a very small positive number while you move the wheel upwards. While moving down, the value will be negative.
+
+\begin{code}
+Vec2 mousePos;
+
+void InitPre()
+{
+   EE_INIT();
+}
+
+bool Init()
+{   
+   return true;
+}
+
+void Shut() {}
+
+bool Update()
+{
+   if(Kb.bp(KB_ESC)) return false;  
+   mousePos.y += Ms.wheel();  
+   return true;
+}
+
+void Draw()
+{
+   D.clear(BLACK);
+   mousePos.draw(RED);
+}
+\end{code}
+
+\begin{exercise}
+Start from the example above. When the left mouse button is held down, you need to control the horizontal dot position. When the right mouse button is held down, you control the vertical position of the dot.
+\end{exercise} 
+
+\subsection{Cursor}
+The mouse cursor is actually just an image shown at the screen. It is possible to change this image in your application:
+
+\begin{code}
+Ms.cursor(Images( ===drop cursor image here=== ));
+\end{code}
+
+\begin{exercise}
+Modify the cursor image in the previous exercise. There are few suitable images in the folder gfx $\Rightarrow$ mouse.  Show the image `BGNormal' at the application start. When a mouse button is held down, show the image `BGMove' instead.
+\end{exercise}
+
+\subsection{Other functions}
+The \eeClass{Mouse} contains a lot of functions we didn't talk about. Just for fun, try to figure out what these functions do. The first and second one are rather obvious, but you might want to experiment a bit to understand what the last one does. 
+
+\begin{itemize}
+	\item \eeFunc{Ms.hide()}
+	\item \eeFunc{Ms.show()}
+	\item \eeFunc{Ms.eat()}
+\end{itemize}
+
+\section{Keyboard Interactions}
+The computer keyboard is often used to interact with a game. Later on, in the chapter about the GUI, you will see how to use a keyboard to type in text. This chapter will concentrate on using keystrokes to control interaction with your application.
+
+Every key has a name. Once you know the name, you are able to check on that particular key. Careful though: all names assume a qwerty keyboard. If your keyboard has another layout, like azerty, you will want to keep an image of a qwerty layout at hand. This seems a bit wierd, but when controlling a game, the actual position is is more importance than the character shown on the keyboard. For instance: we often use the WASD keys to control movement. Now imagine this would translate to the same characters on an azerty keyboard. That wouldn't be practical at all!
+
+That said, checking on a keystroke isn't really much different from a mouse click. You'll see that most methods are quite similar.
+
+\subsection{Key Methods}
+
+Take your time to examine these methods:
+
+\begin{code}
+Kb.bp(KB_N) // true if N was pressed down in this frame.
+Kb.br(KB_E) // true if E was released in this frame.
+Kb.b (KB_R) // true while R is being held down
+Kb.bd(KB_D) // true if a double tap occured on D
+\end{code}
+
+Even though we use the object \eeClass{Kb} instead of \eeClass{Ms}, most functions are exactly the same.  But instead of using the number of a mouse button as an argument, you will now enter a keyboard code. This code will always start with KB\_, followed by a character or a number. Other options are:
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\multicolumn{1}{|l|}{{\bf Functions}} & \multicolumn{1}{l|}{{\bf Control}} & \multicolumn{1}{l|}{{\bf Modifiers}} & \multicolumn{1}{l|}{{\bf Arrows}} & \multicolumn{1}{l|}{{\bf Numpad}} \\ \hline
+KB\_F1                                & KB\_ESC                            & KB\_LCTRL                            & KB\_LEFT                          & KB\_NPDIV                         \\ \hline
+KB\_F2                                & KB\_ENTER                          & KB\_RCTRL                            & KB\_RIGHT                         & KB\_NPENTER                       \\ \hline
+\ldots                                   & KB\_SPACE                          & KB\_LSHIFT                           & KB\_UP                            & KB\_NP1                           \\ \hline
+KB\_F12                               & KB\_BACK                           & KB\_RSHIFT                           & KB\_DOWN                          & KB\_NP2                           \\ \hline
+                                      & KB\_TAB                            & \ldots                                  &                                   & \ldots                               \\ \hline
+\end{tabular}
+\end{center}
+
+A complete list of all keys can be found at Esenthel Engine $\Rightarrow$ Input $\Rightarrow$ Input Buttons.
+
+\begin{exercise}
+Create an application with a dot on the screen. Use the arrow keys to move this dot. Every time an arrow key is pressed, you move this dot 0.1 units in that direction.
+
+The dot itself will be drawn in green, unless the spacebar is held down. If so, draw the dot in red.
+\end{exercise}
+
+\subsection{Gradual changes}
+\label{chapter:keyboardInteractie}
+The method \eeFunc{Kb.bp()} can be used for sudden changes. For example when you open a window, add an object, show a menu or close the application. Like this:
+
+\begin{code}
+if(Kb.bp(KB_F1)) CreateObject();
+\end{code}
+
+Imagine you would use the method \eeFunc{Kb.b()} instead. As long as the F1 key is held down, a new object will be created. On a fast computer, this would be about 60 times a second. And even when you're really fast and release the key almost instantly, you will probably create more than one object.
+
+Still, this is a usable method, but only when you need gradual changes. Like when you move a dot to the right as long as a key is held down:
+
+\begin{code}
+if(Kb.b(KB_RIGHT)) point.x += 0.01;
+\end{code}
+
+Every frame, the value of x will increase a little bit. The dot will gradually move to the right.
+
+\begin{exercise}
+Adapt your last exercise to use the \eeFunc{Kb.b()} method. The dot will now move very fast, so you might want to decrease the added value.
+\end{exercise}
+
+\subsection{Delta time}
+The exercise above has one major problem: the position will be updated at every frame. Should you test this application on two different computer, one with a good graphics card and 60FPS, and another without a dedicated graphics card running at 30FPS, the movement will be twice as fast on the good computer! We won't mind for a small exercise, but this could be a serious gaming disadvantage for the girl with the slower computer.
+
+We can fix this problem with the concept of \textbf{delta time}. The delta time is the time that has passed between this update and the previous one. \textsl{(Remember the mouse wheel delta, being the distance traveled by the mouse wheel between this frame and the previous one.)} The delta time can be retrieved with the next method:
+
+\begin{code}
+Time.d();
+\end{code}
+Would you like to move an object at a speed of 1 unit per second? Try this code:
+
+\begin{code}
+if(Kb.b(KB_RIGHT)) point.x += 1 * Time.d();
+\end{code}
+
+\begin{exercise}
+Adapt the previous exercise, so that the delta time is used. Once you've tested your app, replace the number one with a float variable defined on top of your application. Use two extra keys to alter the variable and hence control the movement speed.
+\end{exercise}
+
+
+
