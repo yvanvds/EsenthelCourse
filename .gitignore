@@ -127,3 +127,5 @@ sympy-plots-for-*.tex/
 
 # esenthel
 eeProjects/_Build_
+*.pdf
+course/course_nl.pdf
