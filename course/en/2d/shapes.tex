@@ -65,8 +65,8 @@ c -= Vec2(0, 0.2);
 c *= 2;
 \end{code}
 
-\subsection{Excercises}
-Recreate the folowing image by drawing circles on the screen. If you like a challenge, try creating a more fitting mouth with the method \eeFunc{drawPie}.
+\subsection{Exercises}
+Recreate the following image by drawing circles on the screen. If you like a challenge, try creating a more fitting mouth with the method \eeFunc{drawPie}.
 
 \begin{figure}[h]
 \centering
@@ -76,7 +76,7 @@ Recreate the folowing image by drawing circles on the screen. If you like a chal
 \end{figure}
 
 \section{Edge2}
-An \eeClass{Edge2} is a line. Just as with \eeClass{Vec2}, the '2' is important. The code will still be valid when you use an \eeClass{Edge} instead of an \eeClass{Edge2}, but that class is intended for drawing in 3D instead. To define an \eeClas{Edge2}, you need two points (\eeClass{Vec2}), being the beginning and the end. Esenthel offers two methods to pass these to the object:
+An \eeClass{Edge2} is a line. Just as with \eeClass{Vec2}, the '2' is important. The code will still be valid when you use an \eeClass{Edge} instead of an \eeClass{Edge2}, but that class is intended for drawing in 3D instead. To define an \eeClass{Edge2}, you need two points (\eeClass{Vec2}), being the beginning and the end. Esenthel offers two methods to pass these to the object:
 
 \begin{code}
 Edge2 e1;
@@ -122,7 +122,7 @@ float y = Cos(Time.curTime());
 \item \textit{(This will be a bit harder)} Try to create an analog watch.
 \end{enumerate}
 
-Take a look at Esenthel Engine $\Rightarrow$ Math $\Rightarrow$ Shapes $\Rightarrow$ Edge. Examine the method \eeFunc{lerp(float s)} vinden. This function needs an argument between zero and one, and return a position on the line.
+Take a look at Esenthel Engine $\Rightarrow$ Math $\Rightarrow$ Shapes $\Rightarrow$ Edge. Examine the method \eeFunc{lerp(float s)}. This function needs an argument between zero and one, and return a position on the line.
 
 \begin{enumerate}
 \item Define an \eeClass{Edge2} and a \eeClass{float} with value zero.
@@ -151,7 +151,7 @@ This means a rectangle can be created like this:
 Rect(Vec2(-0.2, -0.1), Vec2(0.2, 0.1)).draw(BLACK, false);
 \end{code}
 
-Zoals je ziet is er ook nu een draw functie, waarin het eerste argument de kleur is, en je daarna optioneel kan aangeven dat je de rechthoek niet wil vullen. Net zoals bij een edge heb je ook nu weer de mogelijkheid om de x- en y-co\"ordinaat afzonderlijk in te geven:
+Again there is a draw function with the color as the first argument. And optionally you can draw only the perimeter of the rectangle. Just as with \eeClass{Edge2} there is another version of the constructor allowing you to enter the x- and y-coordinates one by one.
 
 \begin{code}
 Rect(-0.2, -0.1, 0.2, 0.1).draw(BLACK);
@@ -170,21 +170,20 @@ class movableRect {
 }
 \end{code}
 
-
-Deze class kunnen we uitbreiden met een create functie, een update functie en een draw functie. Via de create functie geef je de kleur en de startpositie door. De startpositie heeft een standaard waarde, dus wanneer je later de create functie gebruikt zonder een positie, dan staat de rechthoek in het midden van het scherm.
+This class can be extended with a create, update and draw methods. The create method can be used to pass the color and the starting position to the object. This starting position already has a default value, so you can use the create method without it.
 
 \begin{code}
 void create(C Color & color, C Vec2 & pos = 0) {
-  T.color = color;
+  	T.color = color;
 	T.pos = pos;
 }
 \end{code}
 
 \begin{note}
-In deze functie staan nog enkele nieuwigheden. De ampersand geeft aan dat we color en pos als referentie doorgeven. De \eeFunc{C} betekent dat we de waarde niet zullen aanpassen. Je leert hierover meer in een van de volgende hoofdstukken. De letter \eeFunc{T} lost een praktisch probleem op. Zowel het functie-argument als de Color in de class zelf hebben als naam `color'. De compiler kan daarom niet weten wanneer je welke variabele bedoelt. Je zou ze beiden een verschillende naam kunnen geven, maar dat maakt de code moeilijker leesbaar. De elegante oplossing bestaat er in \eeFunc{T.} voor de variabele van de class toe te voegen. De T staat voor `this' en daarmee bedoelen we `deze class'. De versie zonder \eeFunc{T.} is bijgevolg de variabele die we als functieargument doorgeven.
+There some other new stuff in this method. The \& sign indicates that the color and pos will be passed as a reference. The character \eeFunc{C} means we will not change the value that was passed into the method. You will learn more about this in one of the next chapters. Within the function, the character \eeFunc{T} is used to solve a practical problem. The class and the method both have a variable named `color'. This makes it impossible for the compiler to know what variable you mean. You could rename one of them, but that makes the code harder to read. A more elegant solution is to add \eeFunc{T.} before the class variable. T stands for `this' and by that we mean `this class'. The version without \eeFunc{T.} will be the local variable, passed into the method.
 \end{note}
 
-In de update functie kunnen we de positie wijzigen via de pijltjestoetsen. Deze code heb je reeds gezien in hoofdstuk \ref{chapter:keyboardInteractie}.
+Within the update method, the position can be changed by using the arrow-keys. You came across this code before, in chapter \ref{chapter:keyboardInteractie}.
 
 \begin{code}
 void update() {
@@ -195,8 +194,7 @@ void update() {
 }
 \end{code}
 
-
-Tot slot is er een draw functie nodig. Het is pas op deze plaats dat we, tijdelijk, een rechthoek maken. In dit geval is dat het meest praktisch, maar dat hoeft niet altijd zo te zijn. Het zou bijvoorbeeld kunnen dat je in de update functie wil controleren of de rechthoek iets raakt. In zo'n geval zou je waarschijnlijk ook een \eeClass{Rect} aan je class toevoegen.
+The final thing we need is a draw function. Notice that this is the only place we actually create a rectangle. That's because we don't really need the whole rectangle in the other methods. This could be different if, for example, we need to check if the rectangle hits another object. So you could add a real \eeClass{Rect} to this class, but right now it is not needed.
 
 \begin{code}
 void draw() {
@@ -204,9 +202,9 @@ void draw() {
 }
 \end{code}
 
-Zoals je ziet gebruiken we de positie `pos' bij het maken van de rechthoek. Die is namelijk het middelpunt. Aangezien we de hoeken linksonder en rechtsboven nodig hebben bij het maken van een rechthoek, kunnen we eenvoudig een waarde respectievelijk aftrekken en optellen. We zouden deze class nog wat meer flexibel kunnen maken door een `size' te onthouden.
+As you see, we use the position `pos' when we create the rectangle. The position will be the middle of the rectangle. But we still need to define the corner. This can be done be subtracting and adding the same value from the position. In this case the value is literal, but a more advanced class could just define a \eeClass{Vec2 size} and use that instead. That would make it easy to define movable rectangles of different sizes.
 
-Omdat dit de eerste maal is dat we een volledige class uitwerken in esenthel krijg je ze hieronder nog eens helemaal te zien. Let ook op de keywords public en private. Die zijn later belangrijk als je je code overzichtelijk wil houden.
+The whole class is listed again below. It is the first time in this course we actually create a new class, so be sure you understand what is going on. And pay attention to the keywords \eeClass{private} and \eeClass{public}. You should know those from an introductory c++ course. We will talk more about those later on, but remember they are part of a good programming style.
 
 \begin{code}
 class movableRect {
@@ -234,27 +232,27 @@ public:
 }
 \end{code}
 	
-\subsection{Oefeningen}
+\subsection{Exercises}
 
 \begin{enumerate}
-\item Maak in een programma de volgende afbeelding na:
+\item Recreate this screen in an application:
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.4\linewidth]{../images/nested_rectangles}
-\caption[]{Rechthoeken}
+\caption[]{Rectangles}
 \label{fig:nested_rect}
 \end{figure}
 
-\item Voeg een roze vierkant toe van de class \eeClass{movableRect} die we hierboven voorstelden.
-\item \textbf{(Uitbreiding)} Zorg dat het vierkant niet buiten het scherm kan bewegen.
+\item Add a pink square to the application, using the newly created class \eeClass{movableRect}.
+\item \textit{(A bit harder)} Be sure the square cannot move outside of the screen.
 \end{enumerate}
 
 \section{Cuts}
 
-Een functie die je vaak gebruikt in verband met shapes is \eeFunc{Cuts}. Er bestaan heel veel varianten op deze functie, maar de betekenis is steeds dezelfde: raken twee objecten mekaar of niet? Zo kan je controleren of een punt en een cirkel mekaar raken, of een cirkel en een rechthoek, twee rechthoeken, een driehoek en een lijn, enzovoort.
+A function that is used very often in combination with shapes is \eeFunc{Cuts}. There are quite a lot of different versions of this function, but its meaning is always the same: do two shapes overlap, or don't they? The \eeFunc{Cuts} function allows you to check if a dot is inside a circle, if a circle (partially) overlaps a rectangle, if a line cuts a rectangle and so on. 
 
-Om te controleren o een punt een cirkel raakt, gebruik je bijvoorbeeld de volgende code:
+To check if a dot is inside a circle, use the code below:
 
 \begin{code}
 Vec2 pos(0.1, 0.1);
@@ -263,7 +261,7 @@ Circle area(0.3, Vec2(0));
 if(Cuts(pos, area)) area.draw(RED);
 \end{code}
 
-Natuurlijk is het in dit voorbeeld al duidelijk dat het punt de cirkel steeds zal raken. Maar ook de positie van je muiswijzer is een punt. Je zou dus het volgende kunnen schrijven:
+Of course, in this example it is already certain the dot will always be inside the circle. But you could use the same principle to see if the mouse pointer is inside the circle, like this:
 
 \begin{code}
 Circle area(0.1, Vec2(0));
@@ -272,19 +270,19 @@ if(Cuts(Ms.pos(), area)) area.draw(RED);
 else area.draw(BLACK);
 \end{code}
 
-De code hierboven ligt aan de basis van vele interactiemogelijkheden. Dikwijls gebeurt dit in combinatie met andere controles. Probeer zelf eens te bedenken wat de volgende code doet:
+The code above is the starting point for many possible interactions. Often, this will be in combination with other rules. Try to find out what the code below does:
 
 \begin{code}
 Rect button(Vec2(-0.2, -0.1), Vec2(0.2, 0.1));
 bool hover = false;
 
-// in een update functie:
+// in the update function:
 if (Cuts(Ms.pos(), button)) {
-  hover = true;
+    hover = true;
 	if(Ms.bp(0)) exit();
 } else hover = false;
 
-// in een draw functie
+// in the draw function:
 if(hover) {
   button.draw(Color(0, 255, 0));
 } else {
@@ -292,16 +290,15 @@ if(hover) {
 }
 \end{code}
 
-\subsection{Oefeningen}
+\begin{exercise}
 \begin{enumerate}
-\item Maak een programma met 3 cirkels (onder mekaar) waarvan je enkel de rand toont, tenzij de muiscursor zich in een van de cirkels bevindt. In dat geval teken je die cirkel gevuld.
-\item Pas het vorige programma aan. Zorg er voor dat een cirkels langzaam naar rechts beweegt wanneer die zich onder de muiscursor bevindt.
-\item Maak een integer `score'. Wanneer een cirkel de rechterkant van het scherm raakt, verhoog je de score met \'e\'en en plaats je de cirkel terug links.
+\item Create an application with 3 circles, each one below the other. Only the border of the circles is drawn, unless the mouse pointer is in that particular circle. In which case you draw a filled circle.
+\item Make the circles move slowly to the right as long as the mouse pointer is inside the circle.
+\item Create an integer `score'. When the circle goes over the right side of the screen, increase the score by one and place the circle back in the middle.
 \end{enumerate}
 
-\textbf{(Uitbreiding) }Maak een eigen class die zich als een button gedraagt. Je kan vertrekken van het voorbeeld hierboven en een hover effect implementeren. (Extra uitdaging: de kleur kan ook geleidelijk veranderen.) Een button zal ook een tekst moeten tonen, dus je voorziet een create functie die de positie en die tekst instelt. Een meer algemene functie om te bepalen wat de button doet wanneer je er op klikt is nog niet voor nu, maar je kan natuurlijk altijd proberen.
-
-
+\textit{(A bit harder) } Create your own class that behaves like a button, with a hover effect. The button also needs a line of text, which will be set by the create function.
+\end{exercise}
 
 
 

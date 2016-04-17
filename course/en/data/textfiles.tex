@@ -3,7 +3,7 @@ There are a lot of different ways to save data. Textfiles are simple to read, bu
 
 \section{File Locations}
 Whatever your choice, you will have to decide where to store the data. You could type in the full path in your code editor, but that's not a great idea.
-Suppose you decide to save a config file to \verb|C:\myGame\gameData\config.txt.| This will be very anoying towards the user when she decides to save your app on another disk. It's even possible her computer does not even have a C drive!
+Suppose you decide to save a config file to \verb|C:\myGame\gameData\config.txt.| This will be very annoying towards the user when she decides to save your app on another disk. It's even possible her computer does not even have a C drive!
 
 Esenthel allows you to figure out some paths automatically. For example, you can retrieve the `documents' folder of the computer your app is running on:
 
@@ -107,7 +107,7 @@ if(data.load(S + docPath + "/config.txt")) {
 \end{code}
 
 \begin{note}
-While saving a node, you can assign it about every value you want with the function\eeFunc{setValue}. But if you try to read it, you will have to tell the compiler what type of variable you're trying to read: you can use functions like \eeFunc{asInt} to load an integer, or \eeFunc{asText} vto load a string. More possibilities can be found in \verb|File $\Rightarrow$ Xml|. (\eeClass{TextNode} is based on \eeClass{TextParam}.)
+While saving a node, you can assign it about every value you want with the function\eeFunc{setValue}. But if you try to read it, you will have to tell the compiler what type of variable you're trying to read: you can use functions like \eeFunc{asInt} to load an integer, or \eeFunc{asText} to load a string. More possibilities can be found in \verb|File $\Rightarrow$ Xml|. (\eeClass{TextNode} is based on \eeClass{TextParam}.)
 \end{note}
 
 \begin{exercise}
@@ -213,7 +213,7 @@ The save and load functions above do not use the same order for storing and read
 \end{figure}
 
 \begin{note}
-The variable order while reading must match exactly with the order while saving. Unexpected behaviour will follow if it doesn't.
+The variable order while reading must match exactly with the order while saving. Unexpected behavior will follow if it doesn't.
 \end{note}
 
 And there's another, less known, way in which things can go south. C++, like most programming languages, will handle function arguments from right to left. Most of the time we're not bothered by this. Take this code for example:
@@ -287,7 +287,7 @@ Sooner or later, you will want to store multiple objects in one file. There are 
 	\item Create save and load methods for your object, and pass the current file as a reference.
 \end{enumerate}
 
-Below, you see a resource class with save and load methods. Notice that thes methods do not save or load any file directly. They merely add or read data to and from a file that will be created elsewhere.
+Below, you see a resource class with save and load methods. Notice that these methods do not save or load any file directly. They merely add or read data to and from a file that will be created elsewhere.
 
 \begin{code}
 class resource {
@@ -379,7 +379,7 @@ There is one drawback to this approach. When you update your software and add so
 \end{note}
 
 \begin{exercise}
-Create a class for a circle that can remember its color. Create a manager class that can store these circles. Every mouseclick adds a circle to this manager, on the current mouse position. (Reread chapter \ref{section:managerClass} if you need help.)
+Create a class for a circle that can remember its color. Create a manager class that can store these circles. Every mouse click adds a circle to this manager, on the current mouse position. (Reread chapter \ref{section:managerClass} if you need help.)
 
 When you close the application all circles are to be saved on disk. When the application starts, you must load all circles from the previous sessions.
 \textsl{(Project Textfiles, ex. 05)}

@@ -17,13 +17,10 @@
 				"*.snm"
 			],
 			"path": "."
-		},
-		{
-			"path": "C:\\Users\\yvan\\Desktop\\How-to-use-SQLite-Database-in-Swift-master\\DbDemoExampleSwift\\ViewController"
 		}
 	],
 	"settings":
 	{
-		"TEXroot": "course_nl.tex"
+		"TEXroot": "course_en.tex"
 	}
 }

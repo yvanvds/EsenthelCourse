@@ -37,6 +37,10 @@ Dit heeft twee voordelen:
 Omdat PI een nummer is dat alle programmeurs vaak nodig hebben, bestaat er al een constante PI in Esenthel. Niet enkel dat, er zijn ook al varianten voorzien, zoals PI\_2 (de helft van PI) en PI2 (twee maal PI).
 \end{note}
 
+\begin{exercise}
+Maak een programma met de volgende constanten: playerColor, playerSize, enemyColor en enemySize. De player is een rechthoek en de enemies zijn cirkels. \textit{(Het is een erg abstract spel.)} Toon een speler en verschillende enemies op het scherm.
+\end{exercise}
+
 \section{Const Argumenten}
 Er bestaat nog een andere situatie waarin je constanten gebruikt. Bekijk even de volgende functie:
 
@@ -78,3 +82,11 @@ pos.draw(RED);
 \end{code}
 
 Het tweede en derde argument zijn constant. De functie \eeFunc{Clamp} kan dus niet het minimum of maximum aanpassen. Maar \eeFunc{pos} willen we natuurlijk net wel aanpassen. Hier gebruik je dus geen const reference.
+
+\begin{exercise}
+\begin{itemize}
+	\item Doorzoek de Engine code naar meer functies die geen const reference gebruiken. Probeer te verklaren waarom ze dat niet doen.
+	\item Schrijf een functie `ClampToScreen' die een gegeven coordinaat aanpast wanneer het buiten het scherm zou vallen. Test de functie met een eenvoudig programma. Gebruik je een const reference of niet?
+	\item Schrijf een functie met een string argument die die string op het scherm plaatst. Je maakt een versie met een const reference en een versie met een gewone reference. Test beide versies met bestaande strings en met string literals. Waarom werkt de niet-const versie enkel met strings en niet met literals?
+\end{itemize}
+\end{exercise}

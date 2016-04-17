@@ -44,7 +44,7 @@ Use the example above, but instead of showing this position in the middle of the
 \end{exercise} 
 
 \subsection{Clicks}
-You can use the \eeClass{Ms} object to access anything related to the mouse. Most computer mouses have more than one button, which is why you need to indicate which button you'ld like to query. The left button has an index of 0, the right button an index of 1. If the mouse wheel can also be pressed, it will be index 2. Here are some examples: 
+You can use the \eeClass{Ms} object to access anything related to the mouse. Most computer mouses have more than one button, which is why you need to indicate which button you'd like to query. The left button has an index of 0, the right button an index of 1. If the mouse wheel can also be pressed, it will be index 2. Here are some examples: 
 
 \begin{code}
 Ms.bp(0); // true if the left button was pressed in this frame
@@ -55,7 +55,7 @@ Ms.bd(0); // true when a double click is detected in this frame
 
 There is a subtle difference between \eeFunc{Ms.bp()} and \eeFunc{Ms.b()}:
 \begin{itemize}
-	\item \eeFunc{Ms.bp()} Is only true on the moment the button is pressed. The button might still be held down in the next fram, but the function will return false by then.
+	\item \eeFunc{Ms.bp()} Is only true on the moment the button is pressed. The button might still be held down in the next frame, but the function will return false by then.
 	\item \eeFunc{Ms.b()} This function will return true as long as you don't release the button.
 \end{itemize}
 
@@ -168,7 +168,7 @@ The \eeClass{Mouse} contains a lot of functions we didn't talk about. Just for f
 \section{Keyboard Interactions}
 The computer keyboard is often used to interact with a game. Later on, in the chapter about the GUI, you will see how to use a keyboard to type in text. This chapter will concentrate on using keystrokes to control interaction with your application.
 
-Every key has a name. Once you know the name, you are able to check on that particular key. Careful though: all names assume a qwerty keyboard. If your keyboard has another layout, like azerty, you will want to keep an image of a qwerty layout at hand. This seems a bit wierd, but when controlling a game, the actual position is is more importance than the character shown on the keyboard. For instance: we often use the WASD keys to control movement. Now imagine this would translate to the same characters on an azerty keyboard. That wouldn't be practical at all!
+Every key has a name. Once you know the name, you are able to check on that particular key. Careful though: all names assume a qwerty keyboard. If your keyboard has another layout, like azerty, you will want to keep an image of a qwerty layout at hand. This seems a bit weird, but when controlling a game, the actual position is is more importance than the character shown on the keyboard. For instance: we often use the WASD keys to control movement. Now imagine this would translate to the same characters on an azerty keyboard. That wouldn't be practical at all!
 
 That said, checking on a keystroke isn't really much different from a mouse click. You'll see that most methods are quite similar.
 
@@ -180,7 +180,7 @@ Take your time to examine these methods:
 Kb.bp(KB_N) // true if N was pressed down in this frame.
 Kb.br(KB_E) // true if E was released in this frame.
 Kb.b (KB_R) // true while R is being held down
-Kb.bd(KB_D) // true if a double tap occured on D
+Kb.bd(KB_D) // true if a double tap occurred on D
 \end{code}
 
 Even though we use the object \eeClass{Kb} instead of \eeClass{Ms}, most functions are exactly the same.  But instead of using the number of a mouse button as an argument, you will now enter a keyboard code. This code will always start with KB\_, followed by a character or a number. Other options are:

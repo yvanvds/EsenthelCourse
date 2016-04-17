@@ -1,0 +1,90 @@
+\chapter{Constants}
+\section{Global Constants}
+Most applications will use particular values throughout the code. Imagine an application which does a lot of calculations with circles: you will definitely use the number pi a lot. You could calculate pi every time you need it, but that's not a good idea because the outcome will be the same every time. You're making your computer do needless calculations. Instead you could declare a global variable:
+
+\begin{code}
+int pi = 3.1415926;
+\end{code}
+
+With this variable, you can use pi everywhere in your code. But mistakes happen, and what about this one:
+
+\begin{code}
+int value = 1;
+// ... more code ...
+if(pi = value) {
+  // do something
+}
+\end{code}
+
+The code above won't result in an error. But instead of comparing pi, you assign a new value to pi by mistake. Auch! This mistake is easily made, but it might take a while before you realize why every calculation with pi suddenly has the wrong outcome.
+
+It would be much better if we could prevent such a mistake from being made. After assigning a value to pi, there is no reason why it should change. We need a way to prevent changes made to this variable. That's why most programming languages provide a way to make a variable `constant'. A constant can never changes after its declaration. And to increase readability, most programmers will always write constants in capitals.
+
+So how do you declare a constant in C++? You precede it with the word \verb|const|. Esenthel makes it even easier by defining the capital \verb|C| as \verb|const|, just like you can write \verb|T| instead of \verb|this|. In Esenthel, you could declare PI as:
+
+\begin{code}
+C PI = 3.1415926;
+\end{code}
+
+This approach has two advantages:
+
+\begin{enumerate}
+	\item The value of PI can never be changed by mistake.
+	\item If, for some crazy reason, you \textit{need} to change the value of PI, you only have to change it this one instance. \textsl{(Highly unlikely in this case, but it will happen with other constant values in your application. Imagine a constant named ATTACK\_RANGE. You probably will want to experiment with that before releasing your game.)} 
+\end{enumerate}
+
+\begin{note}
+Because PI is needed in almost every game, Esenthel already declared it for you. And not only PI is defined, but also a few common calculations like PI\_2 (half of PI) and PI2 (two times PI).
+\end{note}
+
+\begin{exercise}
+Write an application with the following constants: playerColor, playerSize, enemyColor and enemySize. The player is a rectangle, the enemies are circles \textit{(it is a very abstract game)}. Draw a player and some enemies on the screen using these constants. 
+\end{exercise}
+
+\section{Const Arguments}
+There's another situation in which constants are used. Just look at this function:
+
+\begin{code}
+float calculateDistance(Vec2 & pos1, Vec2 & pos2);
+\end{code}
+
+Suppose you can use this function to calculate the distance between two points. In chapter \ref{chapter:references} you read that it is often faster to pass a variable by reference as opposed to passing it by value. But there's a downside on that. In principle, you could alter the values of pos1 and pos2 within this function. And if a value is passed by reference, this would also change those variables in the original location. But imagine you are working in a team and the function \eeFunc{calculateDistance} is written by someone else. If something unexpected happens in your code, you would have to double check the work of your colleague to verify the values are not changed in there. The name of the function seems to indicate there's no reason for that, but mistakes happen. A lot.
+
+It would be better if we can now for sure the values we pass to this function will not be changed by it. That way, we can focus on our own code when there's an error. The solution is simple: we can pass these references as constants:
+
+\begin{code}
+float calculateDistance(C Vec2 & pos1, C Vec2 & pos2);
+\end{code}
+
+This is much better because:
+
+\begin{enumerate}
+	\item when creating such a function, you will get an error if you try to change pos1 or pos2;
+	\item the programming which uses this function can be sure the values are not changed in there, without reading your code;
+	\item you have a strong indication that values \textit{will} be changed inside a function when the reference is not declared as a constant. \textit{(It's either that, or you need to have a serious talk with your fellow developers.)}
+\end{enumerate}
+
+Let's agree that, starting right now, you will pass all function arguments as a const reference, unless you have a good reason not to. Your future colleagues will like you a lot more when you do so.
+
+And what is a good reason not to use a constant? Look at the Esenthel \eeFunc{Clamp} function:
+\begin{code}
+void Clamp(Vec2 & value, C Vec2 & min, C Vec2 & max);
+\end{code}
+
+This function will change the first argument when its value is lower than the second or higher than the third. It can be used like this:
+
+\begin{code}
+Vec2 pos = Ms.pos();
+Clamp(pos, Vec2(-0.4,-0.4), Vec2(0.4,0.4));
+pos.draw(RED);
+\end{code}
+
+The second and third argument are constant, so the function will never change the minimum or maximum. But the first argument is the one that is meant to change. No const reference there.
+
+\begin{exercise}
+\begin{itemize}
+	\item Search the Engine code for more functions with non-const references. Try to explain why these references are not constant.
+	\item Write a function `ClampToScreen' which changes an argument (a Vec2) when it would be outside the screen. Test your function with a simple program. Can you use a const reference?
+	\item Write a function with a string argument. The function will draw the string on the screen. Create a version with a const reference and one with a non-const reference. Test both versions with existing \eeClass{Str} variables as well as with string literals. Why won't the non-const version work with string literals? 
+\end{itemize}
+\end{exercise}

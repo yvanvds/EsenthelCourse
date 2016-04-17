@@ -54,7 +54,7 @@
 \definecolor{blue}{HTML}{0000FF}
 \definecolor{green}{HTML}{009900}
 \definecolor{orange}{HTML}{FFA500}
-
+\definecolor{black}{HTML}{000000}
 
 % section header
 \titleformat{\section}[hang]{\bfseries}{
@@ -148,6 +148,25 @@
 	\vfill
 	\null
 	\endgroup
+}
+\makeatother
+
+%part page
+\makeatletter
+
+\renewcommand\printpartname{}
+\renewcommand\printpartnum{}
+\renewcommand{\parttitlefont}{\normalfont\raggedleft\Huge\scshape\color{primaryIntense}}
+\newcommand{\partAbstract}[1]{\gdef\@partAbstract{\leftskip5em\normalsize\color{black}\textit{#1}\par}}
+\renewcommand{\printparttitle}[1]{%
+\raggedleft
+\rule{0.75\textwidth}{1pt}
+\vskip1.37\baselineskip
+\parttitlefont Part \thepart: #1
+\color{black}
+\rule{0.75\textwidth}{1pt}
+\vskip1.37\baselineskip
+\@partAbstract
 }
 \makeatother
 

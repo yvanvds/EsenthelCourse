@@ -1,0 +1,85 @@
+%!TEX program = xelatex
+
+\documentclass[11pt, oldfontcommands, oneside, a4paper]{memoir}
+\usepackage{etoolbox}
+
+\input{layout/template}
+
+\setmainlanguage{english}
+\PolyglossiaSetup{english}{indentfirst=false}
+
+\graphicspath{ {images/} }
+
+
+
+\title{Learning C++ with Esenthel}
+\begin{document}
+\titleGM
+\tableofcontents
+
+%\part{C++ en Esenthel}
+%\input{../parts/introduction}
+
+\partAbstract{
+Learning to program is much more fun when you see some results on the screen. Esenthel can be used for 2D as well as 3D applications, but 2D is the easiest to start with. By the end of this part, you will be able to draw and manipulate basic shapes, images and text. And just for fun, you will learn to add some sound.
+}
+\part{2D Concepts}
+
+\input{en/2d/positions}
+\input{en/2d/interaction}
+\input{en/2d/text}
+\input{en/2d/shapes}
+\input{en/2d/images}
+
+\partAbstract{
+In this part you will learn about more generic programming concepts like random values and containers. You will also review some elementary stuff like references, enumerations, functions and classes and see some typical Esenthel use of those. To finish the part off, a chapter about application states is added. Mainly because it didn't really fit in anywhere else.
+}
+\part{Basics}
+
+% \input{nl/basics/random}
+% \input{nl/basics/containers}
+% \input{nl/basicClasses}
+% \input{nl/functions}
+% \input{nl/classes}
+% \input{nl/basics/referenties}
+% \input{nl/basics/pointers}
+% \input{nl/basics/enumeratie}
+\input{en/basics/constants}
+% \input{nl/basics/gamestates}
+
+% \part{Tetris}
+% \input{nl/tetris/inleiding}
+% \input{nl/tetris/objects}
+% \input{nl/tetris/interface}
+% \input{nl/tetris/gamestates}
+% \input{nl/tetris/gamelogic}
+
+% \part{Gui}
+% \input{nl/gui/introduction}
+% \input{nl/gui/window}
+% \input{nl/gui/button}
+% \input{nl/gui/checkbox}
+% \input{nl/gui/slider}
+% \input{nl/gui/textline}
+% \input{nl/gui/translations}
+
+% \part{Data}
+% \input{nl/data/textfiles}
+% \input{nl/data/databases}
+% \input{nl/data/aboutclientserver}
+% \input{nl/data/sharedobjects}
+% \input{nl/data/server}
+% \input{nl/data/client}
+
+% \part{3D Worlds}
+% \input{nl/3DWorlds/introduction}
+% \input{nl/3DWorlds/manipulating_objects}
+% \input{nl/3DWorlds/object_parameters}
+% \input{nl/3DWorlds/animations}
+% \input{nl/3DWorlds/dynamic_objects}
+% \input{nl/3DWorlds/inventory}
+
+\printindex
+
+\end{document}
+

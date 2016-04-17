@@ -147,7 +147,7 @@ For now, experiment a bit with the functions below to learn about their intent.
 \end{itemize}
 
 \section{Sound}
-To make your game a bit more attractive you will want to add sound. Generally speaking, there are two groups: music and effects (FX). Music will mostly be played in the background while FX is linked to certain actions like pressing a button or dying horrably.
+To make your game a bit more attractive you will want to add sound. Generally speaking, there are two groups: music and effects (FX). Music will mostly be played in the background while FX is linked to certain actions like pressing a button or dying horribly.
 
 \subsection{Music}
 A soundtrack can be played with the class \eeClass{Sound}:
@@ -233,18 +233,18 @@ void InitPre()
 
 bool Init()
 {
-   if(!Battle.songs())                         // create 'Battle' playlist if not yet created
+   if(!Battle.songs()) // create 'Battle' playlist if not yet created
    {
-      Battle += (drop hier dramatische track); // add "battle0" track to 'Battle' playlist
-      Battle += (hier ook                   ); // add "battle1" track to 'Battle' playlist
+      Battle += (=== drop action music ===); // add "battle0" track to 'Battle' playlist
+      Battle += (=== same here ===); // add "battle1" track to 'Battle' playlist
    }
-   if(!Explore.songs())                        // create 'Explore' playlist if not yet created
+   if(!Explore.songs()) // create 'Explore' playlist if not yet created
    {
-      Explore+= (hier een rustige track     ); // add "explore" track to 'Explore' playlist
+      Explore+= (=== drop tranquil music ===); // add "explore" track to 'Explore' playlist
    }
-   if(!Calm.songs())                           // create 'Calm' playlist if not yet created
+   if(!Calm.songs())  // create 'Calm' playlist if not yet created
    {
-      Calm   += (Hier nog een rustige track ); // add "calm" track to 'Calm' playlist
+      Calm   += (=== a very relaxed soundtrack ===); // add "calm" track to 'Calm' playlist
    }
    return true;
 }
