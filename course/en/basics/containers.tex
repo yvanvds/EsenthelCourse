@@ -1,0 +1,260 @@
+\chapter{Containers}
+
+So far, you needed to define all global objects at the head of your application file. This is no problem for a little exercise, but when your project grows in size, this becomes a problem. You also have to know upfront how many objects you need. Even for a little game like asteroids, it is impossible to know how many rocks there will be on the screen at all times.
+
+When you need several objects of the same type, you can use a container. When you declare a container for a certain object type, you can add objects to this container during the course of the application. An easy to use container is \eeClass{Memx}. The declaration of a container requires that you provide the type of objects it will contain. When you need a container for floats, you would declare it as a \eeClass{Memx<float>}. A container for rectangles would be a \eeClass{Memx<Rect>}. Look at this code for an example of a container with circles:
+
+\begin{code}
+// Declare a container for circles
+Memx<Circle> circles;
+
+void InitPre()
+{
+   EE_INIT();
+}
+
+bool Init()
+{
+    // add 10 circles to this container  
+	for(int i = 0; i < 10; i++)
+    {
+	    // The method New() adds a new circle to the container. 
+	    // At the same time the Circle method set() is used to 
+	    // assign a radius and a position.
+        circles.New().set(0.1, RandomF(-D.w(), D.w()), RandomF(-D.h(), D.h()));
+   }
+   return true;
+}
+
+void Shut() {}
+
+bool Update()
+{
+   if(Kb.bp(KB_ESC)) return false;  
+   return true;
+}
+
+void Draw()
+{
+   D.clear(BLACK);
+   
+   // Go over all circles in the container and
+   // draw them on the screen.
+   for(int i = 0; i < circles.elms(); i++)
+   {
+      circles[i].draw(RED);
+   }
+}
+\end{code}
+
+\begin{exercise}
+\begin{enumerate}
+\item What would happen if, by mistake, you place the code to generate circles in Update instead of Init?
+\item Put this code back in Init, but add code to the Update function: every time you press the space bar, an extra circle should be added to the container.
+\item Show an image on the screen instead of a circle. \textit{(Too hard? Start with a rectangle!)}
+\end{enumerate}
+\end{exercise}
+
+\section{New()}
+The method \eeFunc{New()} creates a new element at the end of the container. At the same time, it returns a reference to this new element, which is why can use the \eeClass{set()} method of circle in the example above. 
+
+But suppose you need to use two methods of the newly created object? You could try something like this:
+
+\begin{code}
+for(int i = 0; i < 10; i++)
+{
+	circles.New().set(0.1, RandomF(-D.w(), D.w()), RandomF(-D.h(), D.h()));
+	circels.New().extend(-0.05);
+}
+\end{code}
+
+\ldots but it won't work. Instead you are creating two new circles at every itereration. The method \eeFunc{set} is called on the first circle, the method \eeFunc{extend} at the second. The solution is simple: Pass the result of \eeFunc{New()} to a temporary variable. The type of this variable must be a reference to a circle. (If you don't know what a reference is, don't worry. We'll talk about it later. For now, remember that you need to put an ampersand (\&) between the type and the name.
+
+\begin{code}
+for(int i = 0; i < 10; i++)
+{
+	Circle & c = circles.New();
+	c.set(0.1, RandomF(-D.w(), D.w()), RandomF(-D.h(), D.h()));
+	c.extend(-0.05);
+}
+\end{code}
+
+\section{Using objects}
+Very often, you need to iterate over all elements in a container. For example when you draw them all on the screen. It would be very annoying if you had to remember somehow exactly how many elements a container contains. Fortunately, you do not have to. Containers provide a method \eeFunc{elms()} which returns the current number of elements. And to access individual elements you can use square brackets, just like with primitive C arrays.
+
+\begin{code}
+for(int i = 0; i < circles.elms(); i++)
+{
+  circles[i].draw(RED);
+}
+\end{code}
+
+Because you will need an iteration like this very, very often, Esenthel provides a `shortcut'. A macro \eeFunc{REPA} exists to replace the whole for-loop declaration with one instruction:
+
+\begin{code}
+REPA(circles)
+{
+  circles[i].draw(RED);
+}
+\end{code}
+
+Remember this as `repeat all'. \textit{(Or don't remember it at all. Plain for-loops will always work just as well.)} And you can do more with this than just draw every element on the screen. Take a look at the next example and try to figure out what it does.
+
+\begin{code}
+REPA(circles)
+{
+	circles[i].pos.y += Time.d();
+	if(circles[i].pos.y > D.h()) {
+	  circles[i].pos.y -= (2*D.h() + RandomF(1));
+	}
+}
+\end{code}
+
+\begin{exercise}
+\begin{enumerate}
+\item Test the code above in an application. What function would you place this code in?
+\item Add a function to add an extra circle every time you hit the space bar.
+\item Instead of a fixed radius, use a random value between 0.01 and 0.1.
+\item Draw only the perimeter of the circle, in white, on a blue background.
+\item If there are any people nearby, shout out loud what this looks like.
+\end{enumerate}
+\end{exercise}
+
+\section{Adding Objects}
+You will add objects to a container quite a lot. This might happen in the Init function as well as the Update function. Below are a few examples to get you started, but there are a lot of different ways to add objects. It is up to you to figure out what is the best approach in your application.
+
+\subsection{During Init}
+
+Ten circles on random positions:
+
+\begin{code}
+for(int i = 0; i < 10; i++)
+{
+	Circle & c = circles.New();
+	c.set(0.1, RandomF(-D.w(), D.w()), RandomF(-D.h(), D.h()));
+}
+\end{code}
+
+Circles from the left to the right side of the screen:
+
+\begin{code}
+for(float i = -D.w(); i < D.w(); i += 0.2) {
+  circles.New().set(0.1, i, 0);
+}
+\end{code}
+
+Squares placed evenly over the screen:
+\begin{code}
+for(float i = -D.w(); i < D.w(); i += 0.2)
+{
+	for(float j = -D.h();  j < D.h();  j += 0.2)
+	{
+		 rects.New().set(i - 0.05, j - 0.05, i + 0.05, j + 0.05);
+	}     
+}
+\end{code}
+
+\subsection{During Update}
+
+Respond to keyboard input:
+\begin{code}
+if(Kb.bp(KB_SPACE)) {
+  circles.New().set(RandomF(0.05, 0.2), RandomF(-D.w(), D.w()), RandomF(-D.h(), D.h()));
+}
+\end{code}
+
+Use the mouse position:
+\begin{code}
+if(Ms.bp(0)) {
+  circles.New().set(0.05, Ms.pos());
+}
+\end{code}
+
+With a timer:
+\begin{code}
+Flt timer = 3; // put this line on to of the file. Next lines belong in Update()
+
+if(timer > 0) timer -= Time.d();
+else {
+  timer = 3;
+	circles.New().set(RandomF(0.05, 0.2), RandomF(-D.w(), D.w()), RandomF(-D.h(), D.h()));
+}
+\end{code}
+
+\begin{exercise}
+Test all of the examples above and make sure you understand every one of them. Always add code to display all elements on the screen.
+\end{exercise}
+
+\section{Removing Objects}
+Of course you also want to remove objects from a container. Which is not that hard:
+
+\begin{code}
+Memc<Vec2> dots;
+
+// ... add a lot of dots
+
+dots.remove(0); // remove the first dot
+\end{code}
+
+With the method \eeFunc{remove} and the index of the element as an argument, you delete an object in a container. Be careful though. Very often you will want to remove an element while iterating over a container. It is a common beginner mistake to alter an object after you've deleted it:
+
+\begin{code}
+for(int i = 0; i < dots.elms(); i++) {
+    if(dots[i].y < -D.h()) {
+        dots.remove(i);
+	}
+	dots[i].y -= Time.d();
+}
+\end{code}
+
+In the example above, all dots are moved down at every update. When a dot arrives at the bottom of the screen, it will be removed from the container. After removing a dot, it is not the current dot that is moved down, but the next one in the container. This is not a big problem, unless this was actually the last dot in the container. In which case you try to move down an object past the end of the container. The result will be a program crash, your computer might explode and probably a kitten will die somewhere.
+
+To prevent this from happening it is a good rule to put the remove method as the last statement in the loop:
+
+\begin{code}
+for(int i = 0; i < points.elms(); i++) {
+	points[i].y -= Time.d();
+  if(points[i].y < -D.h()) points.remove(i);
+}
+\end{code}
+
+Things start to be a bit more complicated when you combine more than one container. In the next example we have container for dots and a container for circles. The code tries to verify if a dot hits a circle. If this is the case, both the circle and the dot must be removed from their container. To do this, we have to check every dot against every circle.
+
+\begin{code}
+for(int i = 0; i < points.elms(); i++) {
+	for(int j = 0; j < circles.elms(); j++) {
+	    if(Cuts(points[i], circles[j])) {
+		    points.remove(i);
+		    circles.remove(j);
+		    // At this point there is one less dot in the container, but next circles will
+		    // still be compared against the current dot. If we are at the last dot, i will
+		    // no longer be valid. To prevent a crash, we add a break statement to go
+		    // back to the outer for loop:
+			break;
+		}		
+	}
+}
+\end{code}
+
+
+Tot slot kan je een container ook nog in \'e\'en keer helemaal leegmaken:
+
+\begin{code}
+points.clear();
+\end{code}
+
+\section{Een spelletje}
+
+\begin{enumerate}
+\item Maak een driehoek onder aan je scherm die je met de pijltjestoetsen heen en weer kan bewegen.
+\item Voorzie een container voor de class \eeClass{Vec2}. Telkens als je op de spatiebalk drukt voeg je een element toe op de positie van de driehoek.
+\item In de update functie verhoog je de y waarde van elk element in de container. (Gebruik \eeClass{Time.d()}!) Wanneer een element de bovenkant van het scherm bereikt, verwijder je het uit de container.
+\item In de \eeFunc{Draw()} functie teken je alle elementen op het scherm.
+\item Maak een tweede container voor cirkels. Elke seconde voeg je een cirkel toe aan de bovenkant van het scherm.
+\item In de update functie ga je alle cirkels naar beneden bewegen.
+\item Toon de cirkels in de \eeFunc{Draw()} functie.
+\item Wanneer een cirkel en een punt mekaar raken, dan verwijder je ze beiden.
+\item Wanneer een cirkel de driehoek raakt, dan toon je 'Game Over' op het scherm.
+\end{enumerate}
+
+Je kan dit concept nog verder afwerken. Zo kan je voorkomen dat er nog nieuwe cirkels bijkomen na een game over, of dat je nog kan bewegen en schieten. Cirkels zouden ook steeds sneller kunnen verschijnen of sneller bewegen naarmate je langer speelt. Je kan ook een score op het scherm tonen of een aantal levens voorzien.
