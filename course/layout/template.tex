@@ -157,7 +157,7 @@
 \renewcommand\printpartname{}
 \renewcommand\printpartnum{}
 \renewcommand{\parttitlefont}{\normalfont\raggedleft\Huge\scshape\color{primaryIntense}}
-\newcommand{\partAbstract}[1]{\gdef\@partAbstract{\leftskip5em\normalsize\color{black}\textit{#1}\par}}
+\newcommand{\partAbstract}[1]{\gdef\@partAbstract{\leftskip5em\normalsize\color{black}\textit{#1}}}
 \renewcommand{\printparttitle}[1]{%
 \raggedleft
 \rule{0.75\textwidth}{1pt}
@@ -166,7 +166,7 @@
 \color{black}
 \rule{0.75\textwidth}{1pt}
 \vskip1.37\baselineskip
-\@partAbstract
+\@partAbstract\vfil
 }
 \makeatother
 
