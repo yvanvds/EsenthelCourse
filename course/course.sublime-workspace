@@ -11,49 +11,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "course_nl.tex",
-			"settings":
-			{
-				"buffer_size": 1545,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "\\chapter{Animations}\nDe class \\eeClass{Game.Chr} voorziet een aantal standaard animaties. Die zijn echter zelden genoeg. In dit hoofdstuk zie je hoe je deze animaties aanpast, en hoe je nieuwe animaties toevoegt.\n\nEsenthel maakt een onderscheid tussen standaard animaties and custom animaties. De standaard animaties worden automatisch toegepast aan de hand van enkele variabelen in \\eeClass{Game.Chr}. Als je de header file van deze class opent, dan zie je binnen de class een struct \\eeClass{Input}. Deze class regelt hoe je avatar over het scherm beweegt. Je ziet properties zoals crouch, walk, jump en dodge.\n\nHet is eenvoudig om deze waarden aan te passen. Je hebt dat trouwens al gedaan in een van de vorige hoofdstukken. Denk aan code zoals:\n\n\\begin{code}\ninput.turn.x = Kb.b(KB_Q) - Kb.b(KB_E);\ninput.turn.y = Kb.b(KB_T) - Kb.b(KB_G);\ninput.move.x = Kb.b(KB_D) - Kb.b(KB_A);\n\\end{code}\n\n\\begin{exercise}\nDe avatar heeft, naast een run animatie, ook een walk animatie. Die wordt op dit moment niet gebruikt. Pas de code in \\eeFunc{player.update} aan zodat je avatar standaard wandelt, maar wel loopt wanneer de linker ctrl toets ingedrukt is. Zoek in de struct \\eeClass{Input} op welke property je hier voor aanpast.\n\\end{exercise}\n\n\\section{Jump}\nVreemd genoeg bevat \\eeClass{Input} wel een property jump die de avatar tijdelijk omhoog beweegt, maar bestaat er geen standaard animatie voor jump. Dat wil zeggen dat je een custom animatie moet gebruiken. Om dit te doen heb je een \\eeClass{Motion} object nodig. Voeg alvast dit object toe aan de class \\eeClass{Player}.\n\n\\begin{code}\nMotion jumpMotion;\n\\end{code}\n\nIn de functie \\eeFunc{update} kan je de huidige `jump' code aanvullen:\n\n\\begin{code}\n// jumping\ninput.jump = Kb.bp(KB_SPACE) ?  3.5 :  0;\nif(Kb.bp(KB_SPACE))\n{\n  jumpMotion.set(skel, === drop jump animation ===);\n}\njumpMotion.updateAuto(5, 5, 1);\n\\end{code}\n\nHet eerste statement stond al in je code. Dat bepaalt of je avatar al dan niet even omhoog gaat. Daarna stel je de animatie in wanneer de speler op de spatiebalk drukt. Het eerste argument is het skeleton waarop de animatie van toepassing is. De waarde `skel' is skeleton dat al aanwezig is in \\eeClass{Game.Chr}. Het tweede argument is de verwijzing naar de animatie. Drop daar de jump animatie die je vindt in Assets $\\Rightarrow$ characters  $\\Rightarrow$ samurai.\n\nTijdens elke update moeten ook alle \\eeClass{Motion} object geupdated worden. In dit geval is dat jumpMotion. Je kan de \\eeFunc{updateAuto} functie gebruiken om het eenvoudig te houden. De eerste twee argumenten bepalen hoe snel je overschakelt van de standaard animatie naar de jump animatie en omgekeerd. Het derde argument is de algemene snelheid waarmee de animatie getoond wordt.\n\nWanneer je nu de game uitvoert, zal je zien dat de jump animatie niet gebruikt wordt. We moeten eerst de aanwezige functie \\eeFunc{animate} van \\eeClass{Game.Chr} overschrijven. Die functie voert nu enkel de standaard animaties uit. Omdat dit een virtuele functie is (kijk in de header file!) moet je daarin ook de oorspronkelijke functie uitvoeren. \\textit{(Tenzij je echt niet wil dat de standaard animaties gebruikt worden.)} Voeg daarom de volgende functie toe aan je player class:\n\n\\begin{code}\nvirtual void animate()\n{\n  super.animate();\n  skel.animate(jumpMotion, true);\n}\n\\end{code}\n\nDeze functie voert eerst de standaard animaties uit. Daarna wordt de \\eeClass{jumpMotion} toegevoegd. Het extra argument `replace' bepaalt dat de vorige animaties overschreven moeten worden. Wanneer je `false' gebruikt, zal de impact van de vorige animaties veel groter zijn.\n\n\\begin{exercise}\nPas de waarden in \\eeFunc{updateAuto} aan een bekijk het resultaat. Bekijk ook hoe anders de animatie is wanneer je \\eeFunc{skel.animate(jumpMotion, false)} gebruikt.\n\nVoeg een extra \\eeClass{Motion} `attackMotion' toe aan de \\eeClass{player} class. In de asset list zie je drie attacks: `attack\\_double', `attack1' en `attack2'. Zorg er voor dat `attack\\_double' uitgevoerd wordt wanneer je de F toets indrukt. Wanneer je de R toets indrukt kiest je programma zelf tussen `attack1' en `attack2'.\n\\end{exercise}\n\n\n",
-			"file": "nl/3DWorlds/animations.tex",
-			"file_size": 3861,
-			"file_write_time": 131043244250715526,
-			"settings":
-			{
-				"buffer_size": 4136,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "nl/3DWorlds/manipulating_objects.tex",
-			"settings":
-			{
-				"buffer_size": 20814,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "nl/3DWorlds/dynamic_objects.tex",
-			"settings":
-			{
-				"buffer_size": 718,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "nl/3DWorlds/object_parameters.tex",
-			"settings":
-			{
-				"buffer_size": 19013,
-				"line_ending": "Windows"
-			}
-		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -94,32 +51,42 @@
 	[
 		"/D/GitHub/EsenthelCourse/course",
 		"/D/GitHub/EsenthelCourse/course/en",
-		"/D/GitHub/EsenthelCourse/course/en/2d",
 		"/D/GitHub/EsenthelCourse/course/en/basics",
+		"/D/GitHub/EsenthelCourse/course/layout",
 		"/D/GitHub/EsenthelCourse/course/nl",
-		"/D/GitHub/EsenthelCourse/course/nl/2d",
-		"/D/GitHub/EsenthelCourse/course/nl/3DWorlds",
-		"/D/GitHub/EsenthelCourse/course/nl/AI",
-		"/D/GitHub/EsenthelCourse/course/nl/basics",
-		"/C/Users/yvan/Desktop/How-to-use-SQLite-Database-in-Swift-master/DbDemoExampleSwift/ViewController"
+		"/D/GitHub/EsenthelCourse/course/nl/basics"
 	],
 	"file_history":
 	[
-		"/D/GitHub/EsenthelCourse/course/nl/2d/images.tex",
+		"/D/GitHub/EsenthelCourse/course/en/basics/random.tex",
+		"/D/GitHub/EsenthelCourse/course/en/basics/containers.tex",
+		"/D/GitHub/EsenthelCourse/course/layout/template.tex",
+		"/D/GitHub/EsenthelCourse/course/en/basics/constants.tex",
+		"/D/GitHub/EsenthelCourse/course/en/basics/basicClasses.tex",
+		"/D/GitHub/EsenthelCourse/course/en/basics/functions.tex",
+		"/D/GitHub/EsenthelCourse/course/course_en.tex",
+		"/D/GitHub/EsenthelCourse/course/course.sublime-project",
+		"/D/GitHub/EsenthelCourse/course/course_nl.tex",
+		"/D/smaLondon/bin/resources/themes/bootstrap/app/wt.css",
+		"/D/GitHub/EsenthelCourse/course/en/2d/interaction.tex",
 		"/D/GitHub/EsenthelCourse/course/en/2d/images.tex",
 		"/D/GitHub/EsenthelCourse/course/en/2d/positions.tex",
-		"/D/GitHub/EsenthelCourse/course/nl/2d/positions.tex",
-		"/D/GitHub/EsenthelCourse/course/course_nl.tex",
+		"/D/GitHub/EsenthelCourse/course/nl/3DWorlds/object_parameters.tex",
 		"/D/GitHub/EsenthelCourse/course/nl/3DWorlds/dynamic_objects.tex",
 		"/D/GitHub/EsenthelCourse/course/nl/3DWorlds/manipulating_objects.tex",
-		"/D/GitHub/EsenthelCourse/course/nl/3DWorlds/object_parameters.tex",
+		"/D/GitHub/EsenthelCourse/course/en/2d/text.tex",
+		"/D/GitHub/EsenthelCourse/course/nl/2d/text.tex",
+		"/D/GitHub/EsenthelCourse/course/en/data/textfiles.tex",
+		"/D/GitHub/EsenthelCourse/course/en/2d/shapes.tex",
+		"/D/GitHub/EsenthelCourse/course/nl/3DWorlds/animations.tex",
+		"/D/GitHub/EsenthelCourse/course/nl/basics/constants.tex",
+		"/D/GitHub/EsenthelCourse/course/nl/2d/images.tex",
+		"/D/GitHub/EsenthelCourse/course/nl/2d/positions.tex",
 		"/C/Users/yvan/Downloads/walk_parliament.json",
 		"/C/Users/yvan/Desktop/How-to-use-SQLite-Database-in-Swift-master/DbDemoExampleSwift/Model/ModelManager.swift",
 		"/C/Users/yvan/Desktop/How-to-use-SQLite-Database-in-Swift-master/DbDemoExampleSwift/AppDelegate.swift",
 		"/C/Users/yvan/Desktop/How-to-use-SQLite-Database-in-Swift-master/DbDemoExampleSwift/Model/StudentInfo.swift",
 		"/C/Users/yvan/Desktop/How-to-use-SQLite-Database-in-Swift-master/DbDemoExampleSwift/Model/Util.swift",
-		"/D/GitHub/EsenthelCourse/course/course.sublime-project",
-		"/D/GitHub/EsenthelCourse/course/layout/template.tex",
 		"/C/Users/yvan/AppData/Roaming/Sublime Text 3/Packages/User/LaTeXTools.sublime-settings",
 		"/D/GitHub/EsenthelCourse/course/nl/gui/translations.tex",
 		"/D/Android/sdk/extras/google/play_apk_expansion/downloader_sample/src/com/example/expansion/downloader/SampleDownloaderActivity.java",
@@ -136,7 +103,7 @@
 	],
 	"find":
 	{
-		"height": 0.0
+		"height": 31.0
 	},
 	"find_in_files":
 	{
@@ -150,6 +117,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"}\n"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -167,157 +135,19 @@
 	"groups":
 	[
 		{
-			"selected": 1,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "course_nl.tex",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1545,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1379,
-								1379
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/LaTeX/LaTeX.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 897.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "nl/3DWorlds/animations.tex",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4136,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4135,
-								4135
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/LaTeX/LaTeX.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 1242.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "nl/3DWorlds/manipulating_objects.tex",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 20814,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/LaTeX/LaTeX.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 2622.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "nl/3DWorlds/dynamic_objects.tex",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 718,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/LaTeX/LaTeX.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "nl/3DWorlds/object_parameters.tex",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 19013,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2170,
-								2155
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/LaTeX/LaTeX.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 552.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				}
+			]
+		},
+		{
+			"sheets":
+			[
 			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 0.0
+		"height": 31.0
 	},
 	"input":
 	{
@@ -332,11 +162,18 @@
 				0,
 				1,
 				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
 			]
 		],
 		"cols":
 		[
 			0.0,
+			0.5,
 			1.0
 		],
 		"rows":
@@ -358,7 +195,7 @@
 	"project": "course.sublime-project",
 	"replace":
 	{
-		"height": 0.0
+		"height": 58.0
 	},
 	"save_all_on_build": true,
 	"select_file":
