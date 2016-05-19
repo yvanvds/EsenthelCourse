@@ -1,10 +1,18 @@
 \chapter{Methods}
 
+<<<<<<< HEAD
+Methods, or class functions, can be added to a class. Mostly, methods should be the way to interact with your class. Instead of changing member variables directly, a class should provide methods to access and alter them. Appart from providing accessors to variables, methods should also be used for any kind of action your class might perform. 
+
+\section{Methods without arguments or result}
+
+A plain method does exactly the same thing, every time you call it. When you think back the the class \eeClass{movingCircle}, you might want to add a method to put the circle back in the middle of the screen:
+=======
 Methods are little blocks of code you can add to a class. \textit{(In principle you can also add blocks of code outside a class. Those blocks are called functions.)} Methods should have a clear relation to your class though. They should alter class variables or return them in some way. Other methods could display something related to the class on the screen.
 
 \section{Simple Methods}
 
 The most simple method always does the same. Remember the class \eeClass{movingCircle}? Perhaps a useful method for this class could reset the position. Such a method would look like this:
+>>>>>>> origin/master
 
 \begin{code}
 class movingCircle {
@@ -19,6 +27,27 @@ class movingCircle {
 // somewhere in your application
 movingCircle mc;
 mc.reset();
+<<<<<<< HEAD
+
+\end{code}
+
+In this example, the circle's position will be set to zero when the \eeFunc{reset()} method is called. This method consists of three parts:
+
+\begin{description}
+\item[void] Indicates the method has no result. (More about results in a moment.)
+\item[reset] The name of the method. You can pick your own name, but of course the restrictions for variable names also apply here. (Some characters are not allowed, don't start with a number, \ldots)
+\item[()] End with a couple of braces. Later on, arguments will be put between them.
+\end{description}
+
+\begin{exercise}
+Add the \eeFunc{reset()} method above to the previous exercise. In the \eeFunc{Update()} function of your program, replace the code to reset the circle's position with your method.
+
+Add a method \eeFunc{draw()} to the same class. This method will draw the circle with a certain color. Again, replace the code in your app with this method.
+\end{exercise}
+
+\section{Methods with Arguments}
+A method can have one or more arguments. Arguments are used to pass values to a method. In the previous example, the \eeFunc{reset()} method didn't need an argument. We know what has to be done to put a circle back in the middle of the screen. But should you write a method to place a circle on any position, you'ld have to pass the desired position as an argument. Like so:
+=======
 \end{code}
 
 The method in the example above will put the circle back in the middle of the screen. Every method declaration consists out of three parts:
@@ -37,6 +66,7 @@ Add a \eeFunc{draw()} method to the class. This method will automatically draw t
 
 \section{Methods with one Argument}
 A method can have an argument. This is quite useful because it allows you to pass an option to the method. The previous methods did not need options. We know that reset will put the circle back in the middle of the screen. Should you want to put in on another spot with a method, that method must know where you want your circle to go. That could be done like this:
+>>>>>>> origin/master
 
 \begin{code}
 class movingCircle {
@@ -48,12 +78,36 @@ class movingCircle {
   }
 }
 
+<<<<<<< HEAD
+// somewhere in your application
+=======
 // somewhere in your Init function
+>>>>>>> origin/master
 movingCircle mc;
 Vec2 p(0.1, 0.4);
 mc.setPos(p);
 \end{code}
 
+<<<<<<< HEAD
+This method has an argument of the type \eeClass{Vec2}. The argument is used internally to alter the circle's position. It is important to remember you only pass the value of the argument, not its name or the variable itself. There is no established relationship between an method and the variables passed into it. 
+
+\begin{code}
+movingCircle mc;
+Vec2 p(0.1, 0.4);
+mc.setPos(p);     // pass contents of p to mc
+p.x += 0.1;       // altering p does not alter the position in mc!!!
+mc.setPos(p);     // call setPos again to pass the new contents to mc
+\end{code}
+
+\begin{exercise}
+A the method \eeFunc{setPos} to your exercise. With it, try something new in the application: every time you press F1, a new random position should be assigned to every circle.
+
+Add a method \eeFunc{setRadius} with a float argument. This method should change the radius of the circle. Change the radius along with the the position when you press F1. (Remember to use only small values, like a 0.01 to 0.2 range.)
+\end{exercise}
+
+\section{More arguments}
+Methods are not limited to a single argument. You can add more as long as they're separated with comma's.
+=======
 A \eeClass{Vec2} is passed as an argument to the method. This argument (a position) will be the new position for the circle. Note that in your application this position is called p, but in the method it is called pos. You only pass the value of p to the method, not its name.
 
 \begin{exercise}
@@ -62,6 +116,7 @@ Again with the class \eeClass{movingCircle}, add a method \eeFunc{setPos} like a
 
 \section{Functions with more arguments}
 Methods are not limited to one argument. You could use more, separated by comma's:
+>>>>>>> origin/master
 
 \begin{code}
 class movingCircle {
@@ -75,12 +130,31 @@ class movingCircle {
   }
 }
 
+<<<<<<< HEAD
+// somewhere in your application
+=======
 // somewhere in your Init function
+>>>>>>> origin/master
 movingCircle mc;
 Vec2 p(0.1, 0.4);
 mc.init(0.1, p, Vec2(0.3, -0.5));
 \end{code}
 
+<<<<<<< HEAD
+Again, the example introduces a few new concepts:
+\begin{description}
+\item[T] What if the name of an argument is the same as the name of a class variable? In the example above there is an argument called 'speed', but also a variable called speed. How will the compiler know which is which, when you just type speed. Well, as a rule the most local declaration is used, which in this case is the argument. To indicate you want to use the class variable, you can use \eeClass{T}. Again in the example, the value of the argument 'speed' is passed to the class variable 'speed'. 
+\item[Passing arguments] When the init method is used, a predefined \eeClass{Vec2} is used to pass the position. But speed also needs a \eeClas{Vec2}. In this case, a new Vec2 is created directly inside the braces and passed as an argument. Both options are valid, but the first one is generally used when you still need the object p after passing it to the function. This would not be possible with the second \eeClass{ Vec2} because it does not have a name.
+\end{description}
+
+\begin{exercise}
+And in init method to your class and use it.
+\end{exercise}
+
+\section{Methods with a Result}
+In the beginning of this chapter, I mentioned you should never use class variables directly, outside a class. You've just learned how to alter a variable through a method with an argument, but what if you wanted to retrieve the value of the variable? The answer is simple. Use the method result:
+
+=======
 A few things to remember:
 \begin{description}
 \item[T] To access a class variable, we can use \eeClass{T}. This is needed if argument has the same name as a class variable. Without \eeClass{T}, we would always use the most local variable, which is the argument. In other words:
@@ -100,6 +174,7 @@ Add the init function above to your \eeClass{movingCircle} class. Rework your ap
 
 \section{Methods with a Result}
 At the beginning of this chapter you were told not to use class variables directly outside of the class. Just now, you learned how to change their values by using methods. But how can you retrieve the value of a class variable without accessing it directly? The answer is simple: you create a method with a result:
+>>>>>>> origin/master
 
 \begin{code}
 class movingCircle {
@@ -112,6 +187,35 @@ class movingCircle {
     this->speed = speed;
   }
   
+<<<<<<< HEAD
+  float getRadius() {
+    return c.r;
+  }
+}
+
+// somewhere in your application
+movingCircle mc;
+mc.init(0.1, p, Vec2(0.3, -0.5));
+float radius = mc.getRadius();
+
+\end{code}
+
+At the end of this example, the float radius will have a value of 0.1. This is how you create a method with a result:
+
+\begin{itemize}
+\item Use the result type instead of the keyword void. In this case we want to retrieve a radius from the circle. A radius is a float, which means the result type will also be a float.
+\item The method contents should end with the keyword \textttt{return}, followed by the value that should be returned. This value will be passed to the caller.
+\end{itemize}
+
+\begin{exercise}
+Add this method to your class. Add code to your application to show the radius of a circle on the screen.
+\end{exercise}
+
+\section{Methods with Arguments and Result}
+One last possibility is the combination of arguments with a result. One common pitfall: although a method can have many arguments, it can only have one result.
+
+The next example implements a \eeFunc{move} method. This method will move a circle by passing a value as an argument. This value will be added to the currrent position, but only as long as the result would not be outside of the screen. By returning a bool as a result, we can let the application know if movement succeeded.
+=======
   Vec2 getPos() {
     return c.pos;
   }
@@ -138,6 +242,7 @@ Add the method above to your class. In your application, replace the code to che
 It is possible to have Methods with both arguments and a result. But take care: although a method can have more than one argument, it never have more than one result.
 
 You will be making a method called `move' in the next example. This method will move the circle by adding the argument to the current position. But it will only go ahead as long as the new position will fit within the screen boundaries. If the movement succeeds, the method will return true. If it fails, it will return false.
+>>>>>>> origin/master
 
 \begin{code}
 class movingCircle {
@@ -164,16 +269,33 @@ class movingCircle {
   }
 }
 
+<<<<<<< HEAD
+// somewhere in your application
+=======
 // Somewhere in your Init function:
+>>>>>>> origin/master
 movingCircle mc;
 Vec2 p(0, 0);
 mc.init(0.1, p, Vec2(0.3, -0.5));
 if( !mc.move(mc.speed * Time.d()) ) {
+<<<<<<< HEAD
+  // do something when failed
+=======
   // do something if failed
+>>>>>>> origin/master
 }
 \end{code}
 
 \begin{exercise}
+<<<<<<< HEAD
+Add the move method to your class. The application must use this method to move the circle. This method indicates wether or not the movement was a success, so you can remove the application code to keep the circle within the screen boundaries. If the method returns false, simple call the \eeClass{reset} method to put the circle back in the middle.
+
+It is still possible to simplify move even further. We already know movement will always be the same. So we don't actually need an argument at all! The movement can be done with the information available in the class itself. (speed and the time delta)
+\end{exercise}
+
+\section{The solution}
+The complete class and app for this chapter is listed below for reference. Please compare this with your own result.
+=======
 Add the method \eeClass{move} to your class. In your application you can now use this method to move the circle instead of the more `manual' approach. Since the method also indicates if the circle was actually moved, you can remove the boundary check. When the method returns false, simply put the circle back in the middle.
 
 The method `move' can be simplified even more. We know that in this application, we always want to move in the same direction. In other words, you could remove the method's argument and use the class variables to move to a new position.
@@ -181,6 +303,7 @@ The method `move' can be simplified even more. We know that in this application,
 
 \section{The Solution}
 Below is the resulting code of everything we've done above. Compare this with your own result and make sure you understand what is happening in any lines that are different.
+>>>>>>> origin/master
 
 De class movingCircle:
 \begin{code}
@@ -231,6 +354,10 @@ class movingCircle
 \end{code}
 
 The application:
+<<<<<<< HEAD
+
+=======
+>>>>>>> origin/master
 \begin{code}
 Memc<movingCircle> circles;
 

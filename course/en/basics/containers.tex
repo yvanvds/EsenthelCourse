@@ -212,19 +212,19 @@ In the example above, all dots are moved down at every update. When a dot arrive
 To prevent this from happening it is a good rule to put the remove method as the last statement in the loop:
 
 \begin{code}
-for(int i = 0; i < points.elms(); i++) {
-	points[i].y -= Time.d();
-  if(points[i].y < -D.h()) points.remove(i);
+for(int i = 0; i < dots.elms(); i++) {
+	dots[i].y -= Time.d();
+  if(dots[i].y < -D.h()) dots.remove(i);
 }
 \end{code}
 
 Things start to be a bit more complicated when you combine more than one container. In the next example we have container for dots and a container for circles. The code tries to verify if a dot hits a circle. If this is the case, both the circle and the dot must be removed from their container. To do this, we have to check every dot against every circle.
 
 \begin{code}
-for(int i = 0; i < points.elms(); i++) {
+for(int i = 0; i < dots.elms(); i++) {
 	for(int j = 0; j < circles.elms(); j++) {
-	    if(Cuts(points[i], circles[j])) {
-		    points.remove(i);
+	    if(Cuts(dots[i], circles[j])) {
+		    dots.remove(i);
 		    circles.remove(j);
 		    // At this point there is one less dot in the container, but next 
 		    // circles will still be compared against the current dot. 
@@ -240,7 +240,7 @@ for(int i = 0; i < points.elms(); i++) {
 And if you'd like to clear all container elements at once:
 
 \begin{code}
-points.clear();
+dots.clear();
 \end{code}
 
 \section{A little Game}
@@ -260,3 +260,4 @@ points.clear();
 You could go even further with this game. Don't create new circles after the game is finished, and disable movement and shooting. Circles might move faster the longer you play, a score can be shown or you might give the player more than one life.
 
 And instead of triangles and circles, images might be used. Have fun!
+
