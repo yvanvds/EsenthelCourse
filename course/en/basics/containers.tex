@@ -68,7 +68,7 @@ for(int i = 0; i < 10; i++)
 }
 \end{code}
 
-\ldots but it won't work. Instead you are creating two new circles at every itereration. The method \eeFunc{set} is called on the first circle, the method \eeFunc{extend} at the second. The solution is simple: Pass the result of \eeFunc{New()} to a temporary variable. The type of this variable must be a reference to a circle. (If you don't know what a reference is, don't worry. We'll talk about it later. For now, remember that you need to put an ampersand (\&) between the type and the name.
+\ldots but it won't work. Instead you are creating two new circles at every iteration. The method \eeFunc{set} is called on the first circle, the method \eeFunc{extend} at the second. The solution is simple: Pass the result of \eeFunc{New()} to a temporary variable. The type of this variable must be a reference to a circle. (If you don't know what a reference is, don't worry. We'll talk about it later. For now, remember that you need to put an ampersand (\&) between the type and the name.
 
 \begin{code}
 for(int i = 0; i < 10; i++)
@@ -212,19 +212,19 @@ In the example above, all dots are moved down at every update. When a dot arrive
 To prevent this from happening it is a good rule to put the remove method as the last statement in the loop:
 
 \begin{code}
-for(int i = 0; i < points.elms(); i++) {
-	points[i].y -= Time.d();
-  if(points[i].y < -D.h()) points.remove(i);
+for(int i = 0; i < dots.elms(); i++) {
+	dots[i].y -= Time.d();
+  if(dots[i].y < -D.h()) dots.remove(i);
 }
 \end{code}
 
 Things start to be a bit more complicated when you combine more than one container. In the next example we have container for dots and a container for circles. The code tries to verify if a dot hits a circle. If this is the case, both the circle and the dot must be removed from their container. To do this, we have to check every dot against every circle.
 
 \begin{code}
-for(int i = 0; i < points.elms(); i++) {
+for(int i = 0; i < dots.elms(); i++) {
 	for(int j = 0; j < circles.elms(); j++) {
-	    if(Cuts(points[i], circles[j])) {
-		    points.remove(i);
+	    if(Cuts(dots[i], circles[j])) {
+		    dots.remove(i);
 		    circles.remove(j);
 		    // At this point there is one less dot in the container, but next circles will
 		    // still be compared against the current dot. If we are at the last dot, i will
@@ -236,25 +236,26 @@ for(int i = 0; i < points.elms(); i++) {
 }
 \end{code}
 
-
-Tot slot kan je een container ook nog in \'e\'en keer helemaal leegmaken:
+Of course it is also possible to empty a container at once:
 
 \begin{code}
-points.clear();
+dots.clear();
 \end{code}
 
-\section{Een spelletje}
+\section{A little Game}
 
 \begin{enumerate}
-\item Maak een driehoek onder aan je scherm die je met de pijltjestoetsen heen en weer kan bewegen.
-\item Voorzie een container voor de class \eeClass{Vec2}. Telkens als je op de spatiebalk drukt voeg je een element toe op de positie van de driehoek.
-\item In de update functie verhoog je de y waarde van elk element in de container. (Gebruik \eeClass{Time.d()}!) Wanneer een element de bovenkant van het scherm bereikt, verwijder je het uit de container.
-\item In de \eeFunc{Draw()} functie teken je alle elementen op het scherm.
-\item Maak een tweede container voor cirkels. Elke seconde voeg je een cirkel toe aan de bovenkant van het scherm.
-\item In de update functie ga je alle cirkels naar beneden bewegen.
-\item Toon de cirkels in de \eeFunc{Draw()} functie.
-\item Wanneer een cirkel en een punt mekaar raken, dan verwijder je ze beiden.
-\item Wanneer een cirkel de driehoek raakt, dan toon je 'Game Over' op het scherm.
+\item Create a triangle on the bottom of the screen which can be moved back and forth with the arrow keys.
+\item Add a container for the class \eeClass{Vec2}. Every time you press the space bar, an element should be added to this container, at the current position of the rectangle.
+\item Inside the update function, you increase the y value of every element in the container. (Use \eeClass{Time.d()}!) When an element reaches the top of the screen, it should be removed from the container.
+\item Draw all container elements on the screen in the \eeFunc{Draw()} function.
+\item Create a second container to store circles. A new circle should be added every second, at the top of the screen.
+\item Make all circles move down in the Update function.
+\item Show all circles in the \eeFunc{Draw()} function.
+\item When a circle and a dot collide, they should both be removed.
+\item When a circle collides with the triangle, show the text 'Game Over' in the middle of the screen.
+\item When a circle is below the bottom of the screen, it should also be removed.
 \end{enumerate}
 
-Je kan dit concept nog verder afwerken. Zo kan je voorkomen dat er nog nieuwe cirkels bijkomen na een game over, of dat je nog kan bewegen en schieten. Cirkels zouden ook steeds sneller kunnen verschijnen of sneller bewegen naarmate je langer speelt. Je kan ook een score op het scherm tonen of een aantal levens voorzien.
+This little project certainly can improved upon. You could stop creating new circles when the game is over, and disable the player actions. The speed at which circles appear could increase over time. Or you could show a score on the screen and provide a fixed number of lives. Another challenge could be to use images instead of circles and a triangle.
+

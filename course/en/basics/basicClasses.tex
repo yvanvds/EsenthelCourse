@@ -1,0 +1,72 @@
+\chapter{Classes: the basics}
+
+This course assumes you have some basic knowledge about object oriented programming, and classes are a crucial part of that. In this chapter, the basics of classes will be reviewed, but a little advance knowledge might be required if you're a slow learner.
+
+If data belongs together, this should be reflected in your code. For example: the class \eeClass{Vec2} has two float variables to remember a position: x and y. Without this class it would still be possible to work with 2D coordinates, but you would have to declare two float variables for one position. 
+
+The designer of the game engine knew that 2D positions would be used rather often. So it made sense to provide a class for that. A very simple \eeClass{Vec2} class could look like this:
+
+\begin{code}
+class Vec2 {
+	float x;
+	float y;
+}  
+\end{code}
+
+When this class exists, it can be used anywhere in your project:
+
+\begin{code}
+Vec2 pos;
+Vec2 pos2 = pos; // Assign the values of pos to pos2
+pos.x = 3;       // Adjust the x value of pos
+pos.y = pos2.x;  // Assign the x values of pos2 to the y value of pos
+\end{code}
+
+The same can be done with your own classes. In fact, almost every line of code in your project should be part of a class.
+
+\begin{note}
+When two or more objects or variables belong together, they should be defined as a class.
+\end{note}
+
+There is a difference between a class and an object. In the example above, \eeClass{Vec2} is a class, but pos and pos2 are objects of the class \eeClass{Vec2}. In other words: you cannot 'use' a class directly, but you can create objects with it and use those.
+
+\begin{code}
+Vec2.x = 3; // Very wrong!
+Vec2 pos;
+pos.x = 3; // Correct.
+\end{code}
+
+\section{Roll your own Class}
+Suppose you need a moving circle in your project. To have this circle move at a fixed speed, you need a variable. For instance a \eeClass{Vec2} called 'speed'. This \eeClass{Vec2} obviously belongs with the circle, but the class \eeClass{Circle} does not provide such one. And it should not, because not every circle needs to move. 
+
+This is a very good reason to create your own class for moving circles, containing a \eeClass{Circle} and a \eeClass{Vec2}:
+
+\begin{code}
+class movingCircle {
+  Circle circle;
+  Vec2 speed;
+}
+
+movingCirle mc;
+
+// in the Init function
+mc.circle.set(0.1, Vec2(-0.4, -0.3));
+mc.speed = Vec2(0.3, 0.5);
+
+// in the Update function
+mc.circle.pos += mc.speed * Time.d();
+\end{code}
+
+Once you've created this class \eeClass{movingCirle}, you'll be able to create as many moving circles as you like, all with their own speed. (But using them looks rather complicated, right? You'll soon learn how to simplify this.)
+
+\begin{exercise}
+\begin{enumerate}
+  \item Create a container for the class \eeClass{movingCircle}. Every time the space bar is pressed, add an object to this container. The new object should have a random position and a random speed.
+	\item In the Update function, you must update the position for every circle. When a circle move outside of the screen, it should be put back in the middle.
+	\item Extend the class \eeClass{movingCirle} with a color. Every object should have a random color. Be sure to draw every circle with its custom color.
+	\end{enumerate}
+\end{exercise}
+
+\begin{note}
+More work will be done on this exercise in the next chapter. Save it!
+\end{note}
