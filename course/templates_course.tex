@@ -1,0 +1,423 @@
+%!TEX program = xelatex
+
+\documentclass[11pt, oldfontcommands, oneside, a4paper]{memoir}
+\usepackage{etoolbox}
+
+\input{layout/template}
+
+\setmainlanguage{dutch}
+\PolyglossiaSetup{dutch}{indentfirst=false}
+
+\graphicspath{ {images/} }
+
+
+
+\title{C++ Concepts}
+\begin{document}
+\titleGM
+\tableofcontents
+
+\chapter{Dynamisch Geheugen}
+C++ ondersteunt drie manieren om geheugen toe te wijzen in een programma:
+
+\begin{description}
+	\item[Statisch geheugenbeheer] wordt gebruikt voor statische en globale variabelen. Het geheugen wordt meestal pas terug vrijgegeven wanneer het programma klaar is.
+	\item[Automatisch geheugenbeheer] wordt gebruikt voor functie argumenten en locale variabelen. Het geheugen wordt gereserveerd op het moment dat het een code blok actief is, en verwijderd op het eind van dat blok. Met een code blok bedoelen we alle code tussen twee accolades.
+	\item[Dynamisch geheugenbeheer] is waar we het nu over hebben.
+\end{description}
+
+Statisch en automatisch geheugen hebben twee dingen met mekaar gemeen:
+
+\begin{itemize}
+	\item De grootte van de variabele of array moet bekend zijn bij de compilatie.
+	\item De toewijzing en het vrijgeven van het geheugen gebeurt automatisch.
+\end{itemize}
+
+Meestal is dit voldoende. Maar er zijn situaties waarin deze beperkingen een probleem zijn. Vooral wanneer we niet kunnen voorspellen hoeveel geheugen we nodig zullen hebben.
+
+Als je bijvoorbeeld een gebruiker records in een database laten aanmaken, dan weten we nooit hoeveel records die gebruiker zal maken. Of wanneer we een bestand willen inlezen, dan weten we niet hoe groot dat bestand zal zijn.
+
+Als we steeds vooraf moeten aangeven hoeveel geheugen we nodig hebben, dan zullen we maar best voldoende geheugen aanvragen en hopen dat het genoeg is:
+
+\begin{code}
+Record record[500]; // hopelijk maakt de gebruiker minder dan 500 records
+Monster monster[40]; // hopelijk is de speler dood voor monster 41 komt
+Polygon rendering[30000]; // deze game engine zal maar beter minder dan 30.000 polygons nodig hebben
+\end{code}
+
+Dit is slechte code om minstens vier redenen:
+
+\begin{itemize}
+	\item Ten eerste leidt het tot verspilling van geheugen dat we niet nodig hebben. Als we geheugen aanvragen voor 500 records terwijl de gebruiker er maar 50 nodig heeft, dan had de computer 90\% van dat geheugen beter voor iets anders gebruikt.
+	\item Ten tweede weten we op deze manier niet zeker hoeveel geheugen er nu werkelijk in gebruik is. Er is dan wel plaats voor 40 monsters in deze array, maar bevat monster[25] nu werkelijk een monster of is dit een lege plaats waar misschien ooit een monster kan zitten? We hebben dus extra code nodig om te weten welke monsters werkelijk actief zijn. Dat maakt de code weer complexer.
+	\item Ten derde worden normale variabelen gealloceerd op de \textbf{stack}. Dat is een deel van het programmageheugen dat beperkt is in grootte. In visual studio is de default stack 1MB groot. Als dan je meer dan een MB stack geheugen gebruikt, dan crasht je programma. Probeer het volgende maar eens uit:
+
+\begin{code}
+int main() {
+	int array[1000000]; // reserveer 1 miljoen integers (ongeveer 4MB geheugen)
+}
+\end{code}
+
+	Maar 1MB geheugen gebruiken zou voor de meeste programma's niet werkbaar zijn. Zeker niet als er met graphics gewerkt wordt.
+
+	\item De vierde en belangrijkste reden is dat dit kan leiden tot overflows. Wat gebeurt er wanneer de gebruiker 600 records inleest uit de database, terwijl we maar ruimte hebben voor 500 records? We kunnen zelf een foutmelding programmeren, slechts 500 records lezen of (in het slechtste geval) het programma laten crashen.
+\end{itemize}
+
+Gelukkig bestaat er een oplossing voor deze problemen: dynamisch geheugenbeheer. Dit laat toe dat een programma tijdens de uitvoering extra geheugen vraagt aan het operating system. Dit geheugen komt niet van de stack maar uit een veel grotere pool geheugen die we de \textbf{heap} noemen. Op recente computers kan de heap verschillende gigabytes groot zijn.
+
+\section{Variabelen dynamisch toewijzen}
+Om geheugen te reserveren voor een enkele variabele (geen array) gebruiken we de \textbf{new} operator:
+
+\begin{code}
+new int;
+\end{code}
+
+In het voorbeeld hierboven reserveren we geheugen voor \'e\'en integer op de heap. De new operator heeft als resultaat een pointer naar dat geheugen. Bijgevolg zal je om iets te kunnen doen met dat geheugen, de pointer moeten onthouden:
+
+\begin{code}
+int * ptr = new int; // ptr verwijst naar een geheugenadres waar een integer in past 
+*ptr = 42; // zet 42 op de plaats waar ptr naar verwijst
+\end{code}
+
+Je ziet dat je niet met dynamisch geheugen kan werken zonder pointers. Je zou immers nooit iets kunnen doen met dat geheugen.
+
+Het is ook mogelijk om het geheugen dadelijk te initialiseren met een waarde. Dat kan zo:
+
+\begin{code}
+int * ptr = new int(42);
+\end{code}
+
+\subsection{Hoe werkt dynamisch geheugen?}
+Je computer heeft geheugen dat beschikbaar is voor applicaties. Wanneer je een programma start, dan zal het operating system dat programma in een deel van het geheugen laden. Dit geheugen bestaat uit verschillende zones, elk met een eigen doel. E\'en zone bevat je code (in gecompileerde vorm). Een ander deel dient om te onthouden waar het programma mee bezig is (welke functie de huidige functie aanriep, om later op die plaats verder te kunnen gaan). Maar het meeste geheugen zit gewoon te wachten tot een programma er om vraagt.
+
+Wanneer je dynamisch geheugen aanvraagt, dan vraag je het operating system om een deel van dat geheugen voor jouw programma te reserveren. Als het OS dat kan, zal het het adres van dat geheugen aan je programma bezorgen. Vanaf dat moment kan je programma met dat geheugen doen wat het wil. Wanneer je programma het geheugen niet langer nodig heeft, kan het dat geheugen teruggeven aan het operating system. Het OS kan dat geheugen dan later weer voor een ander programma gebruiken.
+
+\textbf{Anders dan bij statisch geheugen is het je programma zelf dat verantwoordelijk is voor het aanvragen en verwijderen van dynamisch geheugen.}
+
+\subsection{Geheugen terug vrijgeven}
+
+Wanneer je klaar bent met dynamisch toegewezen geheugen, dan moet je C++ expliciet vertellen om het terug te geven aan het OS. Voor gewone variabelen gebeurt dat met de operator \textbf{delete}:
+
+\begin{code}
+delete ptr;
+ptr = nullptr;
+\end{code}
+
+De delete operator verwijdert niet echt iets. Het meldt gewoon aan het OS dat je programma het geheugen niet meer nodig heeft. Ook al lijkt het dus alsof we een variabele verwijderen, dat is niet het geval! De pointer verwijst nog steeds naar hetzelfde adres en je kan er nog steeds een andere waarde aan toewijzen. Tenminste, C++ zal je niet tegenhouden. Aangezien het geheugen ondertussen in gebruik kan zijn door een ander programma, kan je niet langer zeker zijn van zijn inhoud.
+
+Een pointer naar vrijgegeven geheugen noemen we een \textbf{hangende pointer}. Zo'n pointer nogmaals proberen verwijderen zorgt ook voor problemen. Test het volgende programma eens uit:
+
+\begin{code}
+#include <iostream>
+ 
+int main()
+{
+    int *ptr = new int; // reserveer geheugen voor een integer
+    *ptr = 7; // zet een waarde in dat geheugen
+ 
+    delete ptr; // geef het geheugen terug aan het OS
+ 
+    std::cout << *ptr; // onvoorspelbaar!
+    delete ptr; // onvoorspelbaar!
+ 
+    return 0;
+}
+\end{code}
+
+Waarschijnlijk zal het programma niet crashen wanneer je de inhoud van de pointer op het scherm zet, maar de kans is groot dat die inhoud niet meer klopt. Maar de extra delete operator zal meestal wel een crash veroorzaken.
+
+Geheugen terug vrijgeven kan zelfs meerdere hangende pointers veroorzaken. Zo in het volgende voorbeeld:
+
+\begin{code}
+#include <iostream>
+ 
+int main()
+{
+    int *ptr = new int; 
+    int *otherPtr = ptr; // otherPtr verwijst nu naar dezelfde plaats in het geheugen
+ 
+    delete ptr; // geef het geheugen vrij, ptr en otherPtr zijn nu hangende pointers
+    ptr = nullptr; // ptr is nu een null pointer
+ 
+    // toch is otherPtr nog steeds een hangende pointer!!!
+ 
+    return 0;
+}
+\end{code}
+
+In regel zal je steeds, na het vrijgeven van geheugen, alle pointers naar dat geheugen gelijkstellen aan nullptr.
+ 
+\subsection{null pointers}
+Null pointers zijn bijzonder handig wanneer je met dynamisch geheugen werkt. Ten eerste kan je een pointer die nergens naar verwijst steeds naar null laten verwijzen. Dat maakt het gemakkelijk om te weten of je al dan niet om nieuw geheugen moet vragen.
+
+\begin{code}
+int * ptr = nullptr;
+if (!ptr) ptr = new int;
+\end{code}
+
+Daarnaast zal delete ook enkel geheugen vrijgeven wanneer de pointer niet null is. Je zag net dat dubbele deletes een probleem kunnen zijn, maar het volgende is dus perfect mogelijk.
+
+\begin{code}
+int * ptr = new int(42);
+delete ptr;
+ptr = nullptr;
+delete ptr;
+\end{code}
+
+Natuurlijk is deze code vrij zinloos. Maar wanneer je later pointers met classes combineert, komt deze techniek wel van pas.
+
+\subsection{Memory leaks}
+
+Eerder werd al gezegd dat je zelf verantwoordelijk bent voor het verwijderen van dynamisch geheugen. Dat wil zeggen dat dit geheugen, wanneer je het vergeet te verwijderen, blijft bestaan tot je programma stopt en het operating system het in jouw plaats verwijdert. Daarop mag je echter niet rekenen. Stel je voor dat je een programma hebt om afbeeldingen te bekijken. Bij het laden van elke afbeelding reserveer je geheugen voor die afbeelding, maar je vergeet het vrij te geven. Halverwege de foto-avond over je reis naar Scherpenheuvel zou je programma kunnen crashen omdat al het geheugen in gebruik is! (Al zou het in dat geval ook goddelijke interventie kunnen zijn.)
+
+Dit noemen we een \textbf{memory leak}. Het OS krijgt het geheugen niet terug, ook al heeft je programma het niet meer nodig. Memory leaks kunnen op verschillende manieren ontstaan. Ten eerste kan je vergeten het geheugen vrij te geven:
+
+\begin{code}
+void doSomething()
+{
+    int *ptr = new int;
+}
+// ptr bestaat niet meer, maar het geheugen is niet vrijgegen
+// -> memory leak
+\end{code}
+
+Maar je kan ook de pointer overschrijven met een ander adres, waarna je nooit meer aan het oorspronkelijke adres kan:
+
+\begin{code}
+int value = 5;
+int * ptr = new int;
+ptr = &value; // het oude adres is verloren -> memory leak
+\end{code}
+
+Of je kan twee keer geheugen aanvragen met dezelfde pointer, zonder de vorige terug vrij te geven.
+
+\begin{code}
+int * ptr = new int;
+ptr = new int; // memory leak: check!
+\end{code}
+
+\begin{exercise}
+	\begin{itemize}
+		\item Maak een programma waarin je geheugen aanvraagt voor een integer en een float. Wijs beiden een waarde toe. Daarna toon je de som van beiden op het scherm. Geef het geheugen vrij voor je het programma afsluit.
+		
+		\item Verklaar wat er gebeurt in het volgende programma. Veroorzaakt dit een memory leak? Zo ja, waar? Of waarom niet?
+
+		\begin{code}
+int main()
+{
+  int * ptr = nullptr;
+  int * ptr2 = nullptr;
+
+  for (int i = 0; i < 10; i++) {    
+    if (ptr) {
+      cout << *ptr << endl;
+      ptr2 = ptr;
+    }
+    ptr = new int(i);
+    delete ptr2;
+    ptr2 = nullptr;
+  }
+
+  cin.get();
+  return 0;
+}
+		\end{code}
+
+	\end{itemize}
+\end{exercise}
+
+\chapter{Template Functies}
+
+\section{inleiding}
+
+Je weet ondertussen dat functies en classes het eenvoudiger maken om grote programma's te schrijven. Toch zijn ze soms wat beperkt, vooral omdat c++ je verplicht om elke variabele een type te geven. Stel dat je de volgende functie wil schrijven:
+
+\begin{code}
+int max(int nX, int nY) {
+	if (nX > nY) return nX;
+	return nY;
+}
+\end{code}
+
+Je kan deze code eenvoudig in een programma gebruiken om te weten welke variabele de grootste waarde bevat:
+
+\begin{code}
+#include <iostream>
+using namespace std;
+
+int main() {
+	cout << max(1, 3) << endl;
+	cin.get();	
+	return 0;
+}
+\end{code}
+
+Maar deze code zal niet het gewenste resultaat geven wanneer je floats gebruikt:
+
+\begin{code}
+cout << max(0.3, 0.24) << endl;
+\end{code}
+
+Dat komt omdat de functie max \eeClass{integers} verwacht. De \eeClass{floats} hierboven worden daarom afgerond naar beneden om aan de eisen van de functie \eeFunc{max} te voldoen. Daarom hebben we een tweede functie \eeFunc{max} nodig, die \eeClass{floats} als argumenten heeft:
+
+\begin{code}
+float max(float fX, float fY) {
+	if (fX > fY) return fX;
+	return fY;
+}
+\end{code}
+
+Je zal zien dat je functie \eeFunc{max} nu zowel met gehele getallen als met floats kan gebruiken. De compiler zal de meest geschikte functie kiezen. Maar voor jou als programmeur is dat wel meer werk. Nu zijn dit nog maar twee functies, maar wie weet voor welke data je nog allemaal een maximum nodig hebt! Denk aan \eeClass{char}, \eeClass{double}, of misschien zelfs een eigen class \eeClass{Circle}.
+
+Hier komen functie templates van pas. Een template versie van de functie max kan er zo uit zien:
+
+\begin{code}
+Type max(Type tX, Type tY) {
+  if (tX > tY) return tX;
+  return tY;
+}
+\end{code}
+
+De functie verwijst nu niet langer naar \eeClass{float} of \eeClass{integer}, maar naar een \eeClass{Type}. \textsl{(Die naam is overigens vrij te kiezen, maar Type of T worden het meest gebruikt.)} Wanneer je een programma met deze functie compileert, dan krijg je echter een foutmelding: de compiler gaat er van uit dat \eeClass{Type} een class is, en kent die class niet. Je hebt met andere woorden nergens gedeclareerd wat een \eeClass{Type} is.
+
+Om aan te geven dat het om een template gaat, voeg je een extra regel toe, net voor de declaratie van de functie:
+
+\begin{code}
+template <typename Type>
+Type max(Type tX, Type tY) {
+  if (tX > tY) return tX;
+  return tY;
+}
+\end{code}
+
+Op deze manier geeft je aan dat dit een template functie is, en dat \eeClass{Type} de naam van het gebruikte type is. Je kan deze functie nu gebruiken met eender welk type, zolang dat type maar een operator > heeft. Die is immers nodig om te bepalen welke variabele de grootste waarde heeft.
+
+\begin{code}
+cout << max(   3,     7) << endl;
+cout << max(-0.2, -0.46) << endl;
+cout << max('a' ,   'b') << endl;
+\end{code}
+
+\begin{exercise}
+\begin{enumerate}
+	\item Maak een template functie \eeFunc{max3} die de grootste waarde van drie argumenten als resultaat heeft.
+	\item Maak een template functie \eeFunc{avg} die het gemiddelde van 3 waarden als resultaat geeft.
+\end{enumerate}
+\end{exercise}
+
+\section{De compiler}
+
+Voor we verder gaan met templates, is het belangrijk te weten wat de compiler doet met template functies. Het zijn immers \textbf{templates} en geen echte functies. Een programma kan niet werken met deze templates, dus moet de compiler wat extra werk doen om hier een echt programma van te maken. Op het moment dat je de volgende code in je programma gebruikt:
+
+\begin{code}
+cout << max(3, 7) << endl;
+\end{code}
+
+\ldots\ zal de compiler denken: ``oh, ik heb een functie \eeFunc{max} nodig met integers.'' De compiler voegt dan de volgende functie toe aan je programma:
+
+\begin{code}
+int max(int tX, int tY) {
+  if (tX > tY) return tX;
+  return tY;
+}
+\end{code}
+
+Met andere woorden: de compiler maakt een kopie van de template en vervangt \eeClass{Type} overal door \eeClass{int}. Gebruik je verder in je programma ook dit statement:
+
+\begin{code}
+cout << max(3.4, 5.6) << endl;
+\end{code}
+
+\ldots\ dan zal de compiler nog een extra kopie van je functie maken, maar dit maal \eeClass{Type} vervangen door \eeClass{double}. Dat wil zeggen dat de twee functies die je oorspronkelijk schreef nu door de compiler gemaakt worden. Het resultaat is dus hetzelfde, maar je hebt wel minder werk. Ook belangrijk is dat de compiler deze functies enkel maakt wanneer ze nodig zijn. Als je nergens een je programma een functie \eeFunc{max} gebruikt met twee char variabelen, dan zal de compiler die functie ook niet genereren.
+
+Soms moet je de compiler wel wat helpen. Wanneer je de functie op deze manier gebruikt:
+
+\begin{code}
+cout << max(3.4, 5) << endl;
+\end{code}
+
+\ldots\ komt de compiler er niet uit. Moet hij nu de functie met het type \eeClass{double} of het type \eeClass{int} maken? Het eerste argument is immers een double, maar het tweede is een integer. Je moet dan zelf aangeven welke functie er nodig is:
+
+\begin{code}
+cout << max<double>(3.4, 5) << endl;
+\end{code}
+
+Deze notatie komt je hopelijk bekend voor. Bij meer complexe templates is het steeds nodig om aan te geven welk type er nodig is. Je hebt deze notatie dus al gebruikt in onder meer:
+
+\begin{code}
+std::vector<int> intList;
+Memx<Circle> circles;
+\end{code}
+
+\chapter{Template Classes}
+We starten met een eenvoudige class voor een 2D positie. Die zou er zo uit kunnen zien:
+
+\begin{code}
+class Vec {
+public:
+  int x() { return _x; }
+  int y() { return _y; }
+
+  void set(int x, int y) {
+  	_x = x;
+  	_y = y;
+  }
+
+  void set(const Vec & other) {
+  	_x = other._x;
+  	_y = other._y;
+  }
+
+  void print() {
+  	cout << "x: " << _x << " y: " << _y << endl;
+  }
+
+private:
+  int _x, _y;
+};
+\end{code}
+
+Gevolgd door een kort programma:
+
+\begin{code}
+int main() {
+  Vec pos1;
+  pos1.set(1, 2);
+  pos1.print();
+
+  Vec pos2;
+  pos2.set(pos1);
+  pos2.print();
+
+  cin.get();
+  return 0;
+}
+\end{code}
+
+Wil je deze class aanpassen zodat je ook floats en doubles kan gebruiken? Je kan dezelfde techniek als voordien toepassen. Voorzie een template declaratie en vervang \eeClass{int} overal door \eeClass{Type}. Voer daarna het programma uit.
+
+Je zal zien dat de compiler hier behoorlijk van streek raakt. Het probleem zit al in de eerste regel van het programma:
+
+\begin{code}
+Vec pos1;
+\end{code}
+
+Bij een template functie kan de compiler uit de argumenten meestal afleiden met welk type hij een kopie van de template moet maken. Maar hier wordt dat pas duidelijk wanneer de functie \eeFunc{set(int, int)} gebruikt wordt. En dat is te laat. Daarom zal je bij een class template steeds moeten aangeven welk type je wil gebruiken:
+
+\begin{code}
+Vec<int> pos1;
+\end{code}
+
+\begin{note}
+Een van de redenen waarom Esenthel geen template class voor \eeClass{Vec} gebruikt, is dat die class zoveel gebruikt wordt dat het onhandig is om telkens het type mee te geven. Templates worden in C++ eerder voor containers gebruikt, en dat is ook zo in Esenthel.
+\end{note}
+
+\begin{exercise}
+\begin{enumerate}
+	\item Maak een template class Vec3 met een Z co\"ordinaat. Pas de main functie aan om deze class te testen.
+	\item Maak een template class Color met r, g en b waarden. Voorzie een functie om de kleuren in te stellen en een functie om ze op het scherm te printen.
+\end{enumerate}
+\end{exercise}
+
+\end{document}
+

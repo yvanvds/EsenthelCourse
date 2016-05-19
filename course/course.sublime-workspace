@@ -11,6 +11,25 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "course_nl.tex",
+			"settings":
+			{
+				"buffer_size": 2514,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "Package Control Messages\n========================\n\nLaTeXTools\n----------\n\n  LaTeXTools Plugin version 3.7.10 (2016-05-12) changelog:\n  \n  Features:\n  \n  - Updated Evince scripts to run on Python3 and try to autodetect Python version (#721, #333, #400)\n  - Support for multiple cursors with \\input, \\include and environment completions (#691)\n  - Ref commands run with only a single label will automatically be completed\n  - keep_focus and forward_sync can be set via arguments to the jump_to_pdf command (#680)\n  \n  Bugfixes:\n  \n  - Improve author_short (#691)\n",
+			"settings":
+			{
+				"buffer_size": 561,
+				"line_ending": "Windows",
+				"name": "Package Control Messages",
+				"read_only": true,
+				"scratch": true
+			}
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -140,8 +159,67 @@
 			]
 		},
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "course_nl.tex",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2514,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2483,
+								2483
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 1656.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 561,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								561,
+								561
+							]
+						],
+						"settings":
+						{
+							"auto_indent": false,
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_width": 2,
+							"word_wrap": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -229,7 +307,7 @@
 		],
 		"width": 0.0
 	},
-	"selected_group": 0,
+	"selected_group": 1,
 	"settings":
 	{
 	},
