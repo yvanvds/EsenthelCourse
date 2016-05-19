@@ -1,10 +1,8 @@
 \chapter{Classes: the basics}
 
-This course assumes you have some basic knowledge about object oriented programming, and classes are a crucial part of that. In this chapter, the basics of classes will be reviewed, but a little advance knowledge might be required if you're a slow learner.
+The basic idea behind classes is to group variables which belong together. For example, \eeClass{Vec2} has the values x and y which together make up a 2D position. Without this class, you would have to declare two separate floats to remember a position.
 
-If data belongs together, this should be reflected in your code. For example: the class \eeClass{Vec2} has two float variables to remember a position: x and y. Without this class it would still be possible to work with 2D coordinates, but you would have to declare two float variables for one position. 
-
-The designer of the game engine knew that 2D positions would be used rather often. So it made sense to provide a class for that. A very simple \eeClass{Vec2} class could look like this:
+A software library is, for the most part, a collection of classes that work well together. The library developer provides classes which can be used to make your job easier. It would be hard to imagine a game without positions, so it makes sense that Esenthel engine provides you with a class to store such a position. In a most basic form, this class could look like this:
 
 \begin{code}
 class Vec2 {
@@ -13,60 +11,65 @@ class Vec2 {
 }  
 \end{code}
 
-When this class exists, it can be used anywhere in your project:
+When this class is defined, it can be used anywhere in your application:
 
 \begin{code}
 Vec2 pos;
-Vec2 pos2 = pos; // Assign the values of pos to pos2
-pos.x = 3;       // Adjust the x value of pos
-pos.y = pos2.x;  // Assign the x values of pos2 to the y value of pos
+Vec2 pos2 = pos; // assigns the values of pos to pos2
+pos.x = 3;       // change the x value of pos 
+pos.y = pos2.x;  // assign the x value of pos2 to the
+				 // y value of pos
 \end{code}
 
-The same can be done with your own classes. In fact, almost every line of code in your project should be part of a class.
+In every application except from the small exercises we have done in the previous chapters, you should design your own classes. Almost every aspect of your program should be contained within a class. So it's about time you learn more about them.
 
 \begin{note}
-When two or more objects or variables belong together, they should be defined as a class.
+When two or more objects or variables belong together, they should be part of a class.
 \end{note}
 
-There is a difference between a class and an object. In the example above, \eeClass{Vec2} is a class, but pos and pos2 are objects of the class \eeClass{Vec2}. In other words: you cannot 'use' a class directly, but you can create objects with it and use those.
+Please note that there's a difference between a class and an object. In the example above, \eeClass{Vec2} is a class, but pos and pos2 are objects of this class. You cannot use \eeClass{Vec2} as if it were an object, but you can use this class to create one:
 
 \begin{code}
-Vec2.x = 3; // Very wrong!
+Vec2.x = 3; // wrong!
 Vec2 pos;
-pos.x = 3; // Correct.
+pos.x = 3; // correct.
 \end{code}
 
-\section{Roll your own Class}
-Suppose you need a moving circle in your project. To have this circle move at a fixed speed, you need a variable. For instance a \eeClass{Vec2} called 'speed'. This \eeClass{Vec2} obviously belongs with the circle, but the class \eeClass{Circle} does not provide such one. And it should not, because not every circle needs to move. 
-
-This is a very good reason to create your own class for moving circles, containing a \eeClass{Circle} and a \eeClass{Vec2}:
+\section{Create your own class}
+Imagine you need a moving circle in your application. To have a circle move at a fixed speed, you will need a variable to store this speed. It clearly belongs with the circle, but it isn't part of the Circle class provided by Esenthel because not every circle needs to move. So we create our own class:
 
 \begin{code}
 class movingCircle {
-  Circle circle;
+  Circle c;
   Vec2 speed;
 }
 
+// declare an object of this class
 movingCirle mc;
 
-// in the Init function
-mc.circle.set(0.1, Vec2(-0.4, -0.3));
+// some code in Init()
+mc.c.set(0.1, Vec2(-0.4, -0.3));
 mc.speed = Vec2(0.3, 0.5);
 
-// in the Update function
-mc.circle.pos += mc.speed * Time.d();
+// some code in Update()
+mc.c.pos += mc.speed * Time.d();
 \end{code}
 
-Once you've created this class \eeClass{movingCirle}, you'll be able to create as many moving circles as you like, all with their own speed. (But using them looks rather complicated, right? You'll soon learn how to simplify this.)
+Once you have a class \eeClass{movingCirle}, you can create as much moving circles as you like, all able to remember their own speed. \textit{(Although the current class can be improved a lot, which you will learn in a next chapter)}.
 
 \begin{exercise}
 \begin{enumerate}
-  \item Create a container for the class \eeClass{movingCircle}. Every time the space bar is pressed, add an object to this container. The new object should have a random position and a random speed.
-	\item In the Update function, you must update the position for every circle. When a circle move outside of the screen, it should be put back in the middle.
-	\item Extend the class \eeClass{movingCirle} with a color. Every object should have a random color. Be sure to draw every circle with its custom color.
+  \item Create a container for the class \eeClass{movingCircle}. Every time you press the space bar an element should be added to the container, on a random position and with a random speed.
+	\item Make sure all circles update their position in the Update function. When a circle goes outside of the screen, put it back in the middle.
+	\item Expand the class \eeClass{movingCirle} with a color. Every object has a random color, to be used to draw it on the screen.
+>>>>>>> origin/master
 	\end{enumerate}
 \end{exercise}
 
 \begin{note}
+<<<<<<< HEAD
 More work will be done on this exercise in the next chapter. Save it!
+=======
+Be sure to save this exercise. We will use it again in the next chapter.
+>>>>>>> origin/master
 \end{note}

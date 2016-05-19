@@ -64,7 +64,7 @@ But suppose you need to use two methods of the newly created object? You could t
 for(int i = 0; i < 10; i++)
 {
 	circles.New().set(0.1, RandomF(-D.w(), D.w()), RandomF(-D.h(), D.h()));
-	circels.New().extend(-0.05);
+	circles.New().extend(-0.05);
 }
 \end{code}
 
@@ -226,17 +226,18 @@ for(int i = 0; i < dots.elms(); i++) {
 	    if(Cuts(dots[i], circles[j])) {
 		    dots.remove(i);
 		    circles.remove(j);
-		    // At this point there is one less dot in the container, but next circles will
-		    // still be compared against the current dot. If we are at the last dot, i will
-		    // no longer be valid. To prevent a crash, we add a break statement to go
-		    // back to the outer for loop:
+		    // At this point there is one less dot in the container, but next 
+		    // circles will still be compared against the current dot. 
+		    // If we are at the last dot, i will no longer be valid. 
+		    // To prevent a crash, we add a break statement to go back to 
+		    //the outer for loop:
 			break;
 		}		
 	}
 }
 \end{code}
 
-Of course it is also possible to empty a container at once:
+And if you'd like to clear all container elements at once:
 
 \begin{code}
 dots.clear();
@@ -245,17 +246,18 @@ dots.clear();
 \section{A little Game}
 
 \begin{enumerate}
-\item Create a triangle on the bottom of the screen which can be moved back and forth with the arrow keys.
-\item Add a container for the class \eeClass{Vec2}. Every time you press the space bar, an element should be added to this container, at the current position of the rectangle.
-\item Inside the update function, you increase the y value of every element in the container. (Use \eeClass{Time.d()}!) When an element reaches the top of the screen, it should be removed from the container.
-\item Draw all container elements on the screen in the \eeFunc{Draw()} function.
-\item Create a second container to store circles. A new circle should be added every second, at the top of the screen.
-\item Make all circles move down in the Update function.
+\item Create a triangle at the bottom of the screen. This triangle can be moved back and forth with the arrow keys.
+\item Add a container for the class \eeClass{Vec2}. Every time you press the space bar, you add an element on the location of the triangle.
+\item Increase the y value of every container element in the Update function.(Use \eeClass{Time.d()}!) If an element reaches the top of the screen, remove it from the container.
+\item Draw all elements on the screen in the \eeFunc{Draw()} function.
+\item Create a second container for circles. Every second a circle must be added somewhere at the top of the screen.
+\item Move all circles down in the \eeFunc{Update()} function.
 \item Show all circles in the \eeFunc{Draw()} function.
-\item When a circle and a dot collide, they should both be removed.
-\item When a circle collides with the triangle, show the text 'Game Over' in the middle of the screen.
-\item When a circle is below the bottom of the screen, it should also be removed.
+\item When a circle hits a \eeClass{Vec2} from the other container, both must be removed.
+\item When a circle hits the triangle, `Game Over' must be shown on the screen.
 \end{enumerate}
 
-This little project certainly can improved upon. You could stop creating new circles when the game is over, and disable the player actions. The speed at which circles appear could increase over time. Or you could show a score on the screen and provide a fixed number of lives. Another challenge could be to use images instead of circles and a triangle.
+You could go even further with this game. Don't create new circles after the game is finished, and disable movement and shooting. Circles might move faster the longer you play, a score can be shown or you might give the player more than one life.
+
+And instead of triangles and circles, images might be used. Have fun!
 
