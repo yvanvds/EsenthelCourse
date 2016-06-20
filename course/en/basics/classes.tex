@@ -6,21 +6,21 @@ In this chapter, we'll examine one approach which is very useful when working wi
 
 \section{Related ideas}
 
-Every 'idea' in your application should be a class. This idea can be the score logic, the database connection, the player, a certain type of monster and so on. A class is something you create objects from, so things like a player, a monster or a window do seems like logical candidates. And they are. But just as well can a class be a more abstract idea, like a scoring system, everything related to the network or a database connection. Or a class could just be repsonsible for retrieving and updating the data from one table in a database. 
+Every 'idea' in your application should be a class. This idea can be the score logic, the database connection, the player, a certain type of monster and so on. A class is something you create objects from, so things like a player, a monster or a window do seems like logical candidates. And they are. But just as well can a class be a more abstract idea, like a scoring system, everything related to the network or a database connection. Or a class could just be responsible for retrieving and updating the data from one table in a database. 
 
 Everything that is related to that idea, should be part of the class. Take a score class, for example. The following concepts clearly belong together: 
 
 \begin{itemize}
 \item a variable to store the current score
-\item a variabele to store the high score
+\item a variable to store the high score
 \item a method to change the score
 \item a method to reset the score
-\item a method to compare the score with the highscore
+\item a method to compare the score with the high score
 \item a method to retrieve the current score
 \item \ldots
 \end{itemize}
 
-When creating a class, it is a good idea to think about the class itself for a moment. What methods could you might need later on? Maybe you won't need a reset method, but there's a good chance you will. Instead of thinking about your application, you should think aobut the class itself.
+When creating a class, it is a good idea to think about the class itself for a moment. What methods could you might need later on? Maybe you won't need a reset method, but there's a good chance you will. Instead of thinking about your application, you should think about the class itself.
 
 Beginning programmers often make the mistake to focus on their application a bit too much. The result of that is a programming session like this:
 
@@ -28,7 +28,7 @@ Beginning programmers often make the mistake to focus on their application a bit
   \item Hey, i need a way to store an view the current score. Let's make a class for that.
   \item (you write a class with a score and set and get methods)
   \item Great, now i can create a window which shows the score on the screen. Let's make a class for this window.
-  \item (you write a class for the score gui)
+  \item (you write a class for the score GUI)
   \item Oh, let's add a highscore!
   \item (you alter the score class to store the high score)
   \item (you start creating a database class to store highscores)
@@ -43,7 +43,7 @@ This is why you should try to focus on the current task: creating the class. May
 
 That is rule 1: think about the class, not about the application. Rule number two is: logic and interface don't mix. It's just a bad idea. We try to make a clear distinction between GUI classes, logic classes, network classes, database classes and so on.
 
-Think about the score class one more time. You could decide that the score will be visible on the screen and implement a score method called 'draw' to do just that. But later on you need to display the score when the game is over, in a slighty different way. Will you create yet another draw method? Or when you have to line up the drawing of score with the drawing of the current level. Will you add the level to the scoring system? Level management could very well deserve its own class.
+Think about the score class one more time. You could decide that the score will be visible on the screen and implement a score method called 'draw' to do just that. But later on you need to display the score when the game is over, in a slightly different way. Will you create yet another draw method? Or when you have to line up the drawing of score with the drawing of the current level. Will you add the level to the scoring system? Level management could very well deserve its own class.
 
 A far better approach is to create a method to retrieve the score itself. And write classes for a GUI during the game and a GUI during a game over. Those classes will retrieve the current score and decide on how to display it.
 
@@ -88,7 +88,7 @@ It is generally considered a good idea to use methods to access a class variable
 For consistency, I recommend you use the following rules to write these methods:
 
 \begin{itemize}
-\item The name of the method is equal to the name of the variable, preceded by set or get. (And with camelCaps ofcourse)
+\item The name of the method is equal to the name of the variable, preceded by set or get. (And with camelCaps of course)
 \item The method alters the value with the same name as the method.
 \item The set method has an argument of the same type as the value. It returns a reference to the class.
 \item The get method returns a variable with the same type as the class variable.
@@ -213,43 +213,43 @@ void Draw() {
 
 \begin{exercise}
 \begin{enumerate}
-\item Maak een class `movingCircle'. Die bevat een cirkel, een Vec2 `direction' en een float `speed'. 
-\item Voorzie een functie `create' die de cirkel een straal en een beginpositie geeft. Voor de variabele `direction' geef je een random float tussen -1 en 1 aan zowel de x als de y waarde. Speed krijgt een waarde tussen 0.5 en 2.
-\item Voorzie een functie `update' die direction, vermenigvuldigd met \eeFunc{Time.d()} en `speed', optelt bij de positie van de cirkel. Daarna voer je een controle uit op de nieuwe positie. Wanneer de absolute waarde van de y-coordinaat van de cirkel groter is dan de hoogte van het scherm, dan keer je het teken van de y-coordinaat om. Voor de x-coordinaat doe je hetzelfde, maar dan met de breedte van het scherm.
-\item Maak een functie `draw' die de cirkel op het scherm toont. 
-\item In je programma maak je een object van de class `movingCircle'. Je zorgt ook dat de `create', `update' en `draw' functies op de juiste plaats staan om te controleren of je cirkel werkt zoals het hoort.
+\item Create the class `movingCircle'. It should contain a \eeClass{Circle}, a \eeClass{Vec2} `direction' and a float `speed'. 
+\item Add a `create' method to provide the circle with a radius and a position. This method should also assign a random float between -1 and 1 to the direction variable, and a random float between 0.5 and 2 to speed. 
+\item Add an `update' method to this class. This method will add the direction, multiplied by \eeFunc{Time.d()} and `speed', to the circle's position. The update method should also check the new position. Whenever the x or y value is out of bounds (which means it is no longer visible on the screen) you should reverse the sign of that value.
+\item Create a `draw' method to display the circle on the screen.
+\item Create a global object of the class `movingCircle' in your application. Don't forget to add the object's methods and run your application to see the result.
 
-\item Maak een nieuwe class `circleManager' met een memory container voor `movingCircle'.
-\item Voorzie in deze class een functie `add' die een cirkel toevoegt aan de container.
-\item Maak een functie `update' die de functie `update' van elke cirkel in de container uitvoert.
-\item Maak een functie `draw' die alle cirkels op het scherm toon.
-\item Aangezien je van de class meer \'e\'en object nodig hebt, maak je dat object onderaan in het bestand, net na de class. Je geeft dit object de naam `CM'.
+\item Add a new class `circleManager' which contains a memory container for the class `movingCircle'.
+\item Provide an `add' method to add a new circle to this container.
+\item Provide an `update' method which calls the update method of every circle in the container.
+\item Add a `draw' method to draw all circles on the screen.
+\item Since you only need one object of this class, you should add it in the same file, right below the class declaration with the name `CM'.
 
-\item Verwijder het object van de class `movingCircle' uit je programma. \textsl{(Verwijder ook alle functies die je van dat object gebruikte.)}
-\item In de update functie van je programma voer je de `add' functie van CM uit wanneer je op de spatiebalk drukt.
-\item Ook in de update functie voer je de update functie van CM uit. De draw functie zet je in de `Draw' functie van je programma.
+\item Remove the object of the class `movingCircle' from your application. \textsl{(The lines where you used this object should also be erased.)}
+\item In the update function of your app, execute the `add' method of CM whenever the space bar is pressed.
+\item Also in this update function, execute the update method of CM. And of course the draw method should be called inside your application's Draw function.
 
-\item Uitbreiding: Voeg een functie `remove' toe aan de circleManager. Deze functie heeft als argument een positie. De circle manager controleert of er een cirkel op die positie staat en verwijdert die cirkel.
+\item Extra: write a `remove' method for the circleManager. This method should accept a position as an argument. The method should compare this position with the circles in it's container. If the provided position overlaps with a circle, this circle should be erased from the container.
 \end{enumerate}
 \end{exercise}
 
-\section{Werken aan bestaande code}
-Wanneer je iets moet aanpassen aan code die al bestaat, dan is het begin dikwijls het moeilijkst. Hierbij enkele hulpmiddelen.
+\section{Working with existing code.}
+When you need to change code which already exists, there's good news and there's bad news. The good news is that it can save you some work because you don't have to start from scratch. The bad news: as long as you don't understand what's already there, you are bound to make mistakes. It can be hard to start working with code you didn't write yourself, but here's a few suggestions to get you started.
 
 \begin{itemize}
-\item Zorg eerst dat je de weet wat waar staat. Bekijk de verschillende classes in het programma en zorg dat je weet welke class wat doet.
-\item Kijk van welke classes er globale objecten bestaan.
-\item Zoek naar management classes en onthoudt bij welke class die horen.
-\item Zijn er nog andere classes die duidelijk samen horen?
-\item Het kan geen kwaad om op een blad papier notities te nemen van het voorgaande. Dat helpt je om alles te onthouden en te structureren.
+\item Be sure to know where to find what. Examine all classes and find out what they're supposed to do.
+\item Check which classes have global objects.
+\item Find out which class are management classes and what see which classes they manage.
+\item Are there any other classes which clearly belong together?
+\item It doesn't hurt to take notes about this. A few notes about the existing classes and how they relate to each other go a long way to gain the needed insight for understanding existing code.
 \end{itemize}
 
-Wanneer je dan aan de code werkt, houdt dan het volgende in de gaten:
+When you're working with classes and you feel you're stuck, ask yourself these question to get on your way:
 \begin{itemize}
-\item Welke variabelen heeft deze class? Welke informatie heb ik nodig om een functie te laten doen wat ze moet doen?
-\item Welke andere functies heeft deze class? Kan ik een van deze functies gebruiken?
-\item Indien de class een ander object moet wijzigen, welke functies heeft die class al? Moet je er misschien een toevoegen voor dat je kan doen wat je wil doen?
-\item Wordt er een set of get functie gevraagd? In dat geval zijn er regels die het je gemakkelijk maken.
+\item What variables does the class have? What variables do I need to change in the method I am working on. And what information can be used to calculate the result? If this information is already available in the class, just use it. Otherwise you will need to provide one or more arguments to your method.
+\item What other methods does the class provide? Can the result of such a method be useful to the method you're working on?
+\item When your class needs to alter an object of another class, what methods does that class provide to do what you need? If you can't find any, you may want to add that method first.
+\item Will this be a set or get method? In that case you can follow the steps mentioned above to create it.
 \end{itemize}
 
 
