@@ -226,6 +226,272 @@ int main()
 	\end{itemize}
 \end{exercise}
 
+\section{Dynamic arrays}
+
+Dynamisch geheugen komt pas echt van pas wanneer je met geheugencontainers wil werken. In het begin van dit hoofstuk zagen we enkele statische arrays:
+
+\begin{code}
+Record record[500]; 
+Monster monster[40];
+Polygon rendering[30000]; 
+\end{code}
+
+Je leerde al dat dit geheugen in de stack wordt gezet, die wel eens te klein kan zijn voor een grote array. Een ander probleem is dat je al van voor de start van je programma moet weten hoeveel elementen je nodig hebt.
+
+Een dynamische array is op dat vlak meer flexibel:
+
+\begin{code} 
+#include <iostream>
+int main()
+{
+    std::cout << "Enter a positive integer: ";
+    int size;
+    std::cin >> size;
+ 
+    int *array = new int[size]; // use array new.  Note that size does not need to be constant!
+ 
+    std::cout << "I just allocated an array of size " << size << '\n';
+ 
+    array[0] = 5; // set element 0 to value 5
+ 
+    delete[] array; // use array delete to deallocate array
+    array = nullptr; 
+ 
+    return 0;
+}
+\end{code}
+
+Het lijkt er op dat we opnieuw de operator \textsl{new} gebruiken. Maar eigenlijk zal de compiler hier \textsl{new[]} gebruiken, omdat hij ziet dat het resultaat een array moet zijn. De haakjes staan dan wel achter het type, maar dat is voor de compiler geen probleem.
+
+Je ziet ook dat de waarde voor het aantal elementen niet vooraf bepaald moet worden. Je kan nu gewoon een integer doorgeven. Daarnaast is het ook belangrijk dat we nu heap geheugen gebruiken. Daardoor kan het programma veel meer geheugen reserveren. Zo is er geen probleem met de volgende code:
+
+\begin{code}
+int main() {
+  int *list = new int[1000000];
+}
+\end{code}
+
+\subsection{Dynamische arrays verwijderen}
+Om een dynamische array te verwijderen, gebruik je de array versie van delete operator: \textsl{delete[]}. Beginnende programmeurs vergissen zich hier dikwijls en gebruiken de gewone delete operator (zonder haakjes). Die geeft enkel het eerste element van de array terug vrij. En zo zit je weer met een memory leak.
+
+\subsection{Waarden toewijzen}
+Eenmaal je een geldige array hebt, kan je eenvoudig waarden toevoegen:
+
+\begin{code}
+int main() {
+  std::string * text = new std::string[10];
+  text[0] = "hello world";
+  std::cout << "our favorite: " << text[0] << std::endl; 
+  delete[] text;
+  text = nullptr;
+}
+\end{code}
+
+\subsection{Resize}
+Eenmaal je een array gemaakt hebt, kan je de grootte niet wijzigen. Om snel alle elementen in een array af te gaan is het noodzakelijk dat die elementen allemaal op een rijtje staan in het heap geheugen. Maar wanneer je extra elementen zou aanmaken, dan is het mogelijk dat het geheugen vlak na de array al aan een ander programma werd gegeven. Daarom is een resize niet zomaar mogelijk. 
+
+Er zijn wel classes in de library die je toelaten om de grootte van een container aan te passen, zoals \eeClass{std::vector}. In praktijk zal zulk een class wat extra elementen voorzien voor het geval je die nodig zou hebben, en indien dat niet volstaat de volledige container copi\"eren naar een nieuwe plaats in het geheugen om vervolgens het oorspronkelijke geheugen terug vrij te geven.
+
+Libraries zoals Esenthel, waar snelheid van cruciaal belang is, hebben betere manieren om dat aan te pakken. Maar die houden dan meestal meer geheugen bezet.
+
+\begin{exercise}
+Schrijf een programma dat de gebruiker vraagt hoeveel namen hij wil ingeven. Daarna vraagt het programma om iedere naam. Tot slot toont het de hele lijst van ingegeven namen op het scherm.
+
+Hint: gebruik een dynamische array van std::string om de namen op te slaan.
+\end{exercise}
+
+\chapter{Operator Overloading}
+\section{Inleiding}
+
+In C++ zijn operators eigenlijk functies. Wanneer je de volgende bewerking ziet staan:
+
+\begin{code}
+int z = x + y;
+\end{code}
+
+dan maakt de compiler daar dit van:
+
+\begin{code}
+int z = operator+(x, y);
+\end{code}
+
+C++ heeft met andere woorden een functie met de volgende definitie, waarin \textsl{operator+} de naam van de functie is.
+
+\begin{code}
+int operator+(int value1, int value2);
+\end{code}
+
+Ook voor doubles, floats en strings beschikt C++ al over deze functies. Maar wanneer je een eigen class maakt, dan bestaat dergelijke functie niet.
+
+\begin{code}
+class Vec2 {
+  int x, y;
+};
+
+int main() {
+  Vec2 v1, v2;
+  Vec2 v3 = v1 + v2; // error
+}
+\end{code}
+
+Om bovenstaande code te laten werken, moeten we een operator+ defini\"eren voor Vec2. Die techniek noemen we `operator overloading'. Er zijn wel enkele beperkingen aan verbonden:
+
+\begin{enumerate}
+  \item Bijna elke operator kan je overladen, behalve conditional (?:), scope(::), member selector (.) en member pointer selector (.*).
+  \item Je kan geen operators overladen die niet bestaan. Nieuwe operators maken is dus niet mogelijk. Je kan bijvoorbeeld geen operator met een dollarteken maken om euro's om te zetten naar dollars.
+  \item Het is niet mogelijk om het aantal argumenten in een operator functie te wijzigen. 
+  \item Je kan nooit de volgorde van bewerkingen of de associativiteit van een operator aanpassen.
+\end{enumerate}
+
+Daarnaast zijn er enkele richtlijnen die je best volgt. 
+
+\begin{enumerate}
+  \item De oorspronkelijke betekenis van de operator moet zo goed mogelijk bewaard blijven. 
+  \item Wanneer de betekenis van een operator niet duidelijk is, dan gebruik je beter een gewone functie.
+\end{enumerate} 
+
+Toch zijn er zo nog voldoende mogelijkheden. Zo kan je de + operator implementeren om twee objecten van een class op te tellen. Of je implementeert de << operator om de inhoud van een class op het scherm te tonen. Je kan ook de == operator gebruiken om te controleren of twee objecten gelijk zijn. Al die mogelijkheden laten je toe om uiteindelijk je class op een intuitieve manier te gebruiken.
+
+\section{Friend Functions}
+De + en - operator zijn wellicht de meeste gebruikte. Maar kijk nog even naar de definitie:
+
+\begin{code}
+int operator+(int value1, int value2);
+\end{code}
+
+Je ziet dat deze operator geen lid is van een class. Meestal zal een operator wel toegang moeten hebben tot de private variabelen van een class, dus daar zit je met een probleem. Waar ook een oplossing voor bestaat: je maakt duidelijk dat de functie `bevriend' is met de class.
+
+Zo bijvoorbeeld in deze class:
+
+\begin{code}
+class Rekening {
+private:
+  int _bedrag;
+
+public:
+  Rekening(int value) { _bedrag = value; }
+  int bedrag() const { return _bedrag; }
+  friend Rekening operator+(const Rekening &r1, const Rekening &r2);
+};
+
+// opgelet, de friend functie is geen lid van de class!
+Rekening operator+()(const Rekening &r1, const Rekening &r2) {
+  return Rekening(r1._bedrag + r2._bedrag);
+}
+
+int main() {
+  Rekening r1(60000);
+  Rekening r2(20);
+
+  Rekening r3 = r1 + r2;
+  std::cout << "Ik heb " << r2.bedrag() << " gespaard." << std::endl;
+}
+\end{code}
+
+Je ziet dat de functie niet zo moeilijk is, zolang je je aan de regels houdt. Zo moeten de argumenten van een operator+ functie altijd twee const references zijn. Het resultaat moet steeds een nieuw object van dezelfde class zijn. Voor de eigenlijke berekening maken we hier een nieuw object, waarin we de bedragen (integers) optellen in de constructor.
+
+\begin{exercise}
+Voeg ook operator- toe aan het voorbeeld hierboven.
+\end{exercise}
+
+Nu kan je twee rekeningen samen tellen, maar misschien zou het in dit geval ook logisch zijn dat je een integer bij een bestaande rekening kan tellen. Dat kan, maar enkel wanneer je daar ook een operator voor schrijft. Voor primitives (integer, float, \ldots) is het niet nodig om een const reference te gebruiken.
+
+\begin{code}
+class Rekening {
+  ...
+  friend Rekening operator+(const Rekening &r1, int value);
+};
+
+Rekening operator+()(const Rekening &r1, int value) {
+  return Rekening(r1._bedrag + value);
+} 
+
+\\ ergens in main:
+Rekening r2 = r1 + 1000;
+
+\end{code}
+
+\begin{exercise}
+  \begin{enumerate}
+    \item Test de nieuwe operator. Wat gebeurt er wanneer je de integer vooraan zet? Voeg code toe om dat op te lossen. Maak ook een - operator met een integer.
+
+    \item Maak een class \eeClass{Vec2} met een integer x en y. Voorzie ook + en - operators voor deze class.
+  \end{enumerate}
+\end{exercise}
+
+Zoals gezegd kan je ook andere operators toevoegen. Zo zou je de \eeClass{Vec2} in de oefening hierboven een functie kunnen geven om de inhoud het het scherm te tonen:
+
+\begin{code}
+class Vec2 {
+  int x, y;
+
+  void print() {
+    std::cout << "Vec2(" << x << ", " << y <<")";
+  }
+};
+\end{code}
+
+Deze functie heeft echter een nadeel. Omdat \eeFunc{print()} een gewone lidfunctie is, kan je ze niet midden in een output statement zetten. Je zal het op deze manier moeten doen:
+
+\begin{code}
+Vec2 v1;
+std::cout << "my point is";
+v1.print();
+std::cout << " in 2D";
+\end{code}
+
+Het zou eenvoudiger zijn wanneer je gewoon het volgende kon schrijven:
+
+\begin{code}
+std::cout << "my point is" << v1 << " in 2D";
+\end{code}
+
+En via de << operator kan dat! Deze operator overladen is niet zo verschillend van de + operator, maar de functie argumenten zijn anders. Begin bij de uitdrukking \texttt{std::cout << point}. Als << de operator is, wat zijn dan de operatoren? Aan de linkerkant zie je het object \texttt{std::cout}. Dat is een object van de class \eeClass{std::ostream}. De rechter operator is van het type \eeClass{Vec2}. Daarom ziet de definitie er zo uit:
+
+\begin{code}
+friend std::ostream& operator<<(std::ostream &out, const Point & point);
+\end{code}
+
+De implementatie zelf is dan behoorlijk eenvoudig:
+
+\begin{code}
+friend std::ostream& operator<<(std::ostream &out, const Point & point) {
+  out << "Vec2(" << x << ", " << y <<")";
+  return out;
+}
+\end{code}
+
+Misschien is de return value hier wel het meest vreemd. Bij de + operator was de linkerzijde van de operator ook een waarde. Maar nu staat aan de linkerkant een output stream. Door die hier als eerste argument te gebruiken en dat argument ook als resultaat terug te geven, kan je heel eenvoudig meerdere outputs combineren.
+
+\begin{code}
+Vec2 v1, v2;
+std::cout << "Punt 1 is: " << v1 << "en punt 2 is: " << v2 << std::endl;
+\end{code} 
+
+\section{Lidfuncties}
+Wanneer het eerste argument van een operator functie een const reference naar dezelfde class is, dan kan de operator functie ook als lidfunctie geschreven worden. Je laat het eerste argument in dat geval gewoon weg:
+
+\begin{code}
+class Vec2 {
+public:
+  int x, y;
+  Vec2 operator+(const Vec2 & value) {
+    Vec2 result;
+    result.x = x + value.x; 
+    result.y = y + value.y;
+    return result;
+  }
+};
+\end{code}
+
+\begin{exercise}
+Schrijf zelf een extra + operator voor een integer. (Je telt die integer dan op bij zowel x als y.) Kan je in de bewerking de integer ook vooraan zetten? Leg uit.
+
+Voorzie ook een += operator en controleer of die werkt.
+\end{exercise}
+
+
+
 \chapter{Template Functies}
 
 \section{inleiding}
