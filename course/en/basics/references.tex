@@ -1,0 +1,147 @@
+\chapter{References}
+\label{chapter:references}
+\section{Introduction}
+
+take a look at this code:
+
+\begin{code}
+Vec sum(Vec pos1, Vec pos2) {
+  return pos1 + pos2;
+}
+
+// someplace else
+Vec p1(0.1, 0.3, 0.5);
+Vec p2(1.9, 2.7, 0.5);
+
+Vec p3 = som(p1, p2); 
+\end{code}
+
+Although the sum function above will give you the expected result, it is far from optimal. Your application has to do quite a lot of work to calculate the result and store it in \texttt{p3}.
+
+You already know that a function doesn't know a thing about what is happening in the rest of your application. In this case that means the function will receive two values, somehow calculates the sum of those values and returns the result to the application.
+
+But how is it able to do so if it doesn't 'see' the reset of the application? How does it know the values of its arguments? And how does it know where to put the result? The answer is quite simple, actually: at the moment the application needs the function \eeFunc{sum} to calculate something, it will copy two values to the function. Afterwards, the result is copied back to the application.
+
+The bad news: all this copying around takes time. Below are the steps that are needed to execute the function \eeFunc{sum}.
+
+
+\begin{itemize}
+\item copy \texttt{p1.x} to \texttt{pos1.x}
+\item copy \texttt{p1.y} to \texttt{pos1.y}
+\item copy \texttt{p1.z} to \texttt{pos1.z}
+\item copy \texttt{p2.x} to \texttt{pos2.x}
+\item copy \texttt{p2.y} to \texttt{pos2.y}
+\item copy \texttt{p2.z} to \texttt{pos2.z}
+\item reserve some memory for the result
+\item add \texttt{pos1.x} to \texttt{pos2.x} and store the result in \texttt{result.x}
+\item add \texttt{pos1.y} to \texttt{pos2.y} and store the result in \texttt{result.y}
+\item add \texttt{pos1.z} to \texttt{pos2.z} and store the result in \texttt{result.z}
+\item copy \texttt{result.x} to \texttt{p3.x}
+\item copy \texttt{result.y} to \texttt{p3.y}
+\item copy \texttt{result.z} to \texttt{p3.z}
+\end{itemize}
+
+And consider this: this function's arguments are simple vectors! What if it would be containers with thousands of element? Or maybe you will use this function so much it eventually gets called a thousand times each second!
+
+In other words: \emph{When you want speed and performance (and is there really a scenario in which you don't?), avoid unneeded copies in your application.}
+
+\section{Pass by Reference}
+So far we always passed values to a method. This is called \textbf{pass by value}. We literally pass values to a function or a method. Which means we'll be making a copy of the object containing them.
+
+Another way to pass an object is called \textbf{pass by reference}. Instead of copying all values, the memory address of the object is passed. In other words: we'll just tell our function 'Hey, the object you need can be found at this or that location.'
+
+In code, it looks like this:
+\begin{code}
+Vec som(Vec & pos1, Vec & pos2) {
+  return pos1 + pos2;
+}
+
+// someplace else
+Vec p1(0.1, 0.3, 0.5);
+Vec p2(1.9, 2.7, 0.5);
+
+Vec p3 = som(p1, p2); 
+\end{code}
+
+Compare this to the first code example. The only difference is the \& (ampersand) between the argument type and its name. That doesn't seem like much, but let's count the number of steps the processor needs to execute this function:
+
+\begin{itemize}
+\item put the memory address of \texttt{p1} in \texttt{pos1}
+\item put the memory address of \texttt{p2} in \texttt{pos2}
+\item reserve some memory for the result
+\item add \texttt{pos1.x} to \texttt{pos2.x} and store the result in \texttt{result.x}
+\item add \texttt{pos1.y} to \texttt{pos2.y} and store the result in \texttt{result.y}
+\item add \texttt{pos1.z} to \texttt{pos2.z} and store the result in \texttt{result.z}
+\item copy \texttt{result.x} to \texttt{p3.x}
+\item copy \texttt{result.y} to \texttt{p3.y}
+\item copy \texttt{result.z} to \texttt{p3.z}
+\end{itemize}
+
+Passing the arguments to the function takes a lot less time when using references. In fact, it is almost always a good idea to pass by reference. The only exception are basic types like \texttt{int}, \texttt{float} and \texttt{bool}. This is because when using basic types, copying the address (32 or 64 bits) takes just as much time as copying the value itself. In some cases it might even be more work! (Consider copying a bool or the address of a bool.)
+
+\section{Return by Reference}
+I'm sure you got this warm feeling after reading the previous section. The wonderful world of C++ programming has just revealed some of its secrets to you. You're ready to improve the world and this example even further! Because really, is there any reason not to use a reference as a return value? No, there is not! Look at this:
+
+\begin{code}
+Vec & sum(Vec & pos1, Vec & pos2) {
+  return pos1 + pos2;
+}
+
+// someplace else
+Vec p1(0.1, 0.3, 0.5);
+Vec p2(1.9, 2.7, 0.5);
+
+Vec p3 = sum(p1, p2); 
+\end{code}
+
+But unfortunately\ldots\ it is time to get back to reality. Because \texttt{p3} is still a plain \texttt{Vec}, not a reference. You still need to copy the result:
+
+\begin{itemize}
+\item put the memory address of \texttt{p1} in \texttt{pos1}
+\item put the memory address of \texttt{p2} in \texttt{pos2}
+\item reserve some memory for the result
+\item add \texttt{pos1.x} to \texttt{pos2.x} and store the result in \texttt{result.x}
+\item add \texttt{pos1.y} to \texttt{pos2.y} and store the result in \texttt{result.y}
+\item add \texttt{pos1.z} to \texttt{pos2.z} and store the result in \texttt{result.z}
+\item pass the address of \texttt{result} to the application
+\item copy \texttt{result.x} to \texttt{p3.x}
+\item copy \texttt{result.y} to \texttt{p3.y}
+\item copy \texttt{result.z} to \texttt{p3.z}
+\end{itemize}
+
+So while you thought you were making your code faster, there is actually an extra step now. Life sucks, right?
+
+But hey, why don't we just declare p3 as a reference instead of a plain \eeClass{vec}? This way, we can store the address instead of copying the values, right? 
+
+Think again. Variables are only valid within the scope they are declared. The result of the function \eeFunc{sum} is implicitly declared when you sum them up with the plus operator. This happens within the function itself. The result will run out of scope when the function is done, freeing all memory of local variables such as the result of the calculation.
+
+In other words: you just passed an invalid address to your application, endangering the world while doing so. It's a good thing the compiler will warn you about this, should you ever try.
+
+So is there no way to use a return by reference? Well, there is. Just not to return a local variable. When you return an object which is actually stored in your class, there isn't a problem. In fact, you've already used this:
+
+\begin{code}
+Memc<Vec> points;
+Vec & p = points.New();
+p.x = 0.1;
+...
+\end{code}
+
+This is just one example of when references are not only OK, but really needed. First off, the reference returned by new is not local to the method. The whole purpose of a memory container is to maintain a list of objects. Having the memory released when the function goes out of scope would not make any sense. 
+
+Also, suppose you \textsl{don't} use a reference for p. You would be changing a copy instead of the object in the container. Without a reference, you would be unable to alter the objects inside the container.
+
+Does this mean it can't go wrong? Actually it can, but only if you're really asking for it. For instance when you use a reference after deleting the object it references:
+
+\begin{code}
+Memc<Vec> points;
+Vec & p = points.New();
+points.clear();
+p.x = 0.1; // auch!
+\end{code}
+
+As a rule, try to use references only directly after creating them. If you reuse them later on, you're asking for trouble.
+
+\begin{exercise}
+Reopen the exercise you made at the end of the chapter \ref{section:managerClass}. Examine its methods one by one and consider where to use pass by reference instead of pass by value.
+\end{exercise}
+
