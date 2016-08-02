@@ -1,0 +1,225 @@
+\chapter{Pointers}
+
+\section{Introduction}
+By know you've learned that references are pretty neat. But before references existed, there were pointers. Just like references, they are used to store a memory address. But while references are hard to use wrong, pointers allow you to abuse them in every possible way. They're the bondage lovers of programming!
+
+For instance: a reference \textsl{has} to have a valid address when you create it. And once created, the address can never change. You can't create an empty reference and pass the address later on. Pointers on the other hand, can point to anything or nothing. And you can change the contained address as many times as you like.
+
+In most circumstances, using a reference is a lot safer. When a function asks for reference arguments, you can just provide regular objects. It's hard to do something wrong there. But you might run into problems when you want to return a reference. Take this code for example:
+
+\begin{code}
+class players {
+  Memc<Player> list;
+	
+  Player &  add(Vec2 & pos, Str & name) {
+    Player & p = list.add();
+    p.set(pos, name);
+    return p;
+  }	  
+
+  Player & findByName(Str & name) {
+    FREPA(list) {
+      if(Equal(list[i].getName(), name) {
+        return list[i];
+      }
+    }
+  }	
+}
+// global object
+players Players;
+
+// somewhere in your application
+Players.add(Vec2(1,1), "niceGuy");
+player & friend = Players.findByName("coolGuy");
+\end{code}
+
+The \eeFunc{add()} method won't give you problems. The reference arguments will always exist when you pass the to this method. (Either they are real objects, or they are existing references. And references cannot be empty.) The result will be valid too, because we are certain a new object will be made and returned.
+
+Now take a look at the method \eeFunc{findByName()}. This method also returns a reference to a player. As long as the player you're looking for actually exists, there isn't any problem. But what if it doesn't? From what object would you return a reference? Remember, a reference can never be referencing a non existing object. So here are your options:
+
+\begin{itemize}
+  \item create a a new player: This enables you to return a valid reference to the player with this name. But when you use a method created by someone else, this is not really the behaviour you should expect. A method to find something should not create the object it is looking for. Otherwise, how are you able to find out if something exists or not?
+  \item return a reference to the first player in the list: This might sound like a good idea. At least you do return a valid reference. But what if you're actually looking for that first player? The method returns the first object in the list, but now you don't know if this is because the object does not exist, or because it is actually the first object.
+\end{itemize}
+
+None of the options you have is a good idea. What we need is a way to have our method tell us 'Hey, I don't have the object you're looking for. Stop buggering me!'. Or something slightly more polite.
+
+\section{Pointers to the Rescue}
+
+A pointer \textsl{can} point to an object. But it doesn't have to. They're like references without the safeguards. Here's a little idea to familiarize you with the idea:
+
+Suppose you have a room full of lockers. Every locker can hold exactly one item. Now you put a mobile phone in locker 1. After a while, you decide to move the phone to locker 2. But just in case someone is looking for this phone in the first locker, you leave a note in there: 'hey, the mobile phone is stored in locker 2 now'.
+
+Locker 1 now points to locker 2. In fact, we can move the phone around and put it in any locker we like. As long as we update the note in locker 1, everyone is able to get our phone with just one easy step: use the location stored in locker 1.
+
+You might be asking yourself: why on earth don't we just put the phone itself in locker 1 all the time? And you're right. Let us make it more complicated: imagine \textsl{every} locker has a phone, except for locker 1. For reasons beyond comprehension, the company owning these lockers wants to make sure all phones are used equally. So when someone uses the first phone, the next person should use the second phone. When the last phone is used, we'll have to use the first one again.
+
+This could get really complicated. Imagine you have to notify everyone in the building that you've made phonecall and used the phone in locker 3. And everyone would have to remember that. Won't it be a lot easier to use a simple procedure?
+
+\begin{itemize}
+  \item Look in locker 1 for a pointer to another locker.
+  \item Use the locker found in locker 1.
+  \item Increase the locker number (pointer) in locker 1.
+\end{itemize}
+
+When all phones are completely discharged, we could even replace the note with the locker ID with an empty note. Everyone would instantly know there's no phone available when the note is empty.
+
+\section{Basisbewerkingen}
+\subsection{Een pointer declareren}
+Een pointer is een variabele, net zoals een andere. Alleen, in een pointer variabele sla je geen data op, maar een geheugenadres van data. 
+
+Een pointer declareer je zo:
+
+\begin{code}
+int * p1;
+int* p2;
+int *p3;
+Str * textPtr;
+Player * playerPtr;
+\end{code}
+
+Je ziet dat je nogal wat vrijheid hebt. De eerste drie pointer variabelen zijn identiek. Ze kunnen verwijzen naar een integer. Waar de asterisk staat maakt dus niet uit.
+
+De vierde pointer is een pointer naar een \texttt{Str} (string), terwijl de vijfde pointer naar een object van de eigen klasse \texttt{Player} verwijst.
+
+\subsection{Een adres toekennen aan een pointer.}
+Wanneer we een referentie declareren, dan moeten we die dadelijk een waarde geven. Bij een pointer is dat niet nodig.
+
+Maar je weet dat wanneer we een integer gebruiken die we nooit een waarde gegeven hebben, die eender welke waarde kan hebben. Daarom is het een goed idee om een integer dadelijk te initialiseren, bijvoorbeeld met:
+
+\begin{code}
+int i = 0;
+\end{code}
+
+Ook bij een pointer kan je dat doen. Want zonder initialisatie kan een pointer naar om het even welk geheugenadres verwijzen. En als je vervolgens via de pointer de waarde in dat geheugen wijzigt, dan kan je programma crashen.
+
+Maar je kan niet zomaar het volgende schrijven:
+\begin{code}
+int i = 42;
+int * p = i;
+\end{code}
+
+In de code hierboven kennen we de inhoud van i, dus de waarde 42, toe aan p. Maar p verwacht een adres. Je laat p dus het geheugenadres 42 onthouden, niet het adres van i. Om aan te geven dat we het adres --en niet de waarde zelf-- willen doorgeven, gebruik je een ampersand (\&). Dus\ldots
+
+\begin{code}
+int   i = 42;
+int * p = &i; // declaratie en initialisatie
+int * p;      // enkel declaratie
+p       = &i; // enkel initialisatie
+p       =  i; // Fout! Het adres is nu 42 
+\end{code}    
+
+\ldots betekent: sla het adres van i op in p. Je ziet dat je dit dadelijk bij het declareren kan doen, maar ook later in het programma. De laatste regel is trouwens een waar je voor moet uitkijken. De compiler zal deze toewijzing niet verbieden, maar je programma zal waarschijnlijk crashen.
+
+\subsection{Een variabele wijzigen via een pointer}
+Wat nu als we i willen wijzigen via de pointer p? \texttt{p = i;} is fout, dat zagen we hierboven. We moeten aanduiden dat we niet p willen wijzigen, maar het geheugen waar p naar verwijst. Om dat aan te duiden hebben we een extra symbool nodig: de asterisk (*).
+
+\begin{code}
+int   i = 42;
+int * p = i ; // het adres in p wordt het adres van i
+*p      = 43; // de waarde op het adres in p wordt 43
+\end{code}
+
+We zetten de twee mogelijkheden nog eens op een rijtje:
+
+\begin{code}
+p = &i; // slaat het adres van i op in p
+*p = i; // slaat de waarde van i op in het adres waar p naar verwijst.
+\end{code}
+
+En het kan nog leuker! Indien p1 en p2 beiden pointers naar integers zijn, kan je de waarde waar p2 naar verwijst, opslaan in het adres waar p1 naar verwijst:
+
+\begin{code}
+*p1 = *p2;
+\end{code}
+
+\subsection{pointers naar null}
+Maar wat met een pointer die nergens naar verwijst? Zonder initialisatie verwijst die naar een willekeurig adres in het geheugen. Dikwijls is het nodig dat je programma weet of een pointer toegewezen is of niet. Daarom bestaat er een speciale waarde die aangeeft dat de pointer nergens naar wijst. We noemen dat een ``null pointer''. Je kan dat zo schrijven:
+
+\begin{code}
+int * p1 = null;
+\end{code}
+
+We zouden nu de code aan het begin van dit hoofdstuk kunnen herschrijven:
+
+\begin{code}
+class players {
+  Memc<Player> list;
+  
+  // referenties geven hier geen probleem, dus blijven we die gebruiken	
+  Circle &  add(Vec2 & pos, Str & name) {
+    Player & p = list.add();
+    p.set(pos, name);
+    return p;
+  }	  
+
+  // pointer result in plaats van een reference	
+  Circle * findByName(Str & name) {
+    FREPA(list) {
+      if(Equal(list[i].getName(), name) {
+        return &list[i]; // notice the ampersand!
+      }
+    }
+    // geen player gevonden met deze naam
+    return null;
+  }	
+}
+// globaal object
+players Players;
+
+// ergens in je programma 
+Players.add(Vec2(1,1), "niceGuy");
+player * vriend = Players.findByName("coolGuy");
+
+// misschien is coolGuy niet online?
+if(vriend != null) {
+  Greet(vriend); // veronderstel Greet(player * p);
+}
+\end{code} 
+
+In dit geval kunnen we verder met als de functie \texttt{findByName()} geen speler vond. Met een referentie kon dat niet. Maar je moet dan wel controleren of je geen null als resultaat kreeg.
+
+\begin{note}
+Sommige geheugencontainers, zoals Memc, kunnen tijdens de uitvoering van het programma verplaatst worden. Bijvoorbeeld omdat er op die plaats in het geheugen niet genoeg ruimte was om nieuwe players toe te voegen. Het programma zal dan de hele container verplaatsen naar een andere plaats in het geheugen. De opgevraagde pointer is dan niet meer geldig. Vraag dus elke keer opnieuw het adres aan. Als dat niet kan, of als je zo voortdurend opnieuw hetzelfde adres moet opvragen, dan gebruik je een ander soort container, zoals Memx. Die geeft de garantie dat een gegeven adres nooit wijzigt.
+\end{note} 
+
+\section{Alles op een rijtje}
+Het is je al opgevallen dat pointers en references beiden de symbolen \& en * gebruiken. En ze hebben een andere betekenis, afhankelijk van de situatie. hieronder zie je een overzicht van de mogelijkheden.
+
+Aangenomen dat de volgende variabelen reeds bestaan:
+
+\begin{code}
+int   j   = 43;
+int & ref = j ;
+int * ptr = &j;
+\end{code}
+
+kunnen we de volgende code gebruiken:
+
+\begin{myTable}{references en pointers}{l||l|l}
+  & reference & pointer \\ 
+\hline Declaratie     &      & \lstinline|int * i;| \\ 
+\hline Declaratie en Initialisatie  & \lstinline|int & i = j;|  & \lstinline|int * i = &j;|\\ 
+\hline Initialisatie &  & \lstinline| i = &j;| \\
+\hline\hline Waarde aanpassen & \lstinline|i = 42;| & \lstinline|*i = 42;| \\
+\hline Waarde aanpassen & \lstinline|i = j;| & \lstinline|*i = j;| \\
+\hline Waarde aanpassen via ref & \lstinline|i = ref;| & \lstinline|*i = ref;| \\
+\hline Waarde aanpassen via ptr & \lstinline|i = *ptr;| & \lstinline|*i = *ptr;| \\
+\hline\hline Adres aanpassen &  & \lstinline| i = &j;| \\
+\hline Adres aanpassen via ref &  & \lstinline| i = &ref;| \\
+\hline Adres aanpassen via ptr &  & \lstinline| i = ptr;| \\ 
+ 
+\end{myTable} 
+
+Zoals je ziet ogen de references een stuk eenvoudiger. Maar het valt ook op dat die references veel minder mogelijkheden hebben. Daarom is het soms echt noodzakelijk om pointers te gebruiken.
+
+\begin{exercise}
+\begin{enumerate}
+  \item Maak een programma met 5 cirkels, gespreid over de onderkant van je scherm. Je gebruikt best een memory container om de cirkels in op te slaan.
+	\item Als je muis zich boven een cirkel bevindt, dan verplaats je die langzaam naar boven.
+	\item Maak een functie die als resultaat een pointer geeft naar de hoogste cirkel. Je voert deze functie uit in update en houdt het resultaat bij een een pointer variabele.
+	\item In Draw teken je alle cirkels op het scherm. Vergelijk voor het tekenen van de cirkel het adres met de pointer variabele die het adres van de hoogste cirkel bevat. Als die gelijk zijn, teken je de cirkel groen, anders rood..
+\end{enumerate}
+\end{exercise}
+
+	
