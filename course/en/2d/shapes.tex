@@ -44,14 +44,14 @@ There's something remarkable about the \eeFunc{draw} method! It can be used with
 void draw(C Color & color, Bool fill = true, Int resolution = -1) C;
 \end{code}
 
-The first argument is a \eeClass{Color}. The second argument is a \eeClass{bool} named `fill'. You might suspect this means whether or not you desire to draw the circle as a perimeter or an area. And of course you're right. Only, the argument doesn't stop there: it has a value assigned ( = true). This is called a default value. If you agree with the default, you don't gave to explicitly pass true as an argument. Only when you don't agree, you will have to pass false.
+The first argument is a \eeClass{Color}. The second argument is a \eeClass{bool} named `fill'. You might suspect this means whether or not you desire to draw the circle as a perimeter or an area. And of course you're right. Only, the argument doesn't stop there: it has a value assigned ( = true). This is called a default value. If you agree with the default, you don't have to explicitly pass true as an argument. Only when you don't agree, you will have to pass false.
 
 \begin{note}
 The third argument (resolution) is also optional. Experiment with several values to find out what is does. (Try values like 2, 3, 8, 14, \ldots)
 \end{note}
 
 \subsection{Math}
-You can do math with circles. There are operators like \eeOpp{+=}, \eeOpp{-=}, \eeOpp{/=} and \eeOpp{*=}, which can be used to alter the radius or the position. How do you know which value will be altered? Well, if you add a float to a circle, the radius change. When you add a \eeClass{Vec2} this will later the position.
+You can do math with circles. There are operators like \eeOpp{+=}, \eeOpp{-=}, \eeOpp{/=} and \eeOpp{*=}, which can be used to alter the radius or the position. How do you know which value will be altered? Well, if you add a float to a circle, the radius will change. When you add a \eeClass{Vec2} this will alter the position.
 
 \begin{code}
 Vec2 pos(0.1, 0);
@@ -65,7 +65,7 @@ c -= Vec2(0, 0.2);
 c *= 2;
 \end{code}
 
-\subsection{Exercises}
+\begin{exercise}
 Recreate the following image by drawing circles on the screen. If you like a challenge, try creating a more fitting mouth with the method \eeFunc{drawPie}.
 
 \begin{figure}[h]
@@ -74,6 +74,8 @@ Recreate the following image by drawing circles on the screen. If you like a cha
 \caption[]{Pay attention to the eyes!}
 \label{fig:pos2D}
 \end{figure}
+
+\end{exercise}
 
 \section{Edge2}
 An \eeClass{Edge2} is a line. Just as with \eeClass{Vec2}, the '2' is important. The code will still be valid when you use an \eeClass{Edge} instead of an \eeClass{Edge2}, but that class is intended for drawing in 3D instead. To define an \eeClass{Edge2}, you need two points (\eeClass{Vec2}), being the beginning and the end. Esenthel offers two methods to pass these to the object:
@@ -107,6 +109,7 @@ Other methods of interest are \eeFunc{center()}, \eeFunc{delta()}, \eeFunc{dir()
 
 \subsection{Exercises}
 
+\begin{exercise}
 The methods \eeFunc{Sin()} en \eeFunc{Cos()} allow you to retrieve the sine and cosine from any value. This is most fun when that value is the current time. The result over time is a value which moves smoothly between -1 and 1.
 
 \begin{code}
@@ -121,7 +124,9 @@ float y = Cos(Time.curTime());
 \item Decrease the length of the line. 
 \item \textit{(This will be a bit harder)} Try to create an analog watch.
 \end{enumerate}
+\end{exercise}
 
+\begin{exercise}
 Take a look at Esenthel Engine $\Rightarrow$ Math $\Rightarrow$ Shapes $\Rightarrow$ Edge. Examine the method \eeFunc{lerp(float s)}. This function needs an argument between zero and one, and return a position on the line.
 
 \begin{enumerate}
@@ -130,8 +135,11 @@ Take a look at Esenthel Engine $\Rightarrow$ Math $\Rightarrow$ Shapes $\Rightar
 \item In the update function you increase the float with \eeClass{Time.d()}. When the float value is larger than 1, is should be assigned 0.
 \item Draw the line in black with a width of 0.05. Construct a \eeClass{Vec2} with the result of \eeFunc{lerp()}. The argument of the method should be your float. Draw this point in red, also with a width of 0.05.
 \end{enumerate}
+\end{exercise}
 
+\begin{exercise}
 Draw a triangle on the screen.
+\end{exercise}
 
 \section{Rect}
 The last shape in the chapter is a rectangle: \eeClass{Rect}. You will end up using this shape quite a lot, because a rectangle happens to be the shape of most gui elements, like buttons, windows and images.
@@ -156,6 +164,17 @@ Again there is a draw function with the color as the first argument. And optiona
 \begin{code}
 Rect(-0.2, -0.1, 0.2, 0.1).draw(BLACK);
 \end{code}
+
+\begin{exercise}
+Recreate this screen in an application:
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\linewidth]{images/nested_rectangles.png}
+\caption[]{Rectangles}
+\label{fig:nested_rect}
+\end{figure}
+\end{exercise}
 
 \subsection{A moving Rectangle}
 If you want to draw an image on the screen, it will require a rectangle. As such, a rectangle will be the basis of almost every element on your screen. It will often come in handy to have a special class for movable rectangles. As an example, we'll create a rectangle which can be moved with the arrow keys.
@@ -232,21 +251,11 @@ public:
 }
 \end{code}
 	
-\subsection{Exercises}
+\begin{exercise}
+Add a pink square to the application, using the newly created class \eeClass{movableRect}.
 
-\begin{enumerate}
-\item Recreate this screen in an application:
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.4\linewidth]{images/nested_rectangles.png}
-\caption[]{Rectangles}
-\label{fig:nested_rect}
-\end{figure}
-
-\item Add a pink square to the application, using the newly created class \eeClass{movableRect}.
-\item \textit{(A bit harder)} Be sure the square cannot move outside of the screen.
-\end{enumerate}
+\textit{(A bit harder)} Be sure the square cannot move outside of the screen.
+\end{exercise}
 
 \section{Cuts}
 

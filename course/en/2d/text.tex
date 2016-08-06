@@ -7,10 +7,12 @@ There are several ways to put text into a \eeClass{Str}:
 \begin{code}
 Str text("hello world"); // use the constructor
 text  = "hello "; // use assignment
-tex += "world" ; // use the addition assignment operator
+text += "world" ; // use the addition assignment operator
 \end{code}
 
-\textit{The text between quotes is officially called a `string literal'. When you don't have to do anything with a string but drawing it on screen, you can often just use a string literal.}
+\begin{note}
+The text between quotes is officially called a `string literal'. When you don't have to do anything with a string but drawing it on screen, you can often just use a string literal.
+\end{note}
 
 \section{Drawing Text}
 Now let's try and draw some text on the screen. Contrary to the class \eeClass{Vec2}, the \eeClass{Str} class does not have a `draw' method. The object \eeClass{D} is used to show text on the screen:
@@ -28,16 +30,15 @@ The second argument of the method \eeFunc{text} is the text itself. The first ar
 Create an application that shows the words `left', `right', `top' and `bottom' on a logical screen position. Hide the mouse pointer and instead show the word `mouse' at the current mouse position.
 \end{exercise}
 
-\section{Combining text and numbers}
-You cannot just combine text and numbers. As far as your computer knows, the values 42 and ``42'' have nothing to do with each other. The first one is an integer, the second one a string literal which happens to contain the characters 4 and 2. Examine this code:
+\section{Combining Text and Numbers}
+You cannot just combine text and numbers in C++. As far as your computer knows, the values 42 and ``42'' have nothing to do with each other. The first one is an integer, the second one a string literal which happens to contain the characters 4 and 2. Examine this code:
 
 \begin{code}
-int i = 42;
-Str myString;
-mystring = i; // will generate an error
-myString = 42; // an error
-myString = "42"; // this is OK
-D.text(Vec2(0, 0), i); // this is wrong: you cannot pass an integer to a method expecting a string
+int i        =  42    ; // OK
+Str myString =  42    ; // will generate an error
+Str myString = "42"   ; // this is OK
+D.text(Vec2(0, 0), 42); // this is wrong: you cannot pass an integer 
+                        // to a method expecting a string
 \end{code}
 
 Still, you need to draw numbers on a screen eventually. To do that, add the number to a \eeClass{Str} object:
@@ -45,37 +46,25 @@ Still, you need to draw numbers on a screen eventually. To do that, add the numb
 \begin{code}
 int i = 42;
 Str myString;
-myString += i; // this is correct
-myString += 42; // also correct
+myString +=   i; // this is correct
+myString +=  42; // also correct
 myString += 0.4; // also correct. myString now contains "42420.4"
 D.text(Vec2(0, 0), myString); // draw the string on the screen.
 \end{code}
 
-It doesn't end here though. What if you'd like to combine text with numbers? See this:
-
+It doesn't end here though. What if you'd like to combine text with numbers? The good news is that Esenthel provides functions that cover most cases. Not all of them though. Take a look at this:
 \begin{code}
 Str myString;
-myString = "score: " + 42; // wrong!
-myString = "score: ";
-myString += 42; // correct!
+myString = "score: " + 42; // correct
+myString = 42 + "score: "; // wrong
 \end{code}
  
-What happened there? The first version doesn't work because the compiler tries to add 42 to the string literal ``score: '' first. Only after that it will try to assign the result to \eeClass{myString}. But adding something to a string literal won't work, because you can never change a literal.
-
-The second version does work, because you assign the literal to the string first. Afterwards, the integer is added to the string.
-
-Because you will want to combine integers (or floats) and strings quite a lot, there is a shortcut: a \eeClass{Str} object called \eeClass{S}. This object will always be an empty string.
+Without going into details here, there is a simple solution: a \eeClass{Str} object called \eeClass{S} is provided by Esenthel. Whenever you run into an error when you try to combine text and integers or floats, start with \eeClass{S +}.
 
 \begin{code}
 Str myString;
-myString = S + "score: " + 42; // correct!
-\end{code}
+myString = S + 42  + " is your score"; 
 
-Why does this work? S is an empty \eeClass{Str}. Both the string literal and the integer will be added to S. Afterwards the text in S will be copied to myString.
-
-An object like this can also be passed to \eeClass{D.text()}, so the following statements are completely fine:
-
-\begin{code}
 int myScore = 10;
 D.text(Vec2(0, 0), S + "score: " + myScore);
 
@@ -87,7 +76,7 @@ D.text(Vec2(0, 0), S + "score: " + myScore + " / 10");
 Create an application with an int `score'. Increase the score every time you press the space bar. Show the current score on the screen.
 \end{exercise}
 
-\section{Vec2 as text}
+\section{Vec2 as Text}
 While debugging your application it can be useful to show the x- and y-coordinates of a \eeClass{Vec2} on the screen. You could do this the hard way:
 
 \begin{code}

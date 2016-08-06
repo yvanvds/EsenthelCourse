@@ -205,7 +205,7 @@ Create an application with a dot on the screen. Use the arrow keys to move this 
 The dot itself will be drawn in green, unless the spacebar is held down. If so, draw the dot in red.
 \end{exercise}
 
-\subsection{Gradual changes}
+\subsection{Gradual Changes}
 \label{chapter:keyboardInteractie}
 The method \eeFunc{Kb.bp()} can be used for sudden changes. For example when you open a window, add an object, show a menu or close the application. Like this:
 
@@ -227,7 +227,7 @@ Every frame, the value of x will increase a little bit. The dot will gradually m
 Adapt your last exercise to use the \eeFunc{Kb.b()} method. The dot will now move very fast, so you might want to decrease the added value.
 \end{exercise}
 
-\subsection{Delta time}
+\subsection{Delta Time}
 The exercise above has one major problem: the position will be updated at every frame. Should you test this application on two different computer, one with a good graphics card and 60FPS, and another without a dedicated graphics card running at 30FPS, the movement will be twice as fast on the good computer! We won't mind for a small exercise, but this could be a serious gaming disadvantage for the girl with the slower computer.
 
 We can fix this problem with the concept of \textbf{delta time}. The delta time is the time that has passed between this update and the previous one. \textsl{(Remember the mouse wheel delta, being the distance traveled by the mouse wheel between this frame and the previous one.)} The delta time can be retrieved with the next method:

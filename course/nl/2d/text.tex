@@ -36,12 +36,11 @@ Maak een programma dat de muis verbergt en op de positie van de muis het woord `
 Je kan getallen en tekst niet zomaar combineren. Voor je computer zijn 42 en ``42'' iets helemaal anders. Het eerste is een getal, het tweede een tekst die toevallig de characters 4 en 2 bevat. Dat zie je ook in de volgende code:
 
 \begin{code}
-int i = 42;
-Str myString;
-mystring = i; // dit genereert een foutmelding
-myString = 42; // dit is nogmaals een foutmelding
-myString = "42"; // dit is ok!
-D.text(Vec2(0, 0), i); // dit is weer fout: je kan geen integer gebruiken als het programma een string verwacht
+int i        =  42    ; // OK
+Str myString =  42    ; // will generate an error
+Str myString = "42"   ; // this is OK
+D.text(Vec2(0, 0), 42); // this is wrong: you cannot pass an integer 
+                        // to a method expecting a string
 \end{code}
 
 Toch wil je vaak ook de waarde van een variabele op het scherm. Hoe pak je dat dan aan? Wel, je kan een getal wel toevoegen aan een \eeClass{Str} object:
@@ -49,42 +48,31 @@ Toch wil je vaak ook de waarde van een variabele op het scherm. Hoe pak je dat d
 \begin{code}
 int i = 42;
 Str myString;
-myString += i; // dit is correct
-myString += 42; // dit ook
-myString += 0.4; // dit ook. De myString bevat nu de tekst "42420.4"
-D.text(Vec2(0, 0), myString); // toont de tekst op het scherm
+myString +=   i; // this is correct
+myString +=  42; // also correct
+myString += 0.4; // also correct. myString now contains "42420.4"
+D.text(Vec2(0, 0), myString); // draw the string on the screen.
 \end{code}
 
-Maar we zijn nog niet helemaal klaar. Dikwijls wil je tekst en getallen combineren. Maar kijk eens naar de volgende code:
+Maar we zijn nog niet helemaal klaar. Dikwijls wil je tekst en getallen combineren. Het goede nieuws is that Esenthel functies voorziet in de meeste gevallen. Maar niet altijd. Kijk maar naar de volgende code:
 
 \begin{code}
 Str myString;
-myString = "score: " + 42; // fout!
-myString = "score: ";
-myString += 42; // correct!
+myString = "score: " + 42; // correct
+myString = 42 + "score: "; // wrong
 \end{code}
- 
-De eerste versie werkt niet omdat je 42 wil toevoegen aan een string literal. De compiler zal proberen om eerst 42 toe te voegen aan ``score: ''. Pas dan wordt de combinatie van die twee in `myString' geplaatst. Bij het combineren van die twee gaat het dus fout, want ``score: '' is geen \eeClass{Str} maar een string literal.
 
-De tweede versie werkt wel, omdat je eerst de string literal in een \eeClass{Str} object plaats, en pas dan het getal aan dat object toevoegt.
-
-Omdat je een string en een getal vaak gecombineerd worden, bestaat er een shortcut: een \eeClass{Str} object \eeClass{S}. Dit is een lege string.
+We gaan hier niet in op de details, maar er bestaat een eenvoudige oplossing: een \eeClass{Str} object \eeClass{S} die voorzien is in de engine. Wanneer je een foutmelding krijgt bij het combineren van tekst met integers of floats, begin dan met \eeClass{S +}. 
 
 \begin{code}
 Str myString;
-myString = S + "score: " + 42; // correct!
-\end{code}
+myString = S + 42  + " is your score"; 
 
-Hoe komt het dat dit wel werkt? S is een lege \eeClass{Str}. De string literal wordt toegevoegd aan S. Daarna wordt 42 toegevoegd aan S. Tenslotte wordt S in de variabele `myString' geplaatst.
-
-Een dergelijk object kan je ook doorgeven aan \eeClass{D.text()}. De volgende statements zijn dus helemaal in orde:
-
-\begin{code}
 int myScore = 10;
 D.text(Vec2(0, 0), S + "score: " + myScore);
 
-// iets complexer
-D.text(Vec2(0, 0), S + "score: " + myScore + " op tien");
+// more complex
+D.text(Vec2(0, 0), S + "score: " + myScore + " / 10");
 \end{code}
 
 \begin{exercise}

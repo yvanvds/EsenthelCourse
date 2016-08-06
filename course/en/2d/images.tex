@@ -40,6 +40,10 @@ if(Kb.b(KB_LEFT))
 }
 \end{code}
 
+\begin{exercise}
+Find 3 very sad images and create an application with a moving image. Make sure the images are switched one way or another.
+\end{exercise}
+
 Another way to add some dimension is by varying the image over time. You actually create a little animation by rotating through a list of images all the time. The following example presents a player class with three variations for every direction.
 
 \begin{code}
@@ -133,7 +137,7 @@ The example above can be found in the course template. Create an object of the p
 On line 39 there's an object `current' of the class \eeClass{ImagePtr}. this class is a `pointer' to an \eeClass{Image}. The code below that line will make the pointer `point' to the image we want to show next. At the bottom, \verb|current->draw()| is used to draw that image. Note the arrow instead of the dot. This is a sign that current is not a real image object, but just points to one. (Don't worry if you find this hard to grasp. You will learn more about pointers in another chapter.)
 \end{note}
 
-\subsection{Exercises}
+\begin{exercise}
 The \eeClass{Image} class in Esenthel contains a whole bunch of functions. Most of them you will not need any time soon, but it is good to remember that whatever you want to do with your image, there's a good chance there is a function which has you covered.
 
 For now, experiment a bit with the functions below to learn about their intent.
@@ -145,6 +149,7 @@ For now, experiment a bit with the functions below to learn about their intent.
 \item Draw an image using \eeFunc{drawFS}
 \item (a bit harder) Load an image, apply a blur and export as PNG. Can you do it?
 \end{itemize}
+\end{exercise}
 
 \section{Sound}
 To make your game a bit more attractive you will want to add sound. Generally speaking, there are two groups: music and effects (FX). Music will mostly be played in the background while FX is linked to certain actions like pressing a button or dying horribly.
@@ -210,19 +215,24 @@ But what do they mean, little grasshopper?
 \item The last argument is a `channel'. Esenthel has several channels for playing audio. If you don't use this argument, the sound will use the channel `VOLUME\_FX'. It is generally a good idea to use several channels for different types of sounds, because the volume of a channel can be changed. It makes it easy to implement volume changes for music, fx or voices.
 \end{enumerate}
 
-\subsection{exercise}
+\begin{exercise}
 Create an application which loads a soundtrack. Draw a green, an orange and a red circle on the screen. The track should start playing when you click the green circle, pause when you click the orange circle and stop when you click the red one.
+\end{exercise}
 
+\begin{exercise}
 \textbf{Extra:} Search the header file of the sound class for a method to retrieve the current playing position within a sound file. Draw this position on the screen. 
+\end{exercise}
 
+\begin{exercise}
 \textbf{Extra:} This will be a bit harder. Use the functions \eeFunc{fadeInFromSilence()} and \eeFunc{fadeOut()} to apply a fade of 3 seconds instead of an immediate start and stop.
+\end{exercise}
 
 \subsection{Playlists (Extra)}
 To play music, you can also use playlists. This will bring more variation to your soundtrack, and also allows you to switch between playlists when the mood of the game changes. Just examine the code below to see how it works:
 
 \begin{code}
 // defined play lists
-Playlist Battle , // this is battle playlist used for playing when battles
+Playlist Battle , // battle playlist 
          Explore, // exploring playlist
          Calm   ; // calm playlist
 
@@ -235,16 +245,16 @@ bool Init()
 {
    if(!Battle.songs()) // create 'Battle' playlist if not yet created
    {
-      Battle += (=== drop action music ===); // add "battle0" track to 'Battle' playlist
-      Battle += (=== same here ===); // add "battle1" track to 'Battle' playlist
+      Battle += (=== drop action music ===); // add "battle0" 
+      Battle += (=== same here ===); // add "battle1" 
    }
    if(!Explore.songs()) // create 'Explore' playlist if not yet created
    {
-      Explore+= (=== drop tranquil music ===); // add "explore" track to 'Explore' playlist
+      Explore+= (=== drop tranquil music ===); // add "explore" track 
    }
    if(!Calm.songs())  // create 'Calm' playlist if not yet created
    {
-      Calm   += (=== a very relaxed soundtrack ===); // add "calm" track to 'Calm' playlist
+      Calm   += (=== a very relaxed soundtrack ===); // add "calm" 
    }
    return true;
 }

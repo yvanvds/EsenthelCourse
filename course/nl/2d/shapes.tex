@@ -66,7 +66,7 @@ c -= Vec2(0, 0.2);
 c *= 2;
 \end{code}
 
-\subsection{Oefeningen}
+\begin{exercise}
 Maak de volgende afbeelding na door cirkels op je scherm te plaatsen. Als uitbreiding kan je ook eens naar de functie `\eeFunc{drawPie}' kijken en een meer geschikte mond voorzien.
 
 \begin{figure}[h]
@@ -75,6 +75,8 @@ Maak de volgende afbeelding na door cirkels op je scherm te plaatsen. Als uitbre
 \caption[]{Let op de oogjes!}
 \label{fig:pos2D}
 \end{figure}
+
+\end{exercise}
 
 \section{Edge2}
 Een \eeClass{Edge2} is een lijnstuk. De `2' is net zoals bij \eeClass{Vec2} belangrijk. Wanneer je die vergeet is je code wel geldig, maar dient die om een lijnstuk in 3D te tekenen. Om een \eeClass{Edge2} te defini\"eren heb je twee punten nodig, het begin en het eind. Esenthel bied je twee mogelijkheden om die in geven:
@@ -110,6 +112,7 @@ Daarnaast kan je ook informatie over de lijn opvragen via bijvoorbeeld \eeFunc{c
 
 \subsection{Oefeningen}
 
+\begin{exercise}
 Via de functies \eeFunc{Sin()} en \eeFunc{Cos()} kan je de sinus en cosinus van een getal opvragen. Dit is vooral handig omdat dat getal bijvoorbeeld de tijd kan zijn. Via de tijd krijg je een geleidelijke verandering in de sinus en cosinus waarde. Beiden bewegen constant tussen -1 en 1. 
 
 \begin{code}
@@ -123,7 +126,9 @@ float y = Cos(Time.curTime());
 \item Zorg er voor dat de lijn dubbel zo snel beweegt.
 \item Zorg er voor dat de lijn maar half zo lang is.
 \end{enumerate}
+\end{exercise}
 
+\begin{exercise}
 Kijk eens in Esenthel Engine $\Rightarrow$ Math $\Rightarrow$ Shapes $\Rightarrow$ Edge. Je kan daar de functie \eeFunc{lerp(float s)} vinden. Deze functie heeft een getal tussen 0 en 1 nodig en geeft een punt in de lijn terug.
 
 \begin{enumerate}
@@ -132,8 +137,11 @@ Kijk eens in Esenthel Engine $\Rightarrow$ Math $\Rightarrow$ Shapes $\Rightarro
 \item In de update functie verhoog je de float met \eeClass{Time.d()}. Wanneer de float groter is dan 1, dan stel je hem gelijk aan 0.
 \item In de draw functie teken je de lijn in het zwart, met breedte 0.05. Je maakt een \eeClass{Vec2} die je de waarde geeft van de \eeFunc{lerp()} functie van je lijn, met als argument je float. Dit punt teken je rood, met eveneens een breedte 0.05.
 \end{enumerate}
+\end{exercise}
 
-\textbf{(Uitbreiding)} Teken ook eens een driehoek op het scherm.
+\begin{exercise}
+Teken ook eens een driehoek op het scherm.
+\end{exercise}
 
 \section{Rect}
 De laatste vorm die we bespreken is de rechthoek: \eeClass{Rect}. Waarschijnlijk is dit de vorm die je in je eigen programma's het meest zal gebruiken. Een rechthoek ligt immers ook aan de basis van veel andere elementen, zoals een button, een window en een afbeelding.
@@ -158,6 +166,17 @@ Zoals je ziet is er ook nu een draw functie, waarin het eerste argument de kleur
 \begin{code}
 Rect(-0.2, -0.1, 0.2, 0.1).draw(BLACK);
 \end{code}
+
+\begin{exercise}
+\item Maak in een programma de volgende afbeelding na:
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\linewidth]{../images/nested_rectangles.png}
+\caption[]{Rechthoeken}
+\label{fig:nested_rect}
+\end{figure}
+\end{exercise}
 
 \subsection{Een bewegende Rect}
 Omdat een rechthoek dikwijls aan de basis ligt van figuren die je op het scherm wil tonen, en die figuren in een spel nogal vaak bewegen, is het dikwijls handig om een eigen class te maken die intern een rechthoek gebruikt. In deze sectie maken een rechthoek die je kan bewegen via de pijltjestoetsen.
@@ -233,22 +252,12 @@ public:
 	}
 }
 \end{code}
-	
-\subsection{Oefeningen}
 
-\begin{enumerate}
-\item Maak in een programma de volgende afbeelding na:
+\begin{exercise}
+Voeg een roze vierkant toe van de class \eeClass{movableRect} die we hierboven voorstelden.
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.4\linewidth]{../images/nested_rectangles.png}
-\caption[]{Rechthoeken}
-\label{fig:nested_rect}
-\end{figure}
-
-\item Voeg een roze vierkant toe van de class \eeClass{movableRect} die we hierboven voorstelden.
-\item \textbf{(Uitbreiding)} Zorg dat het vierkant niet buiten het scherm kan bewegen.
-\end{enumerate}
+\textbf{(Uitbreiding)} Zorg dat het vierkant niet buiten het scherm kan bewegen.
+\end{exercise}
 
 \section{Cuts}
 
