@@ -1,0 +1,92 @@
+\chapter{Enumerations}
+\section{Bad Example}
+
+Enumerations (also often called `enums') allow us to display numbers as text. Take an enemy class for example. The enemy could be a warrior, a rogue or a priest. Depending on that choice, another image would be displayed on the screen. You could use booleans to remember what type of enemy you're dealing with:
+
+\begin{code}
+class enemy {
+  bool warrior = false;
+  bool rogue   = false;
+  bool priest  = false;
+  Rect r;
+
+  void setWarrior() {
+    warrior = true ;
+    rogue   = false;
+    priest  = false;
+  }
+
+  // the methods setRogue and setPriest are similar
+  // ...
+
+  void draw() {
+    if     (warrior) Images(=== warriorImage ===).draw(r);
+    else if(rogue  ) Images(=== rogueImage   ===).draw(r);
+    else if(priest ) Images(=== priestImage  ===).draw(r);
+  }
+}
+\end{code}
+
+Even though this works, it isn't very efficient. Right now, we only got 3 types of enemies, but the more possibilities you have, the more variables you need to change when selecting a type. It would be much better to use a single variable.
+
+\section{Slightly less Bad Example}
+You could decide to give a warior the number 0, a rogue 1 and a priest 2. This makes your code a lot easier.
+
+\begin{code}
+class enemy {
+  int type = -1;
+	Rect r;
+	
+	void setType(int type) {
+		T.type = type;
+	}
+	
+	void draw() {
+		switch(type) {
+			case 0: Images(=== warriorImage ===).draw(r); break;
+			case 1: Images(=== rogueImage   ===).draw(r); break;
+			case 2: Images(=== priestImage  ===).draw(r); break;
+	  }
+	}
+}
+\end{code}
+Although this is better than the first version, you will mess up sooner or later and use the wrong number somewhere. Or maybe you will use a number for which no class exists.
+
+\section{Enumeration time!}
+The solution for this problem are enumerations. These are lists of words. Internally the first word is equal to zero and every word after that is a higher number. The interesting part is that you can use these words in your code, but the application will use numbers internally.
+
+\begin{code}
+enum ENEMY_TYPE {
+  ET_NONE   ,
+  ET_WARRIOR,
+  ET_ROGUE  ,
+  ET_PRIEST , 
+}
+
+class enemy {
+  ENEMY_TYPE type = ET_NONE;
+	Rect r;
+	
+	void setType(ENEMY_TYPE type) {
+		T.type = type;
+	}
+	
+	void draw() {
+		switch(type) {
+			case ET_WARRIOR: Images(=== warriorImage ===).draw(r); break;
+			case ET_ROGUE  : Images(=== rogueImage   ===).draw(r); break;
+			case ET_PRIEST : Images(=== priestImage  ===).draw(r); break;
+		}
+	}
+}
+\end{code}
+Values like \texttt{ET\_WARRIOR} or \texttt{ET\_ROGUE} can be used anywhere in your code. The method \eeFunc{setType} won't accept a type of enemy which doesn't exists. And at every moment you will have clear idea of what you're doing.
+
+The values of an enum are often capitals. This is just a convention, but it's a good one. You can instantly see that this is not a variable. And just like with constants (also often written in capitals), the value of an enum cannot be changed. Something like \texttt{ET\_WARRIOR = 3} is not possible.
+
+Starting the enum value with \texttt{ET\_} is also a matter of choice. I like to use the first characters of the enumeration in its value name because it makes them easier to remember. ``ENEMY\_TYPE'' can be remembered as ET. The autocomplete of the editor will help you by showing your options as soon as you've typed \texttt{ET\_}.
+
+\begin{note}
+Esenthel also provides an \textsl{enumeration editor}. This is not needed for simple enumerations, but we will use it later in this course because the enumerations defined in there are also available in the world editor.
+\end{note}
+

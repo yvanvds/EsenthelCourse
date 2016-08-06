@@ -1,0 +1,1 @@
+htlatex course_en.tex "htmlcourse,4,frames,nominitoc,next,javascript,imgdir:../images/" "" -dsite\en

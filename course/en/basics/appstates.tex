@@ -1,0 +1,133 @@
+\chapter{Application States}
+\label{chapter:application_states}
+More often than not, an application will provide different ``stages''. On stage could be the moment when you're in the game lobby. Another could be the actual game, or the stage where you pick your character. There won't be much shared code code in the update and draw functions in all those states.
+
+Esenthel provides one application state by default. It consists out of the functions \texttt{Init()}, \texttt{Shut()}, \texttt{Update()} and \texttt{Draw()}. When a state becomes active, its \texttt{Init()}  function is executed. After that, the \texttt{Update()} and \texttt{Draw()} function are constantly alternated until you close the application or switch to a different state. At the moment, the  \texttt{Shut()} function is called.
+
+\section{Intro}
+Every state should be written in its own file. This could be the intro state:
+
+\begin{code}
+bool InitIntro() {return true;}
+
+void ShutIntro() {}
+
+bool UpdateIntro()
+{
+   if(StateActive.time()>3 || Kb.bp(KB_ESC)) {
+      StateMenu.set(1.0);                    
+   }
+   return true;
+}
+
+void DrawIntro()
+{
+   D.clear(BLACK);
+   D.text (0, 0, "Intro");
+}
+
+State StateIntro(UpdateIntro, DrawIntro, InitIntro, ShutIntro);
+\end{code}
+
+This looks a lot like the default state we used so far. The word `Intro' is added before all functions to keep it comprehensable. The actual stated is constructed in the last line:
+
+\begin{code}
+State StateIntro(UpdateIntro, DrawIntro, InitIntro, ShutIntro);
+\end{code}
+
+The state is given a name, and all functions are added to the state. The only thing which is not present is an \eeFunc{InitPre()} function. That one is not part of a state. It is the first function the application will call when started.
+
+Take a look at the constructor of the \eeFunc{State} class:
+
+\begin{code}
+State(Bool (*update)(), void (*draw)(), Bool (*init)()=NULL, void (*shut)()=NULL); 
+\end{code}
+
+Does the asterisk ring a bell? Indeed, it's a pointer. A function pointer to be more precise. The constructor expects us to provide it with the functions that should be ran in this state. Also, the init and shut functions are optional. (They have default value which is a null pointer.) If you don't need to initialize or cleanup, you may leave this empty.
+
+\begin{note}
+When a function argument ends with \eeFunc{=NULL}, it is an optional argument.
+\end{note} 
+
+\section{Menu}
+The code above also mentions another state: `stateMenu':
+
+\begin{code}
+   if(StateActive.time()>3 || Kb.bp(KB_ESC)) {
+      StateMenu.set(1.0);                    
+   }
+\end{code}
+
+In other words: we will wait 3 seconds in this state, or until the user presses escape. At that time, another application state will become active, with a crossfade of 1 second between them. The menu state could be something like this:
+
+Deze nieuwe state zou er zo kunnen uitzien:
+\begin{code}
+bool InitMenu() {return true;}
+void ShutMenu() {}
+
+bool UpdateMenu()
+{
+   if(Kb.bp(KB_ESC))return false;
+   if(Kb.bp(KB_ENTER))StateGame.set(0.5);
+   return true;
+}
+
+void DrawMenu()
+{
+   D.clear(GREY);
+   D.text (0,  0  , "Menu");
+   D.text (0, -0.3, "Press Enter to start the game");
+   D.text (0, -0.5, "Press Escape to exit");
+}
+
+State StateMenu(UpdateMenu, DrawMenu, InitMenu, ShutMenu);
+\end{code}
+
+This state is very similar to the previous one. But this time we can use the Enter key to enter the actual game. 
+
+\section{Game}
+Deze code kan je voor \eeFunc{StateGame} gebruiken. Maak ook nu weer een afzonderlijk bestand.
+\begin{code}
+bool InitGame() {return true;}
+void ShutGame() {}
+
+bool UpdateGame()
+{
+   if(Kb.bp(KB_ESC))StateMenu.set(1.0);
+   return true;
+}
+
+void DrawGame()
+{
+   D.clear(TURQ);
+   D.text (0, 0, "Game");
+}
+
+State StateGame(UpdateGame, DrawGame, InitGame, ShutGame);
+\end{code}
+
+Door tijdens de game op escape te drukken, schakelen we terug naar \eeFunc{StateMenu}. In deze state ga je bij een echte game natuurlijk nog heel veel code moeten toevoegen.
+
+\section{Default State}
+Dan rest ons nog het starten van het programma. We hebben nu alle nodige states, maar \eeFunc{StateIntro} moet nog actief worden. Dit gebeurt door in de \eeFunc{Init()} functie van het programma dadelijk door te schakelen naar \eeFunc{StateIntro}. De functies \eeFunc{Update()} en \eeFunc{Draw()} worden in dit programma dus niet gebruikt.
+
+\begin{code}
+void InitPre()
+{
+   EE_INIT();
+}
+
+bool Init()
+{
+   StateIntro.set();
+   return true;
+}
+
+void Shut() {}
+bool Update() {return false;} // unused
+void Draw  () {             } // unused
+\end{code}
+
+\begin{exercise}
+Gebruik de code van dit hoofdstuk om een programma te maken dat wisselt tussen de voorziene application states. Elke state plaats je in een afzonderlijk bestand.
+\end{exercise}

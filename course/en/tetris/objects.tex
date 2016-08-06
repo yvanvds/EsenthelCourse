@@ -1,0 +1,496 @@
+\chapter{Objects}
+In Tetris you think mainly of blocks as the main item you move around. The fact that blocks exist of squares is ancillary to the player, but it is important for the developer. To check on possible movements all squares have to be evaluated, not the blocks on their own. And when a block reaches the bottom it becomes a part of a lot of squares, which can be removed row-by-row, regardless of the shape of the original block.
+
+\section{Squares}
+Create a folder called `objects' in the library `Tetris parts'. In it, create a code file `square'. This file should contain a class \eeClass{square} in which we describe a square.
+
+A square must have a position. Because the playing field in Tetris is a grid (we can't put a square anywhere we want!), we will use another \eeClass{VecI2} to store integer positions only. Furthermore, the square must have a \eeClass{block} type to determine in what color it should be drawn. We have already defined the types of blocks in the `enumerations' file.
+
+The class \eeClass{square} will also need some methods. We provide a \eeFunc{create} method to set the position and type of the block. In addition, we need a \eeFunc{move} method to move the block in a certain direction. (That direction will be the second enum we declared.) We also need a method to retrieve the current position, and a method to change the block's position directly. And finally, we want a method to draw a square on the screen.
+
+The class looks like this:
+
+\begin{code}
+class square
+{
+private:
+   VecI2      pos ; 
+   BLOCK_TYPE type;
+   
+public:
+   void create (C VecI2 & pos, BLOCK_TYPE type) {}
+   void move (DIRECTION dir) {}
+   VecI2 getPos(             ) C { }
+   void setPos (C VecI2 & pos)   { }
+	 void draw   (             ) C { }
+}
+\end{code}
+
+Add the above code to your project. 
+
+\subsection{Square Tester}
+You'd expect this is when we add the content of these methods. Instead, we will work on the application `square tester'. You know you should test your code very frequently during the development of a program. But in a major project that is difficult. We have to write lots of classes before you can actually run the application.
+
+That's why we use test programs. These will be written to test a specific class. In this case, we make sure that all methods of the class \eeClass{square} can be tested. The code for `square tester' could look like this:
+
+\begin{code}
+
+Memc<square> squares;
+
+void InitPre()
+{
+   EE_INIT();
+}                
+       
+bool Init()
+{   
+	 // Here you create the test function, with different
+	 // block types.
+   squares.New().create(VecI2( 2,  2), BT_S          );
+   squares.New().create(VecI2( 4,  2), BT_T          );
+   squares.New().create(VecI2( 6,  7), BT_L          );
+   squares.New().create(VecI2(10, 12), BT_BACKWARDS_S);
+   squares.New().create(VecI2( 8,  8), BT_BACKWARDS_L);
+   squares.New().create(VecI2( 5,  1), BT_SQUARE     );
+	 return true;
+}
+
+void Shut() {}
+
+bool Update()
+{
+   if(Kb.bp(KB_ESC)) return false;
+   
+	 // We declare a direction and control the arrow keys
+   DIRECTION d = D_NONE;
+   if(Kb.bp(KB_DOWN )) d = D_DOWN ;
+   if(Kb.bp(KB_LEFT )) d = D_LEFT ;
+   if(Kb.bp(KB_RIGHT)) d = D_RIGHT;
+   
+	 // Next we move all the blocks in this direction. When
+	 // no key is pressed, the squares should not move.
+   REPA(squares)
+   {
+      squares[i].move(d);
+   }
+   
+	 // The methods getPos and setPos should also be tested. We are doing that
+	 // when the spacebar is pressed. We retrieve the current position
+	 // of each square and change the vertical value. The altered position
+	 // will be put back into the square.
+   if(Kb.bp(KB_SPACE))
+   {
+      REPA(squares)
+      {
+         VecI2 pos = squares[i].getPos();
+         pos.y += 4;
+         squares[i].setPos(pos);
+      }
+   }
+   
+   return true;
+}
+
+void Draw()
+{
+   D.clear(BLACK);
+	
+	 // Here we test the draw function of each square.
+   REPA(squares)
+   {
+      squares[i].draw();
+   }
+}
+
+\end{code}
+
+\begin{note}
+You have often many ways to write a test program. The important thing is that you test as many class methods in the easiest way possible. This minimizes the chance of errors later on.
+\end{note}
+
+\subsection{Create and Draw}
+The Create method of square is rather straightforward. You have to make sure the arguments are stored in the class variables. Complete this method on your own.
+
+Slightly more difficult is the draw function. Let's sum up what this method should do.
+
+\begin{enumerate}
+  \item Depending on the BLOCK\_TYPE, a color should be set. 
+	\item The position of the square is the position in the grid. We need to calculate the actual position on the screen.
+	\item We have to show an image on the screen, at the calculated position.
+\end{enumerate}
+
+The color will be determined with a switch statement. We declare a variable of the type \eeClass{Color} and assign the value BLACK. Next, this is changed to the desired color for each type:
+
+\begin{code}
+Color color(BLACK);
+      
+switch(type)
+{
+	 case BT_SQUARE     : color = RED   ; break;
+	 case BT_T          : color = PURPLE; break;
+	 case BT_L          : color = GREY  ; break;
+	 case BT_BACKWARDS_L: color = BLUE  ; break;
+	 case BT_STRAIGHT   : color = GREEN ; break;
+	 case BT_S          : color = PINK  ; break;
+	 case BT_BACKWARDS_S: color = YELLOW; break;
+	 case BT_BACKGROUND : color = Color(50, 50, 50) ; break;
+	 case BT_WALL       : color = WHITE ; break;
+}
+\end{code}
+
+Next we have to determine the position. The constant GAMEAREA is the lower left corner of the playing field. All positions are calculated from that point. The bottom left corner of the square at the position (0,0) would therefore have to be equal to the lower left corner of the playing field. Therefore:
+
+\begin{code}
+Vec2 screenpos = GAMEAREA;
+\end{code}
+
+Suppose you want a square at position (1,0). The bottom left corner of the square is equal to that of the playing field, plus the width of one square. For all other positions, the same applies: you multiply the grid position with the size of the square:
+
+\begin{code}
+Vec2 screenpos = GAMEAREA + (pos * SQUARE_SIZE);
+\end{code}
+
+The upper right corner of the square is exactly one square further. We can create a rectangle to draw on the screen in the following way:
+
+\begin{code}
+Vec2 screenpos = GAMEAREA + (pos * SQUARE_SIZE);
+Rect r(screenpos, screenpos + SQUARE_SIZE);
+\end{code}
+
+To draw the actual image on the screen, use the following code: 
+
+\begin{code}
+Images(=== tetris square ===).draw(color, TRANSPARENT, r);
+\end{code}
+
+\subsection{Test}
+At this time the square tester should show the blocks on the screen, even though they can not move yet. Run the tester to confirm this.
+
+The functions move, getPos and setPos are not done yet, but you can surely complete those on your own. Afterwards, verify whether all methods are correct by running the square tester.
+
+\section{Blocks}
+Now add a code file `block' in the folder `Tetris parts/objects'. Create the class \eeClass{block} in that file. Just like a square, a block has a position and a type. But in addition, a block is a bunch of squares. So you need a container for squares inside a block.
+
+And then there are methods. \ eeClass{block} needs a create method, just like a square. And we also provide a second create method with other arguments to copy an existing block.
+
+We also need methods to move, rotate and draw a block. And finally we need a method to retrieve the type of a block and a method which returns the list of squares inside the block. These methods only contain a return statement. Because your test application will not work as long as these methods don't contain a return statement, they are already present in the code below. The result is this class:
+
+\begin{code}
+class block
+{
+private:
+   VecI2        pos    ;
+   BLOCK_TYPE   type   ;  
+   Mems<square> squares;
+   
+public:
+   void create(C VecI2 & pos  , BLOCK_TYPE type) { }
+   void create(C block & other                 ) { }
+	
+   void move  (DIRECTION dir)   { }
+   void rotate(             )   { }
+   void draw  (             ) C { }
+	
+   BLOCK_TYPE       getType   () C { return type   ; }
+	 C Mems<square> & getSquares() C { return squares; }
+}
+\end{code}
+
+Add this code in the file `block' that you created before. Now create a new application `block tester'. Add code in this application to test a block. This time you do not need a container. Just declare a block and use the create, move, rotate and draw methods. The extra create method and the methods \eeFunc{getSquares()} and \{eeFunc{getType()} should not be used yet.
+
+\subsection{Add Squares}
+Before you start with the create and draw methods, create some 'helper' functions to make it easier on yourself. These methods are in the class \eeClass{block}, but they are private. The first function is \eeFunc{makeSBlock}. Which looks like this:
+
+\begin{code}
+void makeSBlock()
+{
+	//    [0][1]
+	// [3][2] 
+	
+	squares.New().create(VecI2(pos.x    , pos.y    ), BT_S);
+	squares.New().create(VecI2(pos.x + 1, pos.y    ), BT_S);
+	squares.New().create(VecI2(pos.x    , pos.y - 1), BT_S);
+	squares.New().create(VecI2(pos.x - 1, pos.y - 1), BT_S);     
+}
+\end{code}
+
+Each block consists of 4 squares. The first square will have the same position as the block. This is important to properly rotate the block later. The other squares should get a position that is derived from the first position. You can look at the diagram in the comments to get a better picture of the positions. The second argument (BT\_S) indicates the type of the block. It is important for drawing the square in the right color. You can now create your own functions for the other blocks. Below are the declarations with a diagram for each block.
+
+\begin{code}
+void makeSquareBlock()
+{
+	// [0][2]
+	// [1][3]
+}
+
+void makeTBlock()
+{
+	//    [1]
+	// [2][0][3]
+}
+
+void makeLBlock()
+{
+	// [2]
+	// [1]
+	// [0][3]  
+}
+
+void makeBackwardsLBlock()
+{
+	//    [2]
+	//    [1]
+	// [3][0]  
+}
+
+void makeStraightBlock()
+{
+	// [2]
+	// [1]
+	// [0]
+	// [3] 
+}
+
+void makeBackwardsSBlock() 
+{
+	// [1][0]
+	//    [2][3]
+}
+\end{code}
+
+We now create an additional private function \eeFunc{setupSquares()}. In it, you first empty the container \eeClass{squares}. Next, depending on the \ eeFunc {BLOCK\_type}, you call the appropriate function. You can start from this example and complete it yourself.
+
+\begin{code}
+void setupSquares()
+{
+	 squares.clear();
+	
+	 switch(type)
+ {
+	 	  case BT_SQUARE: makeSquareBlock(); break;
+			// create the remaining code your self
+ }
+}
+\end{code}
+
+\subsection{Create and Draw}
+The \eeFunc{create} method is easy to complete. Assign values to  \verb|pos| and \verb|Type|. Then call the method \eeFunc{setupSquares}. The second create method is a concept we haven't used before. Here we get a reference to another block as an argument. It is our intention to make a copy of the other block. We do this by copying over each variable from the other block. Because this is the first time you have to create such a method, the complete code is written below. Add this method to your project.
+
+\begin{code}
+void create(C block & other)
+{
+   T.pos  = other.pos ;
+   T.type = other.type;
+   
+   squares.clear();
+   FREPA(other.squares)
+   {
+      squares.New().create(other.squares[i].getPos(), other.type);
+   }
+}
+\end{code}
+
+The \eeFunc{draw} method is easy enough. You should write it yourself. To draw a block on the screen you just need to call the draw method of all the squares in the container.
+
+At this moment it is already possible to run a test. The \eeFunc{create} and \eeFunc{draw} methods already work, so you should check if they do. Run the program with all possible block types and correct your code if something seems off.
+
+\subsection{Move and Rotate}
+Now to get your block moving. The \eeFunc{Move} method takes a direction as an argument. You should use a switch to, depending on the direction, adjust the x or y position. (Note: This position is the grid position, not the position on the screen. Therefore it should be increased by one. Using a time delta is not needed here.)
+
+Once you have adjusted the position of the block, you must also pass the direction to all squares, so that they will be moved also. Add the necessary code to the \eeFunc{Move} method.
+
+The rotate method is slightly more difficult. We need to rotate all the squares around the position of the block. This works best if the position of the block is (0,0), because rotating around another point is much more complicated. However, the block is not likely to be at that position. Therefore, we will first subtract the position of the block from the position of the square. After that, we exchange the x and y position of the square, and we add the position of the block back to the position of the square. Finally, we put the new position back into the square. The code looks like this:
+
+\begin{code}
+void rotate()
+{
+ 	 FREPA(squares)
+  {
+ 		  VecI2 pos = squares[i].getPos();
+ 		  pos -= T.pos;
+ 		  VecI2 newPos(-pos.y, pos.x);
+ 		  newPos += T.pos;
+ 		  squares[i].setPos(newPos);
+  }
+}
+\end{code}
+
+Now run your test application again. You should now be able to move and rotate a block. Test with different starting positions to make sure it always works.
+
+
+\section{Pile}
+When a block in Tetris reaches the bottom, the block is no more: all the squares of the block will be added to another container: the `pile'. This `Pile' class also needs a memory container to hold squares. It also needs methods to simplify the interaction with this pile.
+
+\begin{code}
+class pile
+{
+private:
+   Memx<square> list;
+   
+   bool canMove  (C square & s,  DIRECTION dir) C {}   
+   void removeRow(int row                     ) C {}
+   
+public:
+   void init() {}
+   
+   bool collides(C block & b, DIRECTION dir) C {}   
+   void add     (C block & b               )   {}
+   
+   int checkLines()   {}   
+   void draw     () C {}
+}
+
+pile Pile;
+\end{code}
+
+It is also possible to create a test application for this class. In this app, you can manually add a few blocks to the pile and show this pile on the screen. The \eeFunc{collides} method can be tested by creating another block in the application and moving it. This is an example of a possible test:
+
+\begin{code}
+if(Kb.bp(KB_DOWN) && !Pile.collides(myBlock, D_DOWN)) {
+  myBlock.move(D_DOWN);
+}
+\end{code}
+
+The \eeFunc{check} method can be tested by calling it on pressing the space bar. Of course you first need to add enough blocks to the pile to form a solid line.
+
+\subsection{Init and Draw}
+The methods \eeFunc{init} and \eeFunc{draw} are easy. Write them on your own. The init method must empty the container with the squares. The draw method draws all elements of the container on the screen. If you do not know how to do that, review the chapter on containers.
+
+\subsection{Add}
+The \eeFunc{add} method requires a reference to a block as an argument. Its function is to add all squares in that block to the container. Therefore, we provided a method in the class \ eeClass{block} to gain access to all the squares of that block. The class \eeClass{squares} has a method \eeFunc{create} with arguments for a position and a block type. With that information, you write this method like this:
+
+\begin{code}
+void add(C block & b)
+{
+	 C Mems<square> & squares = b.getSquares();
+	 REPA(squares)
+ {
+	 	  list.New().create(squares[i].getPos(), b.getType());
+ }
+}
+\end{code}
+
+Now that you've finished this feature, you can already try out the init, add and draw function in your test program.
+
+\subsection{canMove \& collides}
+The method \eeFunc{canMove} is private. It will only be used inside this class, called from the \eeFunc{collides} method. The method should check if a particular square can move in a certain direction (the second argument). 
+
+Note that you should not move the square: only check if the movement is possible. For that reason it is not possible to use the \eeFunc{Move} method of class \eeClass{square}. \textsl{(It is also impossible to do so: precisely to avoid this error, the square is passed as a const reference.)}
+
+The method consists of the following steps:
+
+\begin{itemize}
+  \item Create a local \eeClass{VecI2} with the square's position.
+	\item Move this position in the required direction. (Take another look at the move method in \eeClass{square} if you have a trouble doing that.)
+	\item Iterate over all elements in the container with squares and check whether that square is at the same position. If it is, the method should return false.
+	\item If you reach the end of the container without finding a match, the method should return true. Indeed, if there is already a square would be on the new position, the function was abandoned during the audit. Meaning that the square can move in the requested direction.
+\end{itemize}
+
+The public method \eeFunc{collides} also has a direction argument, but with a const reference to a block. It is this method that will be used in the Tetris application.
+
+Because a \eeClass{block} has a method to retrieve a reference to the squares in the block, we use that first:
+
+\begin{code}
+C Mems<square> & squares = b.getSquares();
+\end{code}
+
+The rest of the method will call the method \eeFunc{canMove} for each square. Even when only one square cannot move in the desired direction, the block collides with the pile. In this case the result will be false. Otherwise true is returned. Here's the entire method:
+
+\begin{code}
+bool collides(C block & b, DIRECTION dir) C
+{
+	// Get squares from this block
+	C Mems<square> & squares = b.getSquares();
+	
+	// check all of them
+	REPA(squares)
+{
+		 if(!canMove(squares[i], dir))
+ {
+				return true;
+ }
+}
+	return false;
+}
+\end{code}
+
+Now that you have completed these methods, you can reuse your test application to verify this class.
+
+\subsection{checkLines \& removeRow}
+Finally, we need to be able to check the pile for full rows and remove them. The method \eeFunc{removeRow} is not that difficult. The argument is the row to remove. So you should once more iterate over all elements in the container. When the \verb|y| position of an element is equal to the argument `row ', the element should be removed. Otherwise, you have to verify that the \verb|y| is greater than the argument row. If it is, you move the square down with the method \eeFunc{move}.
+
+\begin{note}
+Because of the way in which the container MemX works, there is no method \eeFunc{remove}. You need to call \eeFunc{removeValid} instead. The differences between the various types of containers will be discussed later. 
+\end{note}
+
+The method \eeFunc{checkLines} should check for full rows in the pile. If so, those rows are to be removed. The method must return the number of rows deleted, because that is important for the score.
+
+You can copy the code below. Just make sure you understand all the steps.
+
+\begin{code}
+int checkLines()
+{
+	// Create an array for all rows. Here we provide three additional 
+	// rows. At the time that the game is done, there will be
+	// blocks in the pile that are positioned higher than the actual 
+	playing field
+	int squaresInRow[ROWS + 3];
+	
+	// Set all values ​​to zero.
+	REPA(squaresInRow) squaresInRow[i] = 0;
+	
+	// Iterate the list and raise a row depending on the \verb|y| position 
+	// of the square.
+	REPA(list)
+{
+		 int row = list[i].getPos().y;
+		 squaresInRow[row]++;
+}
+	
+	// Start with 0 full lines.
+	int completedLines = 0;
+	
+	// Iterate over all rows.
+	REPA(squaresInRow)
+{
+		 // If the number of squares in this row is equal to the 
+		 // constant SQUARES_PER_ROW, the row is complete.
+		 if(squaresInRow[i] == SQUARES_PER_ROW)
+ {
+				// We delete this row, but have to account
+				// for the fact that multiple rows can be deleted
+				// during this loop. If so, the remaining
+				// rows are already moved one position down.
+				removeRow(i - completedLines);
+				
+				// Finally, we adjust the counter of deleted rows.
+				completedLines++;           
+ }
+}
+	
+	// return the number of deleted rows.
+	return completedLines;
+}
+\end{code}
+
+\section{Wall}
+The last element we need is the 'Wall', the boundary of the playing field. This is not a real element because we can deduce the boundaries of the playing field from the constants we have declared earlier. Yet it is convenient to use the idea of ​​a wall, so that with each movement we can check for collisions with the wall, just as we did with the pile.
+
+Therefore, this class consists of only two methods. A private method \eeFunc{canMove} checks if a square is allowed to move in a certain direction. A public method \eeFunc{collides} checks whether a block would hit a wall if it would be moved. The class looks like this:
+
+\begin{code}
+class wall
+{
+private:
+   bool canMove (C square & s, DIRECTION dir) C {}
+   
+public:  
+   bool collides(C block  & b, DIRECTION dir) C {}
+}
+
+wall Wall;
+\end{code}
+
+You can surely write this class on your own. The method \eeFunc{collides} is identical to the method in the class \eeClass{pile}. The method \eeFunc{canMove} is almost the same, but now you don't compare the new position with the content of a pile. Instead, the result is \verb|false| when the x or the y position are smaller than 0. Also if the x position is equal to or greater than the value \verb|SQUARES_PER_ROW|, the result is \verb|false|. In all other cases, the result will be \verb|true|.
+
+You can write a new test program or add the new class to the test application for the pile.

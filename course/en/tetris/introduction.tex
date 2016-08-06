@@ -1,0 +1,143 @@
+\chapter{Introduction}
+In the previous chapters you have seen everything you need to create a simple 2D game. But how do you put a large project together in an orderly way? There is really no simple answer to that. You learn by practice, and not everyone agrees on the best method. Still, there are some rules that may make it easier for sure. And when you work in a group, the lead programmer will usually impose some rules that everyone has to follow. These are not necessarily good or bad rules, but they work as long as everyone follows them.
+
+In this part of the course you will create a clone of the famous Tetris game. You will learn to develop a project step by step  without losing sight of the whole.
+
+\begin{note}
+Tetris consists of blocks which in turn consist of squares. When we talk about blocks in this course, we mean the entire block, not the squares it is made of. When a square is mentioned, we're discussing the squares that make up a block.
+\end{note}
+
+\section{Setup}
+Open the `Tetris\_start' project. In it, you will find the graphics, sounds and fonts that we will use. A blank app `Tetris' is also provided, but we are not going to use it just yet.
+
+\begin{enumerate}
+	\item Create a library at the highest level of the explorer. You do this by right clicking and choosing `new library'. Name this library `Tetris parts'. A library is a green folder. The code in a library can be used from any application within your project, just like the library `Esenthel Engine' which is always present.
+	\item Create a new application (blue folder). Call it `square tester'.
+	\item in the application `square tester', create a code file `main'. 
+	\item In the library `Tetris parts', create a new folder (yellow) called `definitions'.
+	\item Mark `square tester' as the active application.
+\end{enumerate}
+	
+Copy the code in `Tetris/initState' to `square tester/main'. Remove this line: 
+	
+\begin{code}
+D.full(true);
+\end{code}
+
+This makes it easier to terminate your application when something goes wrong.	
+
+\section{Constants}
+In the previous chapter you learned about constants. It is a good idea to create some important constants before you start on the actual code. You can use them anywhere in your code and easily adjust their values if necessary. Create a new code file `constants' in the folder `Tetris parts/definitions'.
+
+To be able to change the name of the app later on, create a constant \eeClass{Str} with a provisional name.
+
+\begin{code}
+C Str APP_NAME = "Tetris";
+\end{code}
+
+The size of the standard application window is not ideal for this game. A size in pixels is required for this. Declare a constant \eeClass{int} for this purpose.
+
+\begin{code}
+// The window size on the screen, in pixels
+C int WINDOW_WIDTH  = 900;
+C int WINDOW_HEIGHT = 800;
+\end{code}
+
+Tetris consists of rows and columns. we also define these:
+
+\begin{code}
+// This impacts the playing field
+C int SQUARES_PER_ROW = 10;
+C int ROWS            = 15;
+\end{code}
+
+It is also possible to add a few constants for the scoring system. There is a fixed number of levels, and we know how much points will be rewarded for a line and a level.
+
+\begin{code}
+// The scoring system uses these
+C int POINTS_PER_LINE  =  525;
+C int POINTS_PER_LEVEL = 6300;
+C int NUM_LEVELS       =    5;
+\end{code}
+
+The speed of the game goes up with each level. This change can also be defined as a constant.
+
+\begin{code}
+// The speed will increase every level
+C float INITIAL_SPEED = 1.0;
+C float SPEED_CHANGE  = 0.1;
+\end{code}
+
+When playing tetris, there is a short period after moving a block down in which you are able to move it sidewards. This period has to be defined.
+
+\begin{code}
+// The time a block can be slided to the side
+// When it hits bottom
+C float SLIDE_TIME = 0.25;
+\end{code}
+
+We also have to determine the size of the playing field. This is done by defining the position of the lower left corner, and defining the size of the rectangle containing the playing field.
+
+\begin{code}
+// The area reserved for the playing field 
+C Vec2 GAMEAREA     (-0.8, -0.8);
+C Vec2 GAMEAREA_SIZE( 1.0,  1.4);
+\end{code}
+
+A new block will always appear at the top of the screen. This position can be deducted from information we already have:  SQUARES\_PER\_ROW and ROWS. In addition, there is a waiting position, top right of the playing field. You might notice we are not using \eeClass{Vec2}, but \eeClass{VecI2}. This is a vector which fits only integers. We do not want Tetris blocks midway between two positions, so there is no need for floats here.
+
+\begin{code}
+// Position for the current and next block
+C VecI2 STARTPOS(SQUARES_PER_ROW / 2, ROWS - 1);
+C VecI2 WAITPOS (SQUARES_PER_ROW + 4, ROWS - 3);
+\end{code}
+
+Now it is possible to calculate the size of a square with the information we already have. This has the advantage that we can modify the foregoing constants later, the size of a square being automatically adjusted.
+
+\begin{code}
+// The size of a square
+C float SQUARE_SIZE = GAMEAREA_SIZE.x / SQUARES_PER_ROW;
+\end{code}
+
+\begin{note}
+Of course it will rarely happen that you precisely know which constants are needed when you're just starting out on a project. In practice you will usually add a lot of constants while you are working on your project.
+\end{note}
+
+\section{Enums}
+Create the code file `enumerations' in  `Tetris parts/definitions'. Add two enumerations that will be useful in your project. Firstly, there is the block type. Tetris has square blocks, T-blocks and so on. A list might look like this:
+
+\begin{code}
+enum BLOCK_TYPE
+{
+   BT_SQUARE     ,
+   BT_T          ,
+   BT_L          ,
+   BT_BACKWARDS_L,
+   BT_STRAIGHT   ,
+   BT_S          ,
+   BT_BACKWARDS_S,
+   BT_NUM        , // number of block types used in the game
+   BT_BACKGROUND , // special case, only for background
+   BT_WALL       ,      
+}
+\end{code}
+
+The last three values ​​deserve extra attention. The value `BT\_NUM' is useful because the number which represents that value is equal to the highest value + 1. This makes it easy to use a random function. Since the result of a random function does not include the maximum value, we will be able to use this kind of code later on in our application:
+
+\begin{code}
+blockType type = Random(BT_NUM);
+\end{code}
+
+So why is BT\_NUM not the last value in the list? Well, the last two values ​​are special cases. There will be special squares to draw the background and the borders of the game. And the color of such a square is determined by the block type. Because we do not want to use those types in the actual game, BT \_NUM is but before these values.
+
+A second enumeration is used to determine the possible directions in which a block can move. A block can not upwards, only to the left, the right, or down. Blocks which are already down, do not have a direction anymore.
+
+\begin{code}
+enum DIRECTION
+{
+   D_LEFT ,
+   D_RIGHT,
+   D_DOWN ,
+   D_NONE ,
+}
+\end{code}

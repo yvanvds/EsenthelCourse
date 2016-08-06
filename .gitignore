@@ -1,3 +1,7 @@
+course/site/images/*
+course/site/en/*
+
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
@@ -129,3 +133,13 @@ sympy-plots-for-*.tex/
 eeProjects/_Build_
 *.pdf
 course/course_nl.pdf
+course/course_en-js.tex
+*.4ct
+course/course_en.4tc
+*.css
+*.tmp
+*.xdv
+course/course_en.xref
+*.html
+course/course_en.lg
+*.idv

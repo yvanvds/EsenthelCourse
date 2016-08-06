@@ -5,7 +5,7 @@ Posities in 2D hebben een x- en een y-co\"ordinaat, net zoals een punt in een gr
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.7\linewidth]{../images/2Dpositions}
+\includegraphics[width=0.7\linewidth]{../images/2Dpositions.png}
 \caption[]{2D co\"ordinaten.}
 \label{fig:pos2D}
 \end{figure}
@@ -19,6 +19,10 @@ pos.y = -0.3; // de positie op de y-as wordt -0.3
 pos   =  0.5; // beide assen krijgen de waarde 0.5
 pos.set(0.1, -0.3); // pas beide assen aan via de functie set(float x, float y)
 \end{code}
+
+\begin{exercise}
+Waar zouden deze posities zich op het scherm bevinden?
+\end{exercise}
 
 \section{Posities Tonen op het Scherm}
 
@@ -57,6 +61,10 @@ void Draw()
 }
 
 \end{code}
+
+\begin{exercise}
+typ deze code in de editor. Gebruik geen copy/paste: daar leer je niets van. Controleer of de code werkt zonder fouten. Indien niet, vergelijk je code dan met dit voorbeeld. Het is heel belangrijk dat je fouten leert begrijpen, dus probeer zelf te zoeken wat er fout ging en waarom.
+\end{exercise}
 
 \section{Rekenen}
 Je kan met \texttt{Vec2} ook rekenen, net zoals je met getallen doet. Het is mogelijk om de x- en de y-co\"ordinaat afzonderlijk aan te passen, maar je kan ook rechtstreeks rekenen met een \texttt{Vec2}. In dat geval wordt de gekozen berekening voor zowel de x- als de y-as uitgevoerd:

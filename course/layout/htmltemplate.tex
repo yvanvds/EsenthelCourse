@@ -1,0 +1,70 @@
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{parskip}
+\usepackage{listings}
+\usepackage{amsthm}
+
+
+%listing
+\lstset{
+  %frame=tb,
+  language=c++,
+  %aboveskip=3mm,
+  %belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  %basicstyle={\small\ttfamily},
+  %backgroundcolor=\color{primaryLight}, % Set the background color for the snippet - useful for highlighting
+  firstnumber=1, % Line numbers begin at line 1
+  stepnumber=5,
+  %frame=lines, % Frame around the code box, value can be: none, leftline, topline, bottomline, lines, single, shadowbox
+  %frameround=tttt, % Rounds the corners of the frame for the top left, top right, bottom left and bottom right
+  numbers=left,
+  numbersep=10pt, % Distance of line numbers from the code box
+  %numberstyle=\tiny\color{primaryDark}, % Style used for line numbers
+  %rulecolor=\color{primaryDark}, % Frame border color
+  %keywordstyle=\color{blue},
+  %commentstyle=\color{green},
+  %stringstyle=\color{red},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=2
+}
+
+\lstset{
+  emph={Vec, Vec2, Circle, Memc, Str, FREPA, SQLColumn, SQLValues, TextData, File, 
+	      Memx, SQL, GuiObjs, Window, Button, TextLine, TextNode},
+  emphstyle={\color{blue}\bfseries}
+}
+
+\newcommand{\tempcaption}{}
+\newenvironment{myTable}[2]{%
+  \gdef\tempcaption{#1}%
+  \begin{center}%
+    \centering
+    \begin{tabular}{#2}%
+}{%
+    \end{tabular}%
+  \end{center}%
+}
+
+% special blocks
+\newenvironment{example}{}{}{}
+\newenvironment{remember}{}{}{}
+\newenvironment{note}{}{}{}
+\newenvironment{exercise}{}{}{}
+
+\newcommand{\partAbstract}[1]{\gdef\@partAbstract{\leftskip5em\normalsize\color{black}\textit{#1}}}
+
+\lstnewenvironment{code}
+	{
+		\lstset{language={[Visual]C++}, columns=fixed}
+	}
+	{
+	}
+%
+\newcommand{\eeClass}[1]{\texttt{#1}}
+\newcommand{\eeFunc}[1]{\texttt{#1}}
+\newcommand{\eeOpp}[1]{\texttt{#1}}
+
+\author{Mute (http://mutecode.com)}

@@ -1,0 +1,137 @@
+\chapter{Application States}
+Now that all parts are ready, we start working on the actual application. In it, there are three application states needed: the initState where the program starts, the gameState in which the actual gameplay takes place and the scoreState which shows you the score when the game is over.
+
+Prepare an application `Tetris' containing a folder `states'. In that folder, you create three files: initState, gameState and scoreState.
+
+\section{Init State}
+
+In the init state, we provide the regular application functions: \eeFunc{InitPre}, \eeFunc{Init}, \eeFunc{Shut}, \eeFunc{Update} and \eeFunc{Draw}. You can take these from any program that you made earlier. Next, you provide the functions with the necessary code.
+
+So far, we mostly left the \eeFunc{InitPre} function alone. This is the first function that is executed when the application starts. You can use this function to adjust some basic settings. In this case, that will be the name of the program and the size of the window. This can be done by using the constants we declared before.
+
+\begin{code}
+void InitPre()
+{
+   EE_INIT();
+   App.name(APP_NAME);
+   D.mode(WINDOW_WIDTH, WINDOW_HEIGHT);  
+}
+\end{code}
+
+The \eeFunc{init} function contains two lines of code. You should call the \eeFunc{create} method of the object \eeClass{Background} and the \eeFunc{startMusic} method of the object \eeClass{SoundManager}. You can certainly write this without an example, right?
+
+We'll skip the Update function for now. But in the \eeFunc{Draw} function you can go wild for a moment. This is where you create a beautiful startup screen. You can certainly use the image and show some text in the accompanying Tetris fonts. And with some extra effort, it is not too hard to make those move or even change colors. Make sure you also show a text ``Push space to start'', because that is how we will start the game.
+
+
+\section{The Game State}
+
+In the file `gamestate', you add three functions: \eeFunc{GameInit}, \eeFunc{GameUpdate} and \eeFunc{GameDraw}. These functions will be left empty for now, although you can already draw the background if you like. You also need to declare this new application state. Here you can see how this file should look right now:
+
+\begin{code}
+bool GameInit()
+{
+   return true;
+}
+
+bool GameUpdate()
+{
+   if(Kb.bp(KB_ESC)) return false;  
+   return true;
+}
+
+void GameDraw()
+{
+   Background.draw();
+}
+
+State GameState(GameUpdate, GameDraw, GameInit);
+\end{code}
+
+Now add some code to the Update function of the initial state: when you press the space bar, your application should switch over to the GameState, with a fade of 0.4 seconds. (If you do not know how to do that, look in Chapter \ref{chapter:application_states}.
+
+Test your application to see if the switch works.
+
+\section{Score State}
+
+This application state is closely related to the class \eeClass{score}. It is therefore necessary to develop them together. Start with the code for the application state:
+
+\begin{code}
+bool scoreUpdate() { 
+  return true;
+}
+
+void scoreDraw() {}
+
+State ScoreState(scoreUpdate, scoreDraw);
+\end{code}
+
+Create a separate code file for the class \eeClass{score}. The framework for this class looks like this:
+
+\begin{code}
+class score
+{
+private:
+   int   points;
+   int   level ;
+   bool  won   ;
+   float speed ;
+   
+   void checkWin() {}
+   
+public:   
+   void  init      (         )   {}   
+   void  addPoints (int value)   {}   
+   float getSpeed  (         ) C {}
+   int   getPoints (         ) C {}
+   int   getLevel  (         ) C {}
+   bool  hasWon    (         ) C {}
+   
+   void  gameIsLost(         )   {}
+}
+
+score Score;
+\end{code}
+
+As you can see, this class contains four values: points, level, won and speed. The latter does not really have anything to do with the score. But because the speed depends on the level, it is convenient to put it together with the rest. For example, the score object may also increase the speed when needed.
+
+\subsection{Simple Things}
+We'll do the basic functions first. The \eeFunc{init} method assigns all variables a suitable starting value. You start at level 1, with 0 points. And you have not won yet. The speed is equal to the constant \verb|INITIAL_SPEED|.
+
+The methods \eeFunc{getSpeed​}, \eeFunc{getPoints}, \eeFunc{getLevel} and \eeFunc{hasWon} just return the value of the corresponding variable.
+
+Write the contents of these five methods yourself.
+
+\subsection{checkWin \& gameIsLost}
+In \eeFunc{checkWin} you should check if the current level is greater than the constant \verb|NUM_LEVELS|. If so, then 'won' should be assigned \verb|true|. At this point, you also switch over to the `score' application state by writing \verb|ScoreState.set(1)| and play a festive sound with the \eeClass{Sound Manager}.
+
+The method \eeFunc{gameIsLost} is similar, but the check is not necessary. You have lost when a block does not fit in the playing field. The code to check that out does not belong in this class. We will write that someplace else, and at that point this method will be called. In this method, you ensure that `won' equals to \verb|false| and you also switch to \eeFunc{ScoreState}. And this time you start a less festive sound.
+
+\subsection{addPoints}
+This last feature will add points to the score. At that time we will also check whether the next level is reached and if so, adjust the speed. We will also check if the player has won the game, because this is the only moment when such can happen.
+
+Again, add the code below to your application. Make sure you understand all of it. Just typing is not enough!
+
+\begin{code}
+void addPoints(int value)
+{
+  if(value > 0)
+  {
+    points += POINTS_PER_LINE * value;
+    SoundManager.score();
+ 
+    if(points >= level * POINTS_PER_LEVEL)
+    {
+      level++;
+      checkWin();
+      speed -= SPEED_CHANGE;
+    } 
+  }      
+}
+\end{code}
+
+\subsection{Score State}
+Now you are ready to add the code for the score state. The framework for that state was already done (otherwise you could not use the state in the \eeClass{score} class). As you can see, this state only contains an \eeFunc{update} and a \eeFunc{draw} method. Nothing needs to be initialised, so an \eeFunc{init} function is superfluous.
+
+For the draw function you can create something similar to the draw function in the Init state. It's probably best if it resembles that one. But you can create a slightly different version depending on whether you have won or not. (You can use the method \eeFunc{Score.hasWon()} to verify that.) You also want to show the score on the screen, and ask the player if (s)he wants to play another game. For the latter you provide a text on screen, requesting to press y or n.
+
+In the update function you check on the y and n keys. When the player presses y, then you switch back over to the GameState. If n is pressed, you exit the application.

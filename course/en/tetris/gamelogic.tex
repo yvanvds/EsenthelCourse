@@ -1,0 +1,198 @@
+\chapter{GameLogic}
+One class remains, but it is the most important. All parts of the game are ready, but you'll have to bring them together to construct the actual game. This is the purpose of the class \eeClass{gameLogic}. Its framework looks like this:
+
+\begin{code}
+class gameLogic
+{
+private:
+   // blocks in the game
+   block currentBlock;
+   block nextBlock   ;
+
+   float forceDownCounter = 0         ;
+   float slideCounter     = SLIDE_TIME;
+   
+   // to move a block completely down
+   bool  toBottom      = false;
+   float toBottomTimer = 0.05 ; 
+   
+   bool canRotate            (C block & b               ) C {}
+   bool canMove              (C block & b, DIRECTION dir) C {}
+   void handleBottomCollision()   {}   
+   void changeFocusBlock     ()   {}    
+   void checkLoss            () C {}
+   void handleInput          ()   {}
+    
+public:
+   void create()
+   void update()   {}
+   void draw  () C {}
+} 
+gameLogic GameLogic;
+\end{code}
+
+Let's look at the variables first:
+
+\begin{description}
+	\item[current block] This is the block you move during the game.
+	\item[nextBlock] This the next block, which is available on the right hand side.
+	\item[forceDownCounter] When we don't move the block down ourselves, it should go down on its  With this timer, we arrange how long that takes.
+	\item[slideCounter] Whenever a block hits the pile, tetris allows you to slide it sideways for a little  This means we need a timer for that.
+	\item[toBottom] When the space bar is pressed, the block should move all the way  But you have to see it move, so you can't just change its position in one go. With this boolean, we can remember if the block should drop down.
+	\item[toBottomTimer] And that movement also needs a timer for each step.
+\end{description}
+
+\section{The easy methods}
+\subsection{CheckLoss}
+A method you can develop without difficulty is \eeFunc{checkLoss}. This method should check whether the player has lost the game. When should that happen? When a new block appears at the top and that block cannot be moved down, the player has lost. And when is it impossible to move a block down. And when it would collide with the \eeClass{Pile}. 
+
+Pile already has a method \eeFunc{collides}. You can pass the object \eeClass{currentBlock} and the desired direction to that method. If the method returns false, you can call \eeFunc{Score.gameIsLost()}.
+
+\subsection{Create}
+The create method will initialize all variables at the start of a game. The first line should be:
+
+\begin{code}
+Random.randomize();
+\end{code}
+
+Why do we need that line? Computers have a big problem with random numbers. They're a bit too exact for that. We solve this with the \eeFunc{Random} object, but this object internally has a fixed list of numbers which it will use one by one. Every time you ask for a random number, you just get the next number from the list. Should you start at the beginning of that list every time you run your application, you get the same `random' numbers every time. This will make your game rather predictable over time. The function \eeFunc{randomize} allows you to start at a random place in the table. This way, another part of the list is used every time.
+
+\begin{note}
+Should you ever develop software for a casino, you'd better not use the default random functions of your environment. It is not that hard to write a program that, in response to the first few results, looks up where the list has started. At that time you can pretty well predict what the next number in the list will be. As a casino prefers to make a profit, a more complex random library should be used.
+\end{note}
+
+The following statements provide two random blocks:
+
+\begin{code}
+currentBlock.create(STARTPOS, (BLOCK_TYPE)Random(BT_NUM));
+nextBlock   .create(WAITPOS , (BLOCK_TYPE)Random(BT_NUM));
+\end{code}
+
+Notice that we use \verb|STARTPOS| and \verb|WAITPOS| to set the positions. The second argument is the block type. We want a random block every time, so the random function is used. The argument of \eeFunc{Random} determines the highest number. But that value is not inclusive: for example, when you write \eeFunc{Random(3)}, the result can be 0, 1 or 2. Not 3. So why do we write \verb|BT_NUM|? For this, you have to go back and look in the file `enumerations'. \verb|BT_NUM| is the eighth item in the list. The first element is equal to 0, so the eighth element is equal to 7. Therefore, the \eeFunc{Random} function will return a number from 0 to 6. And because an enum is nothing but a name for a number, we can easily convert that number to a \verb|BLOCK_TYPE|. Because that is the type the create function expects.
+
+After these statements, we must assign \eeFunc{forceDownCounter} a value of 0, and \verb|SLIDE_TIME| must be assigned to slideCounter. You are surely able to write those statements yourself. Finally, call the \eeClass{Pile} and \eeClass{Score} classes' \eeFunc{init} method.
+
+\subsection{Draw}
+The draw function of this class has to draw three elements display: the current block, the block in the waiting area and the pile. Add the statements to do so.
+
+\section{A bit harder}
+
+\subsection{Can Rotate}
+We already got the methods to check for collisions with the pile or the game area. Now we need to check whether it is possible to rotate a block. This is why the method \eeFunc{canRotate} is created.
+
+In this method, we first create a new block. We do not want to rotate the actual block, but only check if it would be possible. So we call the create function on the new block, with the current block as an argument. Afterwards, the new block will be rotated.
+
+Now we can check if this new block collides with \eeClass{Wall} or \eeClass{Pile}. The second argument is the direction \verb|D_NONE|, because we don't want to check a movement. When one of those methods indicates a collision, the function result is \verb|false|. Otherwise it will be \verb|true|.
+
+\subsection{Can Move}
+The \eeFunc{canMove} method enables us to check on the displacement in one go. We have keep an eye on both collisions with the wall as well with the pile. If any of these methods returns \verb|false|, the result should also be \verb|false|. If not, the result is \verb|true|. The arguments of these methods can be passed on to the collide methods of \eeClass{Wall} and \eeClass{Pile}.
+
+\subsection{Change Focus Block}
+When a block is down, you need to add it to the pile and place a new block on top. The type of the block must be equal to the block in the waiting position. After that, you need a decide what type the next block will be.
+
+You can write this method in three steps:
+
+\begin{enumerate}
+	\item Add the current block to the pile.
+	\item Call the create method of the current block again. The first argument should be the constant \verb|STARTPOS|. The second argument is the type of the block at the waiting position. (Search in the class \eeClass{block} for a method which returns the type.)
+	\item Call the create method of `nextBlock'. This is identical to the statement you previously wrote in the create function of this class.
+\end{enumerate}
+
+\subsection{Handle Bottom Collision}
+This method describes what to do if a block hits the pile. Four simple statements are needed:
+
+\begin{enumerate}
+	\item Call the \eeFunc{changeFocusBlock} method.
+	\item Check whether rows can be removed from the Pile.
+	\item Pass the number of deleted lines (the result of the previous line) to the \eeClass{Score} object.
+	\item check if the game is over with the the \eeFunc{checkLoss} method.
+\end{enumerate}
+
+\subsection{Handle Input}
+We also need a method which reacts when a key is pressed. This will be the method \eeFunc{handleInput}. Each key that we can press during the game should be treated here. When the down arrow key is pressed, you should first check if this movement is even possible. If so, then the block must be moved down and a sound must be played. Like this:
+
+\begin{code}
+if(Kb.bp(KB_DOWN))
+{
+  if(canMove(currentBlock, D_DOWN))
+  {
+    currentBlock.move(D_DOWN);
+    SoundManager.blip();
+  }
+}
+\end{code}
+
+The code to move a block to the left and to the right is similar. Or at least similar enough to do by yourself!
+
+The `UP' key is used to rotate a block in tetris. Add code to check if this key is pressed. This time you just need to call the method \eeFunc{canRotate} with the current block. If the result of that method is \verb|true|, you rotate the block and play a sound.
+
+And finally there is the space bar. When pressing the space bar the current block should move all the way down. To do that, `toBottom'  will be assigned \verb|true| and `toBottomTimer' gets a value of 0. And here, too, a sound is played.
+
+\section{Update}
+And then there's the last method, which is the center of the game:  \eeFunc{update}. This methods sequentially performs various checks. 
+
+\subsection{Force Down}
+First we check if it's time to move a block down. For this we need to increase the value of `forceDownCounter'. If it is higher than the current game speed, the block should be moved downwards:
+
+\begin{code}
+forceDownCounter += Time.d();
+if(forceDownCounter > Score.getSpeed())
+{
+  if(canMove(currentBlock, D_DOWN)) 
+  {
+    currentBlock.move(D_DOWN);
+    forceDownCounter = 0;
+  }
+}
+\end{code}
+
+\subsection{Slide Counter}
+The slide counter is needed to still be able to move the block aside once it hits the pile. Therefore, we must first know whether the block touches the pile. In that case it can not go down any further. In this case, we will reduce the value of `slideCounter'. When slideCounter reaches zero, we call the method \eeFunc{handleBottomCollision}.
+
+\begin{code}
+if(!canMove(currentBlock, D_DOWN))
+{
+  slideCounter -= Time.d();
+} else {
+  slideCounter = SLIDE_TIME;
+}
+
+if(slideCounter <= 0)
+{
+  slideCounter = SLIDE_TIME;
+  handleBottomCollision();
+}
+\end{code}
+
+\subsection{To Bottom}
+The symbol `toBottom ' will be \verb|true| when the player pressed the spacebar. We then move the block down quickly, but it still needs to happen gradually to be visible. So we use a counter with a small value and subtract the time delta again and again. Each time the counter reaches zero, we move the block downward. If that is not possible, the previous code (Slide Counter) will be executed.
+
+Only when the block does not slide down, we will check the player's input.
+
+\begin{code}
+if(toBottom)
+{
+  toBottomTimer -= Time.d();
+  if(toBottomTimer < 0) 
+  {
+    toBottomTimer = 0.05;
+    if(canMove(currentBlock, D_DOWN))
+    {
+      currentBlock.move(D_DOWN);
+    } else {
+      toBottom = false;
+    }
+  }
+} else {
+  handleInput();
+}
+\end{code}
+
+That concludes this method. All you need to do now is add the \eeFunc{create},  \eeFunc{update} and \eeFunc{draw} methods to the Game State. And then, of course, solve all the mistakes until your application works as it should.
+
+\section{Afterthoughts}
+You now have developed a complete project. Hopefully, you'll remember how important it is to turn everything into classes. The use of test applications is very important to keep a large project under control.
+
+But of course the way we went through this project step by step does not quite match reality. The author of this course knew exactly what needed to be done and in what order you could best tackle a problem, before you even started on this exercise. If you start on your own project that will be very different. It is very common that you need to change the classes that you made. Often, methods you really need are missing because you didn't think of them before, and you will write methods which end up unused. That is, especially for a novice programmer, quite normal.
+
+Only through experience you can learn to assess what features are really needed in a class. And even then you can not always predict them exactly.

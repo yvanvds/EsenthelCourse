@@ -1,21 +1,29 @@
 %!TEX program = xelatex
+\newcommand*{\TOHTML}{}
 
+\ifdefined\TOHTML
+\documentclass[]{book}
+\input{layout/htmltemplate}
+
+\else
 \documentclass[11pt, oldfontcommands, oneside, a4paper]{memoir}
 \usepackage{etoolbox}
-
 \input{layout/template}
-
 \setmainlanguage{english}
 \PolyglossiaSetup{english}{indentfirst=false}
-
 \graphicspath{ {images/} }
-
-
+\fi
 
 \title{Learning C++ with Esenthel}
+
 \begin{document}
+\ifdefined\TOHTML
+%\maketitle
+\else
 \titleGM
 \tableofcontents
+\fi
+
 
 %\part{C++ en Esenthel}
 %\input{../parts/introduction}
@@ -41,45 +49,48 @@ In this part you will learn about more generic programming concepts like random 
 \input{en/basics/basicClasses}
 \input{en/basics/functions}
 \input{en/basics/classes}
-\input{en/basics/referenties}
-% \input{nl/basics/pointers}
-% \input{nl/basics/enumeratie}
+\input{en/basics/references}
+\input{en/basics/pointers}
 \input{en/basics/constants}
-% \input{nl/basics/gamestates}
+\input{en/basics/enumerations}
+\input{en/basics/appstates}
 
-% \part{Tetris}
-% \input{nl/tetris/inleiding}
-% \input{nl/tetris/objects}
-% \input{nl/tetris/interface}
-% \input{nl/tetris/gamestates}
-% \input{nl/tetris/gamelogic}
+\partAbstract{
+You will create a clone of the famous Tetris game. You will learn to develop a project step by step  without losing sight of the whole.
+}
+\part{Tetris}
+\input{en/tetris/introduction}
+\input{en/tetris/objects}
+\input{en/tetris/interface}
+\input{en/tetris/gamestates}
+\input{en/tetris/gamelogic}
 
-% \part{Gui}
-% \input{nl/gui/introduction}
-% \input{nl/gui/window}
-% \input{nl/gui/button}
-% \input{nl/gui/checkbox}
-% \input{nl/gui/slider}
-% \input{nl/gui/textline}
-% \input{nl/gui/translations}
-
-\part{Data}
-\input{en/data/textfiles}
-% \input{nl/data/databases}
-% \input{nl/data/aboutclientserver}
-% \input{nl/data/sharedobjects}
-% \input{nl/data/server}
-% \input{nl/data/client}
-
-% \part{3D Worlds}
-% \input{nl/3DWorlds/introduction}
-% \input{nl/3DWorlds/manipulating_objects}
-% \input{nl/3DWorlds/object_parameters}
-% \input{nl/3DWorlds/animations}
-% \input{nl/3DWorlds/dynamic_objects}
-% \input{nl/3DWorlds/inventory}
-
-\printindex
+%% \part{Gui}
+%% \input{nl/gui/introduction}
+%% \input{nl/gui/window}
+%% \input{nl/gui/button}
+%% \input{nl/gui/checkbox}
+%% \input{nl/gui/slider}
+%% \input{nl/gui/textline}
+%% \input{nl/gui/translations}
+%
+%\part{Data}
+%\input{en/data/textfiles}
+%% \input{nl/data/databases}
+%% \input{nl/data/aboutclientserver}
+%% \input{nl/data/sharedobjects}
+%% \input{nl/data/server}
+%% \input{nl/data/client}
+%
+%% \part{3D Worlds}
+%% \input{nl/3DWorlds/introduction}
+%% \input{nl/3DWorlds/manipulating_objects}
+%% \input{nl/3DWorlds/object_parameters}
+%% \input{nl/3DWorlds/animations}
+%% \input{nl/3DWorlds/dynamic_objects}
+%% \input{nl/3DWorlds/inventory}
+%
+%\printindex
 
 \end{document}
 
