@@ -1,7 +1,8 @@
 \chapter{Random}
+A game will rarely stay interesting when it is completely predictable. To avoid predictability, developers use random values provided by the \eeClass{Random} class.
 
 \section{Whole Numbers}
-A game will rarely stay interesting when it is completely predictable. To avoid predictability, developers use random values provided by the \eeClass{Random} class. The function \eeFunc{Random()} returns a random number between 0 and 4.294.967.295. Check this yourself with the next example:
+The function \eeFunc{Random()} returns a random number between 0 and 4.294.967.295. Check this yourself with the next example:
 
 \begin{code}
 uint number = 0;
@@ -19,7 +20,7 @@ void Draw() {
 
 You will rarely need a number this big. Which is why you can use the \eeClass{Random()} function with one or more arguments. When used with one argument, the function will return a number in the range 0 to the argument minus one. In other words, \eeClass{Random(5)}  will return one of the values 0, 1, 2, 3 or 4. Count them, that's 5 different values. A common beginners mistake is to expect the number five as a result. That will never, ever happen!
 
-It is also possible to pass two arguments. \eeClass{Random(-2, 4)} returns one of these values: -2, -1, 0, 1, 2, 3 of 4. The important thing to remember that with this version, the arguments are inclusive.
+It is also possible to pass two arguments. \eeClass{Random(-2, 4)} returns one of these values: -2, -1, 0, 1, 2, 3 or 4. The important thing to remember that with this version, the arguments are inclusive.
 
 \begin{exercise}
 Create the basics of a lottery application. Show a new number from 1 to 42 (inclusive) on the screen every time you press the space bar. 
@@ -49,12 +50,16 @@ c.pos.y = RandomF(-D.h(), D.h());
 In the example above, we won't even pass actual numbers to the function \eeFunc{RandomF()}. Instead, we let our application decide. The width and height of the screen are not the same on every device. By asking the engine about it, we will always end up with the correct values.
 
 \begin{exercise}
-\begin{enumerate}
-\item Create an application which shows a circle on the screen. Every time the space bar is pressed, you change the circle's position.
-\item Create an application with a small rectangle on the screen. Assign a new position every second. 
-\item Starting from the previous exercise, add an int `score' equal to zero. Draw this score somewhere on the screen. When the left mouse button is pressed, check if the mouse pointer is on top of the rectangle. If it is, increase the score by one.
-\item \textit{(A bit harder)} With every score increase, the position of the rectangle should change a bit faster.
-\end{enumerate}  
+Create an application which shows a circle on the screen. Every time the space bar is pressed, you change the circle's position.
+\end{exercise}
+\begin{exercise}
+Create an application with a small rectangle on the screen. Assign a new position every second. 
+\end{exercise}
+\begin{exercise}
+Starting from the previous exercise, add an int `score' equal to zero. Draw this score somewhere on the screen. When the left mouse button is pressed, check if the mouse pointer is on top of the rectangle. If it is, increase the score by one.
+\end{exercise}
+\begin{exercise}
+\textit{(A bit harder)} With every score increase, the position of the rectangle should change a bit faster.
 \end{exercise}
 
 

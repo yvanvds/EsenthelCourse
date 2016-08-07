@@ -115,17 +115,17 @@ REPA(circles)
 \end{code}
 
 \begin{exercise}
-\begin{enumerate}
+\begin{itemize}
 \item Test de bovenstaande code in een progamma.
 \item Voeg een functie toe om een cirkel toe te voegen wanneer je op de spatiebalk drukt.
 \item In plaats van een vaste straal gebruik je een random waarde tussen 0.01 en 0.1.
 \item Teken enkel de omtrek van de cirkels, in het wit. Maak de achtergrond blauw.
 \item Roep luid door de klas waar dit je aan doet denken.
-\end{enumerate}
+\end{itemize}
 \end{exercise}
 
 \section{Objecten genereren}
-Objecten genereren tijdens of aan het begin van een programma is iets wat je best goed beheerst. Daarom zie je hieronder enkele mogelijkheden om je op weg te helpen. Denk er wel aan dat dit slechts voorbeelden zijn. De mogelijkheden waarop je containers gebruikt zijn zowat onuitputtelijk.
+Objecten genereren tijdens of aan het begin van een programma is iets wat je best goed beheerst. Daarom zie je nu enkele mogelijkheden om je op weg te helpen. Denk er wel aan dat dit slechts voorbeelden zijn. De mogelijkheden waarop je containers gebruikt zijn zowat onuitputtelijk.
 
 \subsection{Tijdens Init}
 
@@ -158,12 +158,19 @@ for(float i = -D.w(); i < D.w(); i += 0.2)
 }
 \end{code}
 
+\begin{exercise}
+Probeer de bovenstaande mogelijkheden uit, en toon ook steeds de gegenereerde objecten op het scherm.
+\end{exercise}
+
 \subsection{Tijdens Update}
 
 Via interactie:
 \begin{code}
 if(Kb.bp(KB_SPACE)) {
-  circles.New().set(RandomF(0.05, 0.2), RandomF(-D.w(), D.w()), RandomF(-D.h(), D.h()));
+  circles.New().set(  RandomF(0.05, 0.2)
+	                  , RandomF(-D.w(), D.w())
+	                  , RandomF(-D.h(), D.h())
+  );
 }
 \end{code}
 
@@ -177,12 +184,16 @@ if(Ms.bp(0)) {
 
 Met een timer:
 \begin{code}
-Flt timer = 3; // deze regel zet je boven aan je programma, de rest hoort in update
-
+Flt timer = 3; // deze regel zet je boven aan je programma, 
+               
+// de rest hoort in update
 if(timer > 0) timer -= Time.d();
 else {
   timer = 3;
-	circles.New().set(RandomF(0.05, 0.2), RandomF(-D.w(), D.w()), RandomF(-D.h(), D.h()));
+	circles.New().set(  RandomF(0.05, 0.2)
+	                  , RandomF(-D.w(), D.w())
+										, RandomF(-D.h(), D.h())
+  );
 }
 \end{code}
 

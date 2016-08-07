@@ -1,12 +1,12 @@
 \chapter{Containers}
 
-So far, you needed to define all global objects at the head of your application file. This is no problem for a little exercise, but when your project grows in size, this becomes a problem. You also have to know upfront how many objects you need. Even for a little game like asteroids, it is impossible to know how many rocks there will be on the screen at all times.
+So far, you needed to define all global objects at the top of your application file. This is OK for a little exercise, but when your project grows in size, this becomes a problem. You also have to know upfront how many objects you need. Even for a little game like asteroids, it is impossible to know how many rocks there will be on the screen at all times.
 
-When you need several objects of the same type, you can use a container. When you declare a container for a certain object type, you can add objects to this container during the course of the application. An easy to use container is \eeClass{Memx}. The declaration of a container requires that you provide the type of objects it will contain. When you need a container for floats, you would declare it as a \eeClass{Memx<float>}. A container for rectangles would be a \eeClass{Memx<Rect>}. Look at this code for an example of a container with circles:
+When you need several objects of the same type, you can use a container. When you declare a container for a certain object type, you can add objects to this container during the course of the application. An easy to use container is \eeClass{Memc}. The declaration of a container requires that you provide the type of objects it will contain. When you need a container for floats, you would declare it as a \eeClass{Memc<float>}. A container for rectangles would be a \eeClass{Memc<Rect>}. Look at this code for an example of a container with circles:
 
 \begin{code}
 // Declare a container for circles
-Memx<Circle> circles;
+Memc<Circle> circles;
 
 void InitPre()
 {
@@ -21,7 +21,9 @@ bool Init()
 	    // The method New() adds a new circle to the container. 
 	    // At the same time the Circle method set() is used to 
 	    // assign a radius and a position.
-        circles.New().set(0.1, RandomF(-D.w(), D.w()), RandomF(-D.h(), D.h()));
+        circles.New().set(0.1, RandomF(-D.w(), D.w())
+				                     , RandomF(-D.h(), D.h())
+				);
    }
    return true;
 }
@@ -48,11 +50,13 @@ void Draw()
 \end{code}
 
 \begin{exercise}
-\begin{enumerate}
-\item What would happen if, by mistake, you place the code to generate circles in Update instead of Init?
-\item Put this code back in Init, but add code to the Update function: every time you press the space bar, an extra circle should be added to the container.
-\item Show an image on the screen instead of a circle. \textit{(Too hard? Start with a rectangle!)}
-\end{enumerate}
+What would happen if, by mistake, you place the code to generate circles in Update instead of Init?
+\end{exercise}
+\begin{exercise}
+Put this code back in Init, but add code to the Update function: every time you press the space bar, an extra circle should be added to the container.
+\end{exercise}
+\begin{exercise}
+Show an image on the screen instead of a circle. \textit{(Too hard? Start with a rectangle!)}
 \end{exercise}
 
 \section{New()}
@@ -68,7 +72,7 @@ for(int i = 0; i < 10; i++)
 }
 \end{code}
 
-\ldots but it won't work. Instead you are creating two new circles at every iteration. The method \eeFunc{set} is called on the first circle, the method \eeFunc{extend} at the second. The solution is simple: Pass the result of \eeFunc{New()} to a temporary variable. The type of this variable must be a reference to a circle. (If you don't know what a reference is, don't worry. We'll talk about it later. For now, remember that you need to put an ampersand (\&) between the type and the name.
+\ldots but it won't work. Instead you are creating two new circles at every iteration. The method \eeFunc{set} is called on the first circle, the method \eeFunc{extend} at the second. The solution is simple: Pass the result of \eeFunc{New()} to a temporary variable. The type of this variable must be a reference to a circle. 
 
 \begin{code}
 for(int i = 0; i < 10; i++)
@@ -78,6 +82,10 @@ for(int i = 0; i < 10; i++)
 	c.extend(-0.05);
 }
 \end{code}
+
+\begin{note}
+If you don't know what a reference is, don't worry. We'll talk about it later. For now, remember that you need to put an ampersand (\&) between the type and the name.
+\end{note}
 
 \section{Using objects}
 Very often, you need to iterate over all elements in a container. For example when you draw them all on the screen. It would be very annoying if you had to remember somehow exactly how many elements a container contains. Fortunately, you do not have to. Containers provide a method \eeFunc{elms()} which returns the current number of elements. And to access individual elements you can use square brackets, just like with primitive C arrays.
@@ -111,17 +119,17 @@ REPA(circles)
 \end{code}
 
 \begin{exercise}
-\begin{enumerate}
+\begin{itemize}
 \item Test the code above in an application. What function would you place this code in?
 \item Add a function to add an extra circle every time you hit the space bar.
 \item Instead of a fixed radius, use a random value between 0.01 and 0.1.
 \item Draw only the perimeter of the circle, in white, on a blue background.
 \item If there are any people nearby, shout out loud what this looks like.
-\end{enumerate}
+\end{itemize}
 \end{exercise}
 
 \section{Adding Objects}
-You will add objects to a container quite a lot. This might happen in the Init function as well as the Update function. Below are a few examples to get you started, but there are a lot of different ways to add objects. It is up to you to figure out what is the best approach in your application.
+You will add objects to a container quite a lot. This might happen in the Init function as well as the Update function. Next are a few examples to get you started, but there are a lot of different ways to add objects. It is up to you to figure out what is the best approach in your application.
 
 \subsection{During Init}
 
@@ -154,12 +162,19 @@ for(float i = -D.w(); i < D.w(); i += 0.2)
 }
 \end{code}
 
+\begin{exercise}
+Test all of the examples above and make sure you understand every one of them. Always add code to display all elements on the screen.
+\end{exercise}
+
 \subsection{During Update}
 
 Respond to keyboard input:
 \begin{code}
 if(Kb.bp(KB_SPACE)) {
-  circles.New().set(RandomF(0.05, 0.2), RandomF(-D.w(), D.w()), RandomF(-D.h(), D.h()));
+  circles.New().set(  RandomF(0.05, 0.2)
+	                  , RandomF(-D.w(), D.w())
+	                  , RandomF(-D.h(), D.h())
+  );
 }
 \end{code}
 
@@ -172,12 +187,16 @@ if(Ms.bp(0)) {
 
 With a timer:
 \begin{code}
-Flt timer = 3; // put this line on to of the file. Next lines belong in Update()
-
+Flt timer = 3; // Put this line on top of the file. 
+               
+// These lines belong in Update()
 if(timer > 0) timer -= Time.d();
 else {
   timer = 3;
-	circles.New().set(RandomF(0.05, 0.2), RandomF(-D.w(), D.w()), RandomF(-D.h(), D.h()));
+	circles.New().set(  RandomF(0.05, 0.2)
+	                  , RandomF(-D.w(), D.w())
+										, RandomF(-D.h(), D.h())
+  );
 }
 \end{code}
 
@@ -200,8 +219,8 @@ With the method \eeFunc{remove} and the index of the element as an argument, you
 
 \begin{code}
 for(int i = 0; i < dots.elms(); i++) {
-    if(dots[i].y < -D.h()) {
-        dots.remove(i);
+  if(dots[i].y < -D.h()) {
+    dots.remove(i);
 	}
 	dots[i].y -= Time.d();
 }
@@ -226,12 +245,12 @@ for(int i = 0; i < dots.elms(); i++) {
 	    if(Cuts(dots[i], circles[j])) {
 		    dots.remove(i);
 		    circles.remove(j);
-		    // At this point there is one less dot in the container, but next 
-		    // circles will still be compared against the current dot. 
-		    // If we are at the last dot, i will no longer be valid. 
+		    // At this point there is one less dot in the container, but  
+		    // the remaining circles will still be compared against the current dot. 
+		    // current dot. If we are at the last dot, it will no longer be valid. 
 		    // To prevent a crash, we add a break statement to go back to 
-		    //the outer for loop:
-			break;
+		    // the outer for loop:
+			  break;
 		}		
 	}
 }

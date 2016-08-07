@@ -1,0 +1,441 @@
+htfcss: cmsltt  font-style: oblique; font-family: monospace;
+htfcss: cmtt font-family: monospace;
+htfcss: cmsl font-style: oblique;
+htfcss: cmti  font-style: italic;
+htfcss: cmbx  font-weight: bold;
+htfcss: cmbxsl  font-weight: bold; font-style: oblique;
+htfcss: cmtt font-family: monospace;
+htfcss: cmmi font-style: italic;
+htfcss: cmmib font-style: italic; font-weight: bold;
+File: course_nl.html
+File: course_nl.css
+File: course_nl.tmp
+File: course_nl2.html
+File: course_nl3.html
+File: 2DConcepts.html
+File: Positiesin2D.html
+File: PositiesTonenophetScherm.html
+File: Rekenen.html
+File: Puntenomteonthouden.html
+File: Samengevat.html
+File: Oefening.html
+File: Interactie.html
+File: MuisInteracties.html
+File: Positie.html
+File: Clicks.html
+File: Muiswiel.html
+File: Cursor.html
+File: Overigefuncties.html
+File: KeyboardInteracties.html
+File: KeyFunctions.html
+File: Graduelewijzigingen.html
+File: Deltatime.html
+File: Tekst.html
+File: Tekstophetschermtonen.html
+File: Getallenentekstcombineren.html
+File: EenVec2alstekstweergeven.html
+File: Tekstopmaak.html
+File: Shapes.html
+File: Circle.html
+File: Functies.html
+File: Rekenen1.html
+File: Edge2.html
+File: Functies1.html
+File: Oefeningen.html
+File: Rect.html
+File: EenbewegendeRect.html
+File: Cuts.html
+File: Oefeningen1.html
+File: AfbeeldingenenGeluid.html
+File: Afbeeldingen.html
+File: Geluid.html
+File: Muziek.html
+File: PlaylistsUitbreiding.html
+File: FX.html
+File: exercise.html
+File: Basics.html
+File: Random.html
+File: Gehelegetallen.html
+File: RandomFloat.html
+File: Containers.html
+File: New.html
+File: Objectengebruiken.html
+File: Objectengenereren.html
+File: TijdensInit.html
+File: TijdensUpdate.html
+File: Objectenverwijderen.html
+File: Eenspelletje.html
+File: Classesthebasics.html
+File: Eeneigenclassmaken.html
+File: Functies2.html
+File: Functieszonderargumentenofresultaat.html
+File: Functiesmeteenargument.html
+File: Functiesmetmeerargumenten.html
+File: Functiesmeteenresultaat.html
+File: Functiesmetargumenteneneenresultaat.html
+File: Deoplossing.html
+File: Classesindepraktijk.html
+File: Wathoortsamen.html
+File: SetenGetFuncties.html
+File: publicenprivate.html
+File: Globaleobjecten.html
+File: Managerclasses.html
+File: Werkenaanbestaandecode.html
+File: referenties.html
+File: Passbyreference.html
+File: returnbyreference.html
+File: Pointers.html
+File: Pointersdusldots.html
+File: Basisbewerkingen.html
+File: Eenpointerdeclareren.html
+File: Eenadrestoekennenaaneenpointer.html
+File: Eenvariabelewijzigenviaeenpointer.html
+File: pointersnaarnull.html
+File: Allesopeenrijtje.html
+File: Enumeratie.html
+File: Zomoethetniet.html
+File: Ditisnietveelbeter.html
+File: Enumerationtime.html
+File: Constanten.html
+File: GlobaleConstanten.html
+File: ConstArgumenten.html
+File: ApplicationStates.html
+File: Intro.html
+File: Menu.html
+File: Game.html
+File: DefaultState.html
+File: Tetris.html
+File: Inleiding.html
+File: Setup.html
+File: Constants.html
+File: Enumeraties.html
+File: Objecten.html
+File: Squares.html
+File: SquareTester.html
+File: CreateenDraw.html
+File: DeTest.html
+File: Blocks.html
+File: SquaresToevoegen.html
+File: CreateenDraw1.html
+File: MoveenRotate.html
+File: Pile.html
+File: InitenDraw.html
+File: Add.html
+File: canMovecollides.html
+File: checkLinesremoveRow.html
+File: Wall.html
+File: Interface.html
+File: Background.html
+File: Speelveld.html
+File: NextBlock.html
+File: Tekst1.html
+File: Hetgeluid.html
+File: ApplicationStates1.html
+File: DeInitState.html
+File: DeGameState.html
+File: DeScoreState.html
+File: Wateenvoudigis.html
+File: checkWingameIsLost.html
+File: addPoints.html
+File: ScoreState.html
+File: GameLogic.html
+File: Deeenvoudigefuncties.html
+File: CheckLoss.html
+File: Create.html
+File: Draw.html
+File: Ietsmoeilijker.html
+File: CanRotate.html
+File: CanMove.html
+File: ChangeFocusBlock.html
+File: HandleBottomCollision.html
+File: HandleInput.html
+File: Update.html
+File: ForceDown.html
+File: SlideCounter.html
+File: ToBottom.html
+File: Nabespreking.html
+File: Gui.html
+File: Gui1.html
+File: Eenguiladen.html
+File: Pointersnaarelementen.html
+File: Callbackfuncties.html
+File: Deinhoudvaneenelement.html
+File: DataeninterfaceNevermix.html
+File: GuiWindow.html
+File: Definitie.html
+File: ClassMethods.html
+File: Dialogs.html
+File: GuiButtons.html
+File: ToggleButtons.html
+File: CheckBox.html
+File: Slider.html
+File: TextLine.html
+File: Tekstomzettennaareengetal.html
+File: Anderehandigefuncties.html
+File: Translations.html
+File: ThetranslationManagerClass.html
+File: Map.html
+File: Loadatranslation.html
+File: Data.html
+File: Dataopslaanineenbestand.html
+File: Locaties.html
+File: TextData.html
+File: Contentbewaren.html
+File: Eenbestandladen.html
+File: Contentlezen.html
+File: Eenclassvooreenconfigfile.html
+File: BinaryFiles.html
+File: DataOrder.html
+File: ObjectenOpslaan.html
+File: Databases.html
+File: DatabaseServers.html
+File: EenDatabaseGebruiken.html
+File: DeVerbinding.html
+File: Eentabelmaken.html
+File: DataLezen.html
+File: Recordstellen.html
+File: DataOpslaan.html
+File: DataVerwijderen.html
+File: Overnetwerkapplicaties.html
+File: Messages.html
+File: Gedeeldeclasses.html
+File: DeServer.html
+File: MainProgramLoop.html
+File: DeserverClass.html
+File: DeConstructor.html
+File: Dataverzenden.html
+File: Infovoornieuweclients.html
+File: DeClientClass.html
+File: DeCreateFunctie.html
+File: DeUpdateFunctie.html
+File: HandlePosUpdate.html
+File: HandleFullUpdate.html
+File: DeClient.html
+File: DePeerClass.html
+File: Update1.html
+File: posities.html
+File: Draw1.html
+File: PeerManager.html
+File: Peertoevoegen.html
+File: Peervinden.html
+File: Peerverwijderen.html
+File: Peerstellen.html
+File: UpdateenDraw.html
+File: PeerMessages.html
+File: AddPeer.html
+File: GetPeerDetails.html
+File: GetPeerPos.html
+File: RemovePeer.html
+File: DeNetworkClass.html
+File: Create1.html
+File: Update2.html
+File: DePlayerClass.html
+File: Create2.html
+File: Update3.html
+File: Draw2.html
+File: setDetails.html
+File: MainProgramLoop1.html
+File: InitPre.html
+File: Init.html
+File: Shut.html
+File: Update4.html
+File: Draw3.html
+File: DeGui.html
+File: 3DWorlds.html
+File: Inleiding1.html
+File: Dewereldladen.html
+File: Init1.html
+File: Update5.html
+File: Render.html
+File: Draw4.html
+File: PlayerenCamera.html
+File: Deplayerclass.html
+File: Linktheplayer.html
+File: Camera.html
+File: WorldObjectsManipuleren.html
+File: ObjectClassesenCode.html
+File: ObjectClass.html
+File: Eencustomobjecttoevoegen.html
+File: Virtuelefuncties.html
+File: Rotatie.html
+File: DrawFuncties.html
+File: DeRenderer.html
+File: OutlineRendering.html
+File: DrawBehind.html
+File: Mousepointerto3D.html
+File: Voorbeeldcode.html
+File: Hetwerktniet.html
+File: ObjectParameters.html
+File: RetrievingObjectParamsinCode.html
+File: Particles.html
+File: Licht.html
+File: ToggletheRunes.html
+File: APuzzle.html
+File: Animations.html
+File: PlayerAnimations.html
+File: Jump.html
+File: TheButterflyEffect.html
+File: WalkingwithDinosaurs.html
+File: MaterialVariations.html
+File: Waypoints.html
+File: Steps.html
+File: Code.html
+File: DynamicObjects.html
+Css: @media print {span.next {visibility:hidden;}}
+Css: body#tex4ht-menu {white-space: nowrap; }
+Css: p.noindent { text-indent: 0em }
+Css: td p.noindent { text-indent: 0em; margin-top:0em; }
+Css: p.nopar { text-indent: 0em; }
+Css: p.indent{ text-indent: 1.5em }
+Css: @media print {div.crosslinks {visibility:hidden;}}
+Css: a img { border-top: 0; border-left: 0; border-right: 0; }
+Font_Css("4"): .small-caps{font-variant: small-caps; }
+Font_Css("10"): .htf-cmbx {font-weight: bold; font-style:normal;}
+Font_Css("12"): .htf-calligraphy {font-family:cursive}
+Font_Css("14"): .htf-italic {font-style: italic;}
+Font_Css("16"): .htf-bold {font-weight: bold;}
+Font_Css("12"): .htf-calligraphy-bold {font-family:cursive ; font-weight: bold; }
+Css: center { margin-top:1em; margin-bottom:1em; }
+Css: td center { margin-top:0em; margin-bottom:0em; }
+Css: .Canvas { position:relative; }
+Css: img.math{vertical-align:middle;}
+Css: li p.indent { text-indent: 0em }
+Css: li p:first-child{ margin-top:0em; }
+Css: li p:last-child, li div:last-child { margin-bottom:0.5em; }
+Css: li p~ul:last-child, li p~ol:last-child{ margin-bottom:0.5em; }
+Css: .enumerate1 {list-style-type:decimal;}
+Css: .enumerate2 {list-style-type:lower-alpha;}
+Css: .enumerate3 {list-style-type:lower-roman;}
+Css: .enumerate4 {list-style-type:upper-alpha;}
+Css: div.newtheorem { margin-bottom: 2em; margin-top: 2em;}
+Css: .obeylines-h,.obeylines-v {white-space: nowrap; }
+Css: div.obeylines-v p { margin-top:0; margin-bottom:0; }
+Css: .overline{ text-decoration:overline; }
+Css: .overline img{ border-top: 1px solid black; }
+Css: td.displaylines {text-align:center; white-space:nowrap;}
+Css: .centerline {text-align:center;}
+Css: .rightline {text-align:right;}
+Css: div.verbatim {font-family: monospace; white-space: nowrap; text-align:left; clear:both; }
+Css: .fbox {padding-left:3.0pt; padding-right:3.0pt; text-indent:0pt; border:solid black 0.4pt; }
+Css: div.fbox {display:table}
+Css: div.center div.fbox {text-align:center; clear:both; padding-left:3.0pt; padding-right:3.0pt; text-indent:0pt; border:solid black 0.4pt; }
+Css: div.minipage{width:100%;}
+Css: div.center, div.center div.center {text-align: center; margin-left:1em; margin-right:1em;}
+Css: div.center div {text-align: left;}
+Css: div.flushright, div.flushright div.flushright {text-align: right;}
+Css: div.flushright div {text-align: left;}
+Css: div.flushleft {text-align: left;}
+Css: .underline{ text-decoration:underline; }
+Css: .underline img{ border-bottom: 1px solid black; margin-bottom:1pt; }
+Css: .framebox-c, .framebox-l, .framebox-r { padding-left:3.0pt; padding-right:3.0pt; text-indent:0pt; border:solid black 0.4pt; }
+Css: .framebox-c {text-align:center;}
+Css: .framebox-l {text-align:left;}
+Css: .framebox-r {text-align:right;}
+Css: span.thank-mark{ vertical-align: super }
+Css: span.footnote-mark sup.textsuperscript, span.footnote-mark a sup.textsuperscript{ font-size:80%; }
+Css: div.tabular, div.center div.tabular {text-align: center; margin-top:0.5em; margin-bottom:0.5em; }
+Css: table.tabular td p{margin-top:0em;}
+Css: table.tabular {margin-left: auto; margin-right: auto;}
+Css: td p:first-child{ margin-top:0em; }
+Css: td p:last-child{ margin-bottom:0em; }
+Css: div.td00{ margin-left:0pt; margin-right:0pt; }
+Css: div.td01{ margin-left:0pt; margin-right:5pt; }
+Css: div.td10{ margin-left:5pt; margin-right:0pt; }
+Css: div.td11{ margin-left:5pt; margin-right:5pt; }
+Css: table[rules] {border-left:solid black 0.4pt; border-right:solid black 0.4pt; }
+Css: td.td00{ padding-left:0pt; padding-right:0pt; }
+Css: td.td01{ padding-left:0pt; padding-right:5pt; }
+Css: td.td10{ padding-left:5pt; padding-right:0pt; }
+Css: td.td11{ padding-left:5pt; padding-right:5pt; }
+Css: table[rules] {border-left:solid black 0.4pt; border-right:solid black 0.4pt; }
+Css: .hline hr, .cline hr{ height : 1px; margin:0px; }
+Css: .tabbing-right {text-align:right;}
+Css: span.TEX {letter-spacing: -0.125em; }
+Css: span.TEX span.E{ position:relative;top:0.5ex;left:-0.0417em;}
+Css: a span.TEX span.E {text-decoration: none; }
+Css: span.LATEX span.A{ position:relative; top:-0.5ex; left:-0.4em; font-size:85%;}
+Css: span.LATEX span.TEX{ position:relative; left: -0.4em; }
+Css: div.float, div.figure {margin-left: auto; margin-right: auto;}
+Css: div.float img {text-align:center;}
+Css: div.figure img {text-align:center;}
+Css: .marginpar {width:20%; float:right; text-align:left; margin-left:auto; margin-top:0.5em; font-size:85%; text-decoration:underline;}
+Css: .marginpar p{margin-top:0.4em; margin-bottom:0.4em;}
+Css: table.equation {width:100%;}
+Css: .equation td{text-align:center; }
+Css: td.equation { margin-top:1em; margin-bottom:1em; } 
+Css: td.equation-label { width:5%; text-align:center; }
+Css: td.eqnarray4 { width:5%; white-space: normal; }
+Css: td.eqnarray2 { width:5%; }
+Css: table.eqnarray-star, table.eqnarray {width:100%;}
+Css: div.eqnarray{text-align:center;}
+Css: div.array {text-align:center;}
+Css: div.pmatrix {text-align:center;}
+Css: table.pmatrix {width:100%;}
+Css: span.pmatrix img{vertical-align:middle;}
+Css: div.pmatrix {text-align:center;}
+Css: table.pmatrix {width:100%;}
+Css: span.bar-css {text-decoration:overline;}
+Css: img.cdots{vertical-align:middle;}
+Css: .partToc a, .partToc, .likepartToc a, .likepartToc {line-height: 200%; font-weight:bold; font-size:110%;}
+Css: .chapterToc a, .chapterToc, .likechapterToc a, .likechapterToc, .appendixToc a, .appendixToc {line-height: 200%; font-weight:bold;}
+Css: .index-item, .index-subitem, .index-subsubitem {display:block}
+Css: div.caption {text-indent:-2em; margin-left:3em; margin-right:1em; text-align:left;}
+Css: div.caption span.id{font-weight: bold; white-space: nowrap; }
+Css: h1.partHead{text-align: center}
+Css: p.bibitem { text-indent: -2em; margin-left: 2em; margin-top:0.6em; margin-bottom:0.6em; }
+Css: p.bibitem-p { text-indent: 0em; margin-left: 2em; margin-top:0.6em; margin-bottom:0.6em; }
+Css: .paragraphHead, .likeparagraphHead { margin-top:2em; font-weight: bold;}
+Css: .subparagraphHead, .likesubparagraphHead { font-weight: bold;}
+Css: .quote {margin-bottom:0.25em; margin-top:0.25em; margin-left:1em; margin-right:1em; text-align:justify;}
+Css: .verse{white-space:nowrap; margin-left:2em}
+Css: div.maketitle {text-align:center;}
+Css: h2.titleHead{text-align:center;}
+Css: div.maketitle{ margin-bottom: 2em; }
+Css: div.author, div.date {text-align:center;}
+Css: div.thanks{text-align:left; margin-left:10%; font-size:85%; font-style:italic; }
+Css: div.author{white-space: nowrap;}
+Css: .quotation {margin-bottom:0.25em; margin-top:0.25em; margin-left:1em; }
+Css: h1.partHead{text-align: center}
+Css:  .chapterToc, .likechapterToc {margin-left:0em;}
+Css:  .chapterToc ~ .likesectionToc, .chapterToc ~ .sectionToc, .likechapterToc ~ .likesectionToc, .likechapterToc ~ .sectionToc {margin-left:2em;}
+Css:  .chapterToc ~ .likesectionToc ~ .likesubsectionToc, .chapterToc ~ .likesectionToc ~ .subsectionToc, .chapterToc ~ .sectionToc ~ .likesubsectionToc, .chapterToc ~ .sectionToc ~ .subsectionToc, .likechapterToc ~ .likesectionToc ~ .likesubsectionToc, .likechapterToc ~ .likesectionToc ~ .subsectionToc, .likechapterToc ~ .sectionToc ~ .likesubsectionToc, .likechapterToc ~ .sectionToc ~ .subsectionToc {margin-left:4em;}
+Css: .chapterToc ~ .likesectionToc ~ .likesubsectionToc ~ .likesubsubsectionToc, .chapterToc ~ .likesectionToc ~ .likesubsectionToc ~ .subsubsectionToc, .chapterToc ~ .likesectionToc ~ .subsectionToc ~ .likesubsubsectionToc, .chapterToc ~ .likesectionToc ~ .subsectionToc ~ .subsubsectionToc, .chapterToc ~ .sectionToc ~ .likesubsectionToc ~ .likesubsubsectionToc, .chapterToc ~ .sectionToc ~ .likesubsectionToc ~ .subsubsectionToc, .chapterToc ~ .sectionToc ~ .subsectionToc ~ .likesubsubsectionToc, .chapterToc ~ .sectionToc ~ .subsectionToc ~ .subsubsectionToc, .likechapterToc ~ .likesectionToc ~ .likesubsectionToc ~ .likesubsubsectionToc, .likechapterToc ~ .likesectionToc ~ .likesubsectionToc ~ .subsubsectionToc, .likechapterToc ~ .likesectionToc ~ .subsectionToc ~ .likesubsubsectionToc, .likechapterToc ~ .likesectionToc ~ .subsectionToc ~ .subsubsectionToc, .likechapterToc ~ .sectionToc ~ .likesubsectionToc ~ .likesubsubsectionToc, .likechapterToc ~ .sectionToc ~ .likesubsectionToc ~ .subsubsectionToc, .likechapterToc ~ .sectionToc ~ .subsectionToc ~ .likesubsubsectionToc .likechapterToc ~ .sectionToc ~ .subsectionToc ~ .subsubsectionToc {margin-left:6em;}
+Css:  .likesectionToc , .sectionToc {margin-left:0em;}
+Css:  .likesectionToc ~ .likesubsectionToc, .likesectionToc ~ .subsectionToc, .sectionToc ~ .likesubsectionToc, .sectionToc ~ .subsectionToc {margin-left:2em;}
+Css: .likesectionToc ~ .likesubsectionToc ~ .likesubsubsectionToc, .likesectionToc ~ .likesubsectionToc ~ .subsubsectionToc, .likesectionToc ~ .subsectionToc ~ .likesubsubsectionToc, .likesectionToc ~ .subsectionToc ~ .subsubsectionToc, .sectionToc ~ .likesubsectionToc ~ .likesubsubsectionToc, .sectionToc ~ .likesubsectionToc ~ .subsubsectionToc, .sectionToc ~ .subsectionToc ~ .likesubsubsectionToc, .sectionToc ~ .subsectionToc ~ .subsubsectionToc {margin-left:4em;}
+Css:  .likesubsectionToc, .subsectionToc {margin-left:0em;}
+Css:  .likesubsectionToc ~ .subsubsectionToc, .subsectionToc ~ .subsubsectionToc {margin-left:2em;}
+Css: .figure img.graphics {margin-left:10%;}
+Css: .lstlisting .label{margin-right:0.5em; }
+Css: div.lstlisting{font-family: monospace; white-space: nowrap; margin-top:0.5em; margin-bottom:0.5em; }
+Css: div.lstinputlisting{ font-family: monospace; white-space: nowrap; }
+Css: .lstinputlisting .label{margin-right:0.5em;}
+File: ../js/menu.js
+File: images/2Dpositions.png
+Css: td#TBL-1-1-1{border-left:solid black 0.4pt;border-right:solid black 0.4pt;}
+Css: td#TBL-1-1-2{border-right:solid black 0.4pt;}
+Css: td#TBL-1-1-3{border-right:solid black 0.4pt;}
+Css: td#TBL-1-1-4{border-right:solid black 0.4pt;}
+Css: td#TBL-1-1-5{border-right:solid black 0.4pt;}
+File: images/circle_exercise.png
+File: images/rectangle.png
+File: images/nested_rectangles.png
+File: images/tetris_background.png
+File: images/translation_manager_1.png
+File: images/filebits.png
+File: images/filetree.png
+File: images/objClass1.png
+File: images/objClass2.png
+File: images/objClass3.png
+File: images/objClassParams.png
+File: images/meshVariations.png
+File: images/waypoints.png
+--- characters ---
+Font("cmr","10","10","100")
+Font("cmmi","10","10","100")
+Font("cmsy","10","10","100")
+Font("cmtt","10","10","100")
+Font("cmbx","10","10","100")
+Font("cmti","10","10","100")
+Font("cmsl","10","10","100")
+Font("cmsltt","10","10","100")

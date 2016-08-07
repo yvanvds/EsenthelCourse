@@ -1,6 +1,5 @@
 \chapter{Pointers}
 
-\section{Introduction}
 By know you've learned that references are pretty neat. But before references existed, there were pointers. Just like references, they are used to store a memory address. But while references are hard to use wrong, pointers allow you to abuse them in every possible way. They're the bondage lovers of programming!
 
 For instance: a reference \textsl{has} to have a valid address when you create it. And once created, the address can never change. You can't create an empty reference and pass the address later on. Pointers on the other hand, can point to anything or nothing. And you can change the contained address as many times as you like.
@@ -119,7 +118,7 @@ It is also possible to assign the value of another pointer, like this:
 *p1 = *p2;
 \end{code}
 
-\subsection{Pointer to null}
+\subsection{Pointer to Null}
 An unassigned pointer points to random memory. So how do you make an `empty' pointer, pointing to nothing? You assign a `null' address. We also call this a `null pointer'.
 
 \begin{code}

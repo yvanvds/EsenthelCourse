@@ -41,7 +41,9 @@ The problem with this is that within a few minutes, you're working on three or m
 
 This is why you should try to focus on the current task: creating the class. Maybe you will implement a few methods you won't even need later on. That's OK! It is much harder when you constantly have to revisit your class because you need something which doesn't exist.
 
-That is rule 1: think about the class, not about the application. Rule number two is: logic and interface don't mix. It's just a bad idea. We try to make a clear distinction between GUI classes, logic classes, network classes, database classes and so on.
+That's rule number one: think about the class, not about the application. 
+
+Rule number two is: logic and interface don't mix. It's just a bad idea. We try to make a clear distinction between GUI classes, logic classes, network classes, database classes and so on.
 
 Think about the score class one more time. You could decide that the score will be visible on the screen and implement a score method called 'draw' to do just that. But later on you need to display the score when the game is over, in a slightly different way. Will you create yet another draw method? Or when you have to line up the drawing of score with the drawing of the current level. Will you add the level to the scoring system? Level management could very well deserve its own class.
 

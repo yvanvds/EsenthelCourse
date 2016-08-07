@@ -1,25 +1,21 @@
 %!TEX program = xelatex
-\newcommand*{\TOHTML}{}
 
-\ifdefined\TOHTML
-\documentclass[]{book}
-\input{layout/htmltemplate}
-
-\else
+\ifdefined\NOHTML
 \documentclass[11pt, oldfontcommands, oneside, a4paper]{memoir}
 \usepackage{etoolbox}
 \input{layout/template}
 \setmainlanguage{english}
 \PolyglossiaSetup{english}{indentfirst=false}
 \graphicspath{ {images/} }
+\else
+\documentclass[]{book}
+\input{layout/htmltemplate}
 \fi
 
-\title{Learning C++ with Esenthel}
+\title{Learn C++ with Esenthel}
 
 \begin{document}
-\ifdefined\TOHTML
-%\maketitle
-\else
+\ifdefined\NOHTML
 \titleGM
 \tableofcontents
 \fi

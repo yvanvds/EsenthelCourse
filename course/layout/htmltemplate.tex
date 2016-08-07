@@ -54,7 +54,11 @@
 \newenvironment{note}{}{}{}
 \newenvironment{exercise}{}{}{}
 
-\newcommand{\partAbstract}[1]{\gdef\@partAbstract{\leftskip5em\normalsize\color{black}\textit{#1}}}
+%abstract below part name
+\newcommand{\pAbstract}{empty}
+\newcommand{\partAbstract}[1]{\renewcommand{\pAbstract}{#1}}
+\let\oldpart\part
+\renewcommand{\part}[1]{\oldpart{#1}\pAbstract}
 
 \lstnewenvironment{code}
 	{
@@ -66,5 +70,10 @@
 \newcommand{\eeClass}[1]{\texttt{#1}}
 \newcommand{\eeFunc}[1]{\texttt{#1}}
 \newcommand{\eeOpp}[1]{\texttt{#1}}
+
+\newcommand{\url}[1]{}
+\newcommand{\tick}{\item}
+\newcommand{\fail}{\item}
+\newcommand{\pencil}{\item}
 
 \author{Mute (http://mutecode.com)}

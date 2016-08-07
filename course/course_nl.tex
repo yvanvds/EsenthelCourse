@@ -1,22 +1,24 @@
 %!TEX program = xelatex
 
+\ifdefined\NOHTML
 \documentclass[11pt, oldfontcommands, oneside, a4paper]{memoir}
 \usepackage{etoolbox}
-
 \input{layout/template}
-
 \setmainlanguage{dutch}
 \PolyglossiaSetup{dutch}{indentfirst=false}
-
 \graphicspath{ {images/} }
-
+\else
+\documentclass[]{book}
+\input{layout/htmltemplate}
+\fi
 
 
 \title{Learning C++ with Esenthel}
 \begin{document}
+\ifdefined\NOHTML
 \titleGM
 \tableofcontents
-
+\fi
 %\part{C++ en Esenthel}
 %\input{../parts/introduction}
 
@@ -81,7 +83,7 @@ In dit deel leer je over meer algemene concepten zoals random waarden en contain
 % add a part on how this engine is designed to counter the problem of students forgetting everything after a 5 week break.
 % We could show more advanced programming techniques and focus more on the theory of the design.
 
-\printindex
+
 
 \end{document}
 

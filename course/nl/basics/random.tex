@@ -1,7 +1,8 @@
 \chapter{Random}
+Een game blijft zelden boeiend als die compleet voorspelbaar is. Om die voorspelbaarheid tegen te gaan maken ontwikkelaars gebruik van willekeurige waarden via de \eeClass{Random} class. Die class laat je toe om variatie in te bouwen. 
 
 \section{Gehele getallen}
-Een game blijft zelden boeiend als die compleet voorspelbaar is. Om die voorspelbaarheid tegen te gaan maken ontwikkelaars gebruik van willekeurige waarden via de \eeClass{Random} class. Die class laat je toe om variatie in te bouwen. De functie \eeFunc{Random()} geeft je een willekeurig getal tussen 0 en 4.294.967.295. Je kan dat testen via het volgende voorbeeld:
+De functie \eeFunc{Random()} geeft je een willekeurig getal tussen 0 en 4.294.967.295. Je kan dat testen via het volgende voorbeeld:
 
 \begin{code}
 uint number = 0;
@@ -49,12 +50,16 @@ c.pos.y = RandomF(-D.h(), D.h());
 Zoals je ziet zetten we niet letterlijk getallen in de functie RandomF. Dat kan wel, maar in dit geval is dat niet aangewezen. De hoogte en de breedte van het scherm kunnen namelijk verschillen van toestel tot toestel. Aangezien het middelpunt van het scherm gelijk is aan 0, is de negatieve breedte dus de linkerkant (minimum waarde voor x). De negatieve hoogte is de onderkant (minimum waarde voor y).
 
 \begin{exercise}
-\begin{enumerate}
-\item Maak een programma dat een cirkel op het scherm toont. Telkens je op de spatiebalk drukt, geef je de cirkel een nieuwe positie.
-\item Maak een programma dat een klein vierkant op het scherm toont. Elke seconde geef je het vierkant een nieuwe positie.
-\item Dit is een uitbreiding op het vorige programma. Voor zie een int `score' die gelijk is aan nul. Je toont de score ergens op het scherm. Wanneer je de linkermuisknop indrukt, controleer je of de muiswijzer binnen het vierkant zit. Als dat zo is, verhoog je de score met 1.
-\item Uitbreiding: zorg dat het vierkant steeds sneller van positie wisselt.
-\end{enumerate}  
+Maak een programma dat een cirkel op het scherm toont. Telkens je op de spatiebalk drukt, geef je de cirkel een nieuwe positie.
+\end{exercise}
+\begin{exercise}
+Maak een programma dat een klein vierkant op het scherm toont. Elke seconde geef je het vierkant een nieuwe positie.
+\end{exercise}
+\begin{exercise}
+Dit is een uitbreiding op het vorige programma. Voor zie een int `score' die gelijk is aan nul. Je toont de score ergens op het scherm. Wanneer je de linkermuisknop indrukt, controleer je of de muiswijzer binnen het vierkant zit. Als dat zo is, verhoog je de score met 1.
+\end{exercise}
+\begin{exercise}
+\textit{Challenge:} zorg dat het vierkant steeds sneller van positie wisselt.  
 \end{exercise}
 
 

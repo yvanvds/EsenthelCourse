@@ -1,0 +1,145 @@
+\expandafter\ifx\csname doTocEntry\endcsname\relax \expandafter\endinput\fi
+\doTocEntry\tocpart{I}{\csname a:TocLink\endcsname{4}{x4-1000I}{QQ2-4-1}{2D Concepts}}{5}\relax 
+\doTocEntry\tocchapter{1}{\csname a:TocLink\endcsname{5}{x5-20001}{QQ2-5-2}{Positions in 2D}}{7}\relax 
+\doTocEntry\toclof{1.1}{\csname a:TocLink\endcsname{5}{x5-20011}{}{}}{figure}\relax 
+\doTocEntry\tocsection{1.1}{\csname a:TocLink\endcsname{6}{x6-30001.1}{QQ2-6-4}{Show a position on the screen}}{10}\relax 
+\doTocEntry\tocsection{1.2}{\csname a:TocLink\endcsname{7}{x7-40001.2}{QQ2-7-5}{Math}}{11}\relax 
+\doTocEntry\tocsection{1.3}{\csname a:TocLink\endcsname{8}{x8-50001.3}{QQ2-8-6}{Points to remember}}{12}\relax 
+\doTocEntry\tocsection{1.4}{\csname a:TocLink\endcsname{9}{x9-60001.4}{QQ2-9-7}{Summary}}{13}\relax 
+\doTocEntry\tocchapter{2}{\csname a:TocLink\endcsname{10}{x10-70002}{QQ2-10-8}{Interaction}}{15}\relax 
+\doTocEntry\tocsection{2.1}{\csname a:TocLink\endcsname{11}{x11-80002.1}{QQ2-11-9}{Mouse Interaction}}{15}\relax 
+\doTocEntry\tocsubsection{2.1.1}{\csname a:TocLink\endcsname{12}{x12-90002.1.1}{QQ2-12-10}{Position}}{15}\relax 
+\doTocEntry\tocsubsection{2.1.2}{\csname a:TocLink\endcsname{13}{x13-100002.1.2}{QQ2-13-11}{Clicks}}{16}\relax 
+\doTocEntry\tocsubsection{2.1.3}{\csname a:TocLink\endcsname{14}{x14-110002.1.3}{QQ2-14-12}{Mouse Wheel}}{17}\relax 
+\doTocEntry\tocsubsection{2.1.4}{\csname a:TocLink\endcsname{15}{x15-120002.1.4}{QQ2-15-13}{Cursor}}{18}\relax 
+\doTocEntry\tocsubsection{2.1.5}{\csname a:TocLink\endcsname{16}{x16-130002.1.5}{QQ2-16-14}{Other functions}}{19}\relax 
+\doTocEntry\tocsection{2.2}{\csname a:TocLink\endcsname{17}{x17-140002.2}{QQ2-17-15}{Keyboard Interactions}}{21}\relax 
+\doTocEntry\tocsubsection{2.2.1}{\csname a:TocLink\endcsname{18}{x18-150002.2.1}{QQ2-18-16}{Key Methods}}{21}\relax 
+\doTocEntry\tocsubsection{2.2.2}{\csname a:TocLink\endcsname{19}{x19-160002.2.2}{QQ2-19-17}{Gradual Changes}}{23}\relax 
+\doTocEntry\tocsubsection{2.2.3}{\csname a:TocLink\endcsname{20}{x20-170002.2.3}{QQ2-20-18}{Delta Time}}{24}\relax 
+\doTocEntry\tocchapter{3}{\csname a:TocLink\endcsname{21}{x21-180003}{QQ2-21-19}{Text}}{29}\relax 
+\doTocEntry\tocsection{3.1}{\csname a:TocLink\endcsname{22}{x22-190003.1}{QQ2-22-20}{Drawing Text}}{29}\relax 
+\doTocEntry\tocsection{3.2}{\csname a:TocLink\endcsname{23}{x23-200003.2}{QQ2-23-21}{Combining Text and Numbers}}{30}\relax 
+\doTocEntry\tocsection{3.3}{\csname a:TocLink\endcsname{24}{x24-210003.3}{QQ2-24-22}{Vec2 as Text}}{31}\relax 
+\doTocEntry\tocsection{3.4}{\csname a:TocLink\endcsname{25}{x25-220003.4}{QQ2-25-23}{Font and Size}}{32}\relax 
+\doTocEntry\tocchapter{4}{\csname a:TocLink\endcsname{26}{x26-230004}{QQ2-26-24}{Shapes}}{35}\relax 
+\doTocEntry\tocsection{4.1}{\csname a:TocLink\endcsname{27}{x27-240004.1}{QQ2-27-25}{Circle}}{35}\relax 
+\doTocEntry\tocsubsection{4.1.1}{\csname a:TocLink\endcsname{28}{x28-250004.1.1}{QQ2-28-26}{Methods}}{35}\relax 
+\doTocEntry\tocsubsection{4.1.2}{\csname a:TocLink\endcsname{29}{x29-260004.1.2}{QQ2-29-27}{Math}}{37}\relax 
+\doTocEntry\toclof{4.1}{\csname a:TocLink\endcsname{29}{x29-260111}{}{}}{figure}\relax 
+\doTocEntry\tocsection{4.2}{\csname a:TocLink\endcsname{30}{x30-270004.2}{QQ2-30-29}{Edge2}}{42}\relax 
+\doTocEntry\tocsubsection{4.2.1}{\csname a:TocLink\endcsname{31}{x31-280004.2.1}{QQ2-31-30}{Methods}}{42}\relax 
+\doTocEntry\tocsubsection{4.2.2}{\csname a:TocLink\endcsname{32}{x32-290004.2.2}{QQ2-32-31}{Exercises}}{43}\relax 
+\doTocEntry\tocsection{4.3}{\csname a:TocLink\endcsname{33}{x33-300004.3}{QQ2-33-32}{Rect}}{46}\relax 
+\doTocEntry\toclof{4.2}{\csname a:TocLink\endcsname{33}{x33-300012}{}{}}{figure}\relax 
+\doTocEntry\toclof{4.3}{\csname a:TocLink\endcsname{33}{x33-300063}{}{}}{figure}\relax 
+\doTocEntry\tocsubsection{4.3.1}{\csname a:TocLink\endcsname{34}{x34-310004.3.1}{QQ2-34-35}{A moving Rectangle}}{52}\relax 
+\doTocEntry\tocsection{4.4}{\csname a:TocLink\endcsname{35}{x35-320004.4}{QQ2-35-36}{Cuts}}{55}\relax 
+\doTocEntry\tocchapter{5}{\csname a:TocLink\endcsname{36}{x36-330005}{QQ2-36-37}{Images and Sound}}{59}\relax 
+\doTocEntry\tocsection{5.1}{\csname a:TocLink\endcsname{37}{x37-340005.1}{QQ2-37-38}{Images}}{59}\relax 
+\doTocEntry\tocsection{5.2}{\csname a:TocLink\endcsname{38}{x38-350005.2}{QQ2-38-39}{Sound}}{61}\relax 
+\doTocEntry\tocsubsection{5.2.1}{\csname a:TocLink\endcsname{39}{x39-360005.2.1}{QQ2-39-40}{Music}}{61}\relax 
+\doTocEntry\tocsubsection{5.2.2}{\csname a:TocLink\endcsname{40}{x40-370005.2.2}{QQ2-40-41}{Playlists (Extra)}}{63}\relax 
+\doTocEntry\tocsubsection{5.2.3}{\csname a:TocLink\endcsname{41}{x41-380005.2.3}{QQ2-41-42}{FX}}{64}\relax 
+\doTocEntry\tocpart{II}{\csname a:TocLink\endcsname{42}{x42-39000II}{QQ2-42-43}{Basics}}{71}\relax 
+\doTocEntry\tocchapter{6}{\csname a:TocLink\endcsname{43}{x43-400006}{QQ2-43-44}{Random}}{73}\relax 
+\doTocEntry\tocsection{6.1}{\csname a:TocLink\endcsname{44}{x44-410006.1}{QQ2-44-45}{Whole Numbers}}{73}\relax 
+\doTocEntry\tocsection{6.2}{\csname a:TocLink\endcsname{45}{x45-420006.2}{QQ2-45-46}{Random Float}}{74}\relax 
+\doTocEntry\tocchapter{7}{\csname a:TocLink\endcsname{46}{x46-430007}{QQ2-46-47}{Containers}}{77}\relax 
+\doTocEntry\tocsection{7.1}{\csname a:TocLink\endcsname{47}{x47-440007.1}{QQ2-47-48}{New()}}{77}\relax 
+\doTocEntry\tocsection{7.2}{\csname a:TocLink\endcsname{48}{x48-450007.2}{QQ2-48-49}{Using objects}}{79}\relax 
+\doTocEntry\tocsection{7.3}{\csname a:TocLink\endcsname{49}{x49-460007.3}{QQ2-49-50}{Adding Objects}}{81}\relax 
+\doTocEntry\tocsubsection{7.3.1}{\csname a:TocLink\endcsname{50}{x50-470007.3.1}{QQ2-50-51}{During Init}}{81}\relax 
+\doTocEntry\tocsubsection{7.3.2}{\csname a:TocLink\endcsname{51}{x51-480007.3.2}{QQ2-51-52}{During Update}}{82}\relax 
+\doTocEntry\tocsection{7.4}{\csname a:TocLink\endcsname{52}{x52-490007.4}{QQ2-52-53}{Removing Objects}}{84}\relax 
+\doTocEntry\tocsection{7.5}{\csname a:TocLink\endcsname{53}{x53-500007.5}{QQ2-53-54}{A little Game}}{86}\relax 
+\doTocEntry\tocchapter{8}{\csname a:TocLink\endcsname{54}{x54-510008}{QQ2-54-55}{Classes: the basics}}{89}\relax 
+\doTocEntry\tocsection{8.1}{\csname a:TocLink\endcsname{55}{x55-520008.1}{QQ2-55-56}{Create your own class}}{89}\relax 
+\doTocEntry\tocchapter{9}{\csname a:TocLink\endcsname{56}{x56-530009}{QQ2-56-57}{Methods}}{93}\relax 
+\doTocEntry\tocsection{9.1}{\csname a:TocLink\endcsname{57}{x57-540009.1}{QQ2-57-58}{Methods without arguments or result}}{93}\relax 
+\doTocEntry\tocsection{9.2}{\csname a:TocLink\endcsname{58}{x58-550009.2}{QQ2-58-59}{Methods with Arguments}}{94}\relax 
+\doTocEntry\tocsection{9.3}{\csname a:TocLink\endcsname{59}{x59-560009.3}{QQ2-59-60}{More arguments}}{95}\relax 
+\doTocEntry\tocsection{9.4}{\csname a:TocLink\endcsname{60}{x60-570009.4}{QQ2-60-61}{Methods with a Result}}{96}\relax 
+\doTocEntry\tocsection{9.5}{\csname a:TocLink\endcsname{61}{x61-580009.5}{QQ2-61-62}{Methods with Arguments and Result}}{97}\relax 
+\doTocEntry\tocsection{9.6}{\csname a:TocLink\endcsname{62}{x62-590009.6}{QQ2-62-63}{The solution}}{98}\relax 
+\doTocEntry\tocchapter{10}{\csname a:TocLink\endcsname{63}{x63-6000010}{QQ2-63-64}{More fun with Classes}}{99}\relax 
+\doTocEntry\tocsection{10.1}{\csname a:TocLink\endcsname{64}{x64-6100010.1}{QQ2-64-65}{Related ideas}}{99}\relax 
+\doTocEntry\tocsection{10.2}{\csname a:TocLink\endcsname{65}{x65-6200010.2}{QQ2-65-66}{Setters and Getters}}{102}\relax 
+\doTocEntry\tocsection{10.3}{\csname a:TocLink\endcsname{66}{x66-6300010.3}{QQ2-66-67}{public and private}}{103}\relax 
+\doTocEntry\tocsection{10.4}{\csname a:TocLink\endcsname{67}{x67-6400010.4}{QQ2-67-68}{Global Objects}}{104}\relax 
+\doTocEntry\tocsection{10.5}{\csname a:TocLink\endcsname{68}{x68-6500010.5}{QQ2-68-69}{Manager Classes}}{105}\relax 
+\doTocEntry\tocsection{10.6}{\csname a:TocLink\endcsname{69}{x69-6600010.6}{QQ2-69-70}{Working with existing code.}}{107}\relax 
+\doTocEntry\tocchapter{11}{\csname a:TocLink\endcsname{70}{x70-6700011}{QQ2-70-71}{References}}{111}\relax 
+\doTocEntry\tocsection{11.1}{\csname a:TocLink\endcsname{71}{x71-6800011.1}{QQ2-71-72}{Pass by Reference}}{112}\relax 
+\doTocEntry\tocsection{11.2}{\csname a:TocLink\endcsname{72}{x72-6900011.2}{QQ2-72-73}{Return by Reference}}{114}\relax 
+\doTocEntry\tocchapter{12}{\csname a:TocLink\endcsname{73}{x73-7000012}{QQ2-73-74}{Pointers}}{119}\relax 
+\doTocEntry\tocsection{12.1}{\csname a:TocLink\endcsname{74}{x74-7100012.1}{QQ2-74-75}{Pointers to the Rescue}}{120}\relax 
+\doTocEntry\tocsection{12.2}{\csname a:TocLink\endcsname{75}{x75-7200012.2}{QQ2-75-76}{Pointers 101}}{122}\relax 
+\doTocEntry\tocsubsection{12.2.1}{\csname a:TocLink\endcsname{76}{x76-7300012.2.1}{QQ2-76-77}{Declaring a Pointer}}{122}\relax 
+\doTocEntry\tocsubsection{12.2.2}{\csname a:TocLink\endcsname{77}{x77-7400012.2.2}{QQ2-77-78}{Assign an Address.}}{123}\relax 
+\doTocEntry\tocsubsection{12.2.3}{\csname a:TocLink\endcsname{78}{x78-7500012.2.3}{QQ2-78-79}{Changing a value through its pointer}}{124}\relax 
+\doTocEntry\tocsubsection{12.2.4}{\csname a:TocLink\endcsname{79}{x79-7600012.2.4}{QQ2-79-80}{Pointer to Null}}{125}\relax 
+\doTocEntry\tocsection{12.3}{\csname a:TocLink\endcsname{80}{x80-7700012.3}{QQ2-80-81}{All together}}{127}\relax 
+\doTocEntry\tocchapter{13}{\csname a:TocLink\endcsname{81}{x81-7800013}{QQ2-81-82}{Constants}}{131}\relax 
+\doTocEntry\tocsection{13.1}{\csname a:TocLink\endcsname{82}{x82-7900013.1}{QQ2-82-83}{Global Constants}}{131}\relax 
+\doTocEntry\tocsection{13.2}{\csname a:TocLink\endcsname{83}{x83-8000013.2}{QQ2-83-84}{Const Arguments}}{133}\relax 
+\doTocEntry\tocchapter{14}{\csname a:TocLink\endcsname{84}{x84-8100014}{QQ2-84-85}{Enumerations}}{135}\relax 
+\doTocEntry\tocsection{14.1}{\csname a:TocLink\endcsname{85}{x85-8200014.1}{QQ2-85-86}{Bad Example}}{135}\relax 
+\doTocEntry\tocsection{14.2}{\csname a:TocLink\endcsname{86}{x86-8300014.2}{QQ2-86-87}{Slightly less Bad Example}}{136}\relax 
+\doTocEntry\tocsection{14.3}{\csname a:TocLink\endcsname{87}{x87-8400014.3}{QQ2-87-88}{Enumeration time!}}{137}\relax 
+\doTocEntry\tocchapter{15}{\csname a:TocLink\endcsname{88}{x88-8500015}{QQ2-88-89}{Application States}}{141}\relax 
+\doTocEntry\tocsection{15.1}{\csname a:TocLink\endcsname{89}{x89-8600015.1}{QQ2-89-90}{Intro}}{141}\relax 
+\doTocEntry\tocsection{15.2}{\csname a:TocLink\endcsname{90}{x90-8700015.2}{QQ2-90-91}{Menu}}{142}\relax 
+\doTocEntry\tocsection{15.3}{\csname a:TocLink\endcsname{91}{x91-8800015.3}{QQ2-91-92}{Game}}{143}\relax 
+\doTocEntry\tocsection{15.4}{\csname a:TocLink\endcsname{92}{x92-8900015.4}{QQ2-92-93}{Default State}}{144}\relax 
+\doTocEntry\tocpart{III}{\csname a:TocLink\endcsname{93}{x93-90000III}{QQ2-93-94}{Tetris}}{151}\relax 
+\doTocEntry\tocchapter{16}{\csname a:TocLink\endcsname{94}{x94-9100016}{QQ2-94-95}{Introduction}}{153}\relax 
+\doTocEntry\tocsection{16.1}{\csname a:TocLink\endcsname{95}{x95-9200016.1}{QQ2-95-96}{Setup}}{153}\relax 
+\doTocEntry\tocsection{16.2}{\csname a:TocLink\endcsname{96}{x96-9300016.2}{QQ2-96-97}{Constants}}{155}\relax 
+\doTocEntry\tocsection{16.3}{\csname a:TocLink\endcsname{97}{x97-9400016.3}{QQ2-97-98}{Enums}}{157}\relax 
+\doTocEntry\tocchapter{17}{\csname a:TocLink\endcsname{98}{x98-9500017}{QQ2-98-99}{Objects}}{159}\relax 
+\doTocEntry\tocsection{17.1}{\csname a:TocLink\endcsname{99}{x99-9600017.1}{QQ2-99-100}{Squares}}{159}\relax 
+\doTocEntry\tocsubsection{17.1.1}{\csname a:TocLink\endcsname{100}{x100-9700017.1.1}{QQ2-100-101}{Square Tester}}{159}\relax 
+\doTocEntry\tocsubsection{17.1.2}{\csname a:TocLink\endcsname{101}{x101-9800017.1.2}{QQ2-101-102}{Create and Draw}}{161}\relax 
+\doTocEntry\tocsubsection{17.1.3}{\csname a:TocLink\endcsname{102}{x102-9900017.1.3}{QQ2-102-103}{Test}}{163}\relax 
+\doTocEntry\tocsection{17.2}{\csname a:TocLink\endcsname{103}{x103-10000017.2}{QQ2-103-104}{Blocks}}{165}\relax 
+\doTocEntry\tocsubsection{17.2.1}{\csname a:TocLink\endcsname{104}{x104-10100017.2.1}{QQ2-104-105}{Add Squares}}{165}\relax 
+\doTocEntry\tocsubsection{17.2.2}{\csname a:TocLink\endcsname{105}{x105-10200017.2.2}{QQ2-105-106}{Create and Draw}}{167}\relax 
+\doTocEntry\tocsubsection{17.2.3}{\csname a:TocLink\endcsname{106}{x106-10300017.2.3}{QQ2-106-107}{Move and Rotate}}{168}\relax 
+\doTocEntry\tocsection{17.3}{\csname a:TocLink\endcsname{107}{x107-10400017.3}{QQ2-107-108}{Pile}}{170}\relax 
+\doTocEntry\tocsubsection{17.3.1}{\csname a:TocLink\endcsname{108}{x108-10500017.3.1}{QQ2-108-109}{Init and Draw}}{170}\relax 
+\doTocEntry\tocsubsection{17.3.2}{\csname a:TocLink\endcsname{109}{x109-10600017.3.2}{QQ2-109-110}{Add}}{171}\relax 
+\doTocEntry\tocsubsection{17.3.3}{\csname a:TocLink\endcsname{110}{x110-10700017.3.3}{QQ2-110-111}{canMove \& collides}}{172}\relax 
+\doTocEntry\tocsubsection{17.3.4}{\csname a:TocLink\endcsname{111}{x111-10800017.3.4}{QQ2-111-112}{checkLines \& removeRow}}{174}\relax 
+\doTocEntry\tocsection{17.4}{\csname a:TocLink\endcsname{112}{x112-10900017.4}{QQ2-112-113}{Wall}}{176}\relax 
+\doTocEntry\tocchapter{18}{\csname a:TocLink\endcsname{113}{x113-11000018}{QQ2-113-114}{Interface}}{179}\relax 
+\doTocEntry\tocsection{18.1}{\csname a:TocLink\endcsname{114}{x114-11100018.1}{QQ2-114-115}{Background}}{179}\relax 
+\doTocEntry\toclof{18.1}{\csname a:TocLink\endcsname{114}{x114-1110011}{}{}}{figure}\relax 
+\doTocEntry\tocsubsection{18.1.1}{\csname a:TocLink\endcsname{115}{x115-11200018.1.1}{QQ2-115-117}{Playing Field}}{182}\relax 
+\doTocEntry\tocsubsection{18.1.2}{\csname a:TocLink\endcsname{116}{x116-11300018.1.2}{QQ2-116-118}{Next Block}}{183}\relax 
+\doTocEntry\tocsubsection{18.1.3}{\csname a:TocLink\endcsname{117}{x117-11400018.1.3}{QQ2-117-119}{Text}}{184}\relax 
+\doTocEntry\tocsection{18.2}{\csname a:TocLink\endcsname{118}{x118-11500018.2}{QQ2-118-120}{Sound}}{186}\relax 
+\doTocEntry\tocchapter{19}{\csname a:TocLink\endcsname{119}{x119-11600019}{QQ2-119-121}{Application States}}{189}\relax 
+\doTocEntry\tocsection{19.1}{\csname a:TocLink\endcsname{120}{x120-11700019.1}{QQ2-120-122}{Init State}}{189}\relax 
+\doTocEntry\tocsection{19.2}{\csname a:TocLink\endcsname{121}{x121-11800019.2}{QQ2-121-123}{The Game State}}{190}\relax 
+\doTocEntry\tocsection{19.3}{\csname a:TocLink\endcsname{122}{x122-11900019.3}{QQ2-122-124}{Score State}}{191}\relax 
+\doTocEntry\tocsubsection{19.3.1}{\csname a:TocLink\endcsname{123}{x123-12000019.3.1}{QQ2-123-125}{Simple Things}}{191}\relax 
+\doTocEntry\tocsubsection{19.3.2}{\csname a:TocLink\endcsname{124}{x124-12100019.3.2}{QQ2-124-126}{checkWin \& gameIsLost}}{192}\relax 
+\doTocEntry\tocsubsection{19.3.3}{\csname a:TocLink\endcsname{125}{x125-12200019.3.3}{QQ2-125-127}{addPoints}}{193}\relax 
+\doTocEntry\tocsubsection{19.3.4}{\csname a:TocLink\endcsname{126}{x126-12300019.3.4}{QQ2-126-128}{Score State}}{194}\relax 
+\doTocEntry\tocchapter{20}{\csname a:TocLink\endcsname{127}{x127-12400020}{QQ2-127-129}{GameLogic}}{199}\relax 
+\doTocEntry\tocsection{20.1}{\csname a:TocLink\endcsname{128}{x128-12500020.1}{QQ2-128-130}{The easy methods}}{199}\relax 
+\doTocEntry\tocsubsection{20.1.1}{\csname a:TocLink\endcsname{129}{x129-12600020.1.1}{QQ2-129-131}{CheckLoss}}{199}\relax 
+\doTocEntry\tocsubsection{20.1.2}{\csname a:TocLink\endcsname{130}{x130-12700020.1.2}{QQ2-130-132}{Create}}{201}\relax 
+\doTocEntry\tocsubsection{20.1.3}{\csname a:TocLink\endcsname{131}{x131-12800020.1.3}{QQ2-131-133}{Draw}}{203}\relax 
+\doTocEntry\tocsection{20.2}{\csname a:TocLink\endcsname{132}{x132-12900020.2}{QQ2-132-134}{A bit harder}}{205}\relax 
+\doTocEntry\tocsubsection{20.2.1}{\csname a:TocLink\endcsname{133}{x133-13000020.2.1}{QQ2-133-135}{Can Rotate}}{205}\relax 
+\doTocEntry\tocsubsection{20.2.2}{\csname a:TocLink\endcsname{134}{x134-13100020.2.2}{QQ2-134-136}{Can Move}}{206}\relax 
+\doTocEntry\tocsubsection{20.2.3}{\csname a:TocLink\endcsname{135}{x135-13200020.2.3}{QQ2-135-137}{Change Focus Block}}{207}\relax 
+\doTocEntry\tocsubsection{20.2.4}{\csname a:TocLink\endcsname{136}{x136-13300020.2.4}{QQ2-136-138}{Handle Bottom Collision}}{208}\relax 
+\doTocEntry\tocsubsection{20.2.5}{\csname a:TocLink\endcsname{137}{x137-13400020.2.5}{QQ2-137-139}{Handle Input}}{209}\relax 
+\doTocEntry\tocsection{20.3}{\csname a:TocLink\endcsname{138}{x138-13500020.3}{QQ2-138-140}{Update}}{211}\relax 
+\doTocEntry\tocsubsection{20.3.1}{\csname a:TocLink\endcsname{139}{x139-13600020.3.1}{QQ2-139-141}{Force Down}}{211}\relax 
+\doTocEntry\tocsubsection{20.3.2}{\csname a:TocLink\endcsname{140}{x140-13700020.3.2}{QQ2-140-142}{Slide Counter}}{212}\relax 
+\doTocEntry\tocsubsection{20.3.3}{\csname a:TocLink\endcsname{141}{x141-13800020.3.3}{QQ2-141-143}{To Bottom}}{213}\relax 
+\doTocEntry\tocsection{20.4}{\csname a:TocLink\endcsname{142}{x142-13900020.4}{QQ2-142-144}{Afterthoughts}}{215}\relax 
