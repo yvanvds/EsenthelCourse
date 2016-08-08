@@ -86,7 +86,7 @@ State StateMenu(UpdateMenu, DrawMenu, InitMenu, ShutMenu);
 This state is very similar to the previous one. But this time we can use the Enter key to enter the actual game. 
 
 \section{Game}
-Deze code kan je voor \eeFunc{StateGame} gebruiken. Maak ook nu weer een afzonderlijk bestand.
+You can use this code for \eeFunc{StateGame}. Again, add this code in a separate file.
 \begin{code}
 bool InitGame() {return true;}
 void ShutGame() {}
@@ -106,10 +106,10 @@ void DrawGame()
 State StateGame(UpdateGame, DrawGame, InitGame, ShutGame);
 \end{code}
 
-Door tijdens de game op escape te drukken, schakelen we terug naar \eeFunc{StateMenu}. In deze state ga je bij een echte game natuurlijk nog heel veel code moeten toevoegen.
+You will switch back to \eeFunc{StateMenu} by pressing escape. In a real game you will lot of other code in the update function.
 
 \section{Default State}
-Dan rest ons nog het starten van het programma. We hebben nu alle nodige states, maar \eeFunc{StateIntro} moet nog actief worden. Dit gebeurt door in de \eeFunc{Init()} functie van het programma dadelijk door te schakelen naar \eeFunc{StateIntro}. De functies \eeFunc{Update()} en \eeFunc{Draw()} worden in dit programma dus niet gebruikt.
+Now we still have to start the application. We got all the states we need, but we still have to activate \eeFunc{StateIntro}. This will be done in the \eeFunc{Init()} function off the application. We'll instantly switch to \eeFunc{StateIntro} at that point. This means the functions \eeFunc{Update()} and \eeFunc{Draw()} will never be used in this application.
 
 \begin{code}
 void InitPre()
@@ -129,5 +129,5 @@ void Draw  () {             } // unused
 \end{code}
 
 \begin{exercise}
-Gebruik de code van dit hoofdstuk om een programma te maken dat wisselt tussen de voorziene application states. Elke state plaats je in een afzonderlijk bestand.
+Use the code in this chapter to create an application which switches between all states. Create a separate file for every state.
 \end{exercise}

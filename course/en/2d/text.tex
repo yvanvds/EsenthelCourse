@@ -31,32 +31,24 @@ Create an application that shows the words `left', `right', `top' and `bottom' o
 \end{exercise}
 
 \section{Combining Text and Numbers}
-You cannot just combine text and numbers in C++. As far as your computer knows, the values 42 and ``42'' have nothing to do with each other. The first one is an integer, the second one a string literal which happens to contain the characters 4 and 2. Examine this code:
+You cannot just combine text and numbers in C++. As far as your computer knows, the values 42 and ``42'' have nothing to do with each other. The first one is an integer, the second one a string literal which happens to contain the characters 4 and 2. 
 
-\begin{code}
-int i        =  42    ; // OK
-Str myString =  42    ; // will generate an error
-Str myString = "42"   ; // this is OK
-D.text(Vec2(0, 0), 42); // this is wrong: you cannot pass an integer 
-                        // to a method expecting a string
-\end{code}
-
-Still, you need to draw numbers on a screen eventually. To do that, add the number to a \eeClass{Str} object:
+Now, the \eeClass{Str} class in Esenthel helps you a lot. It allows you to assign and add numbers to strings. For instance, all these expressions are correct:
 
 \begin{code}
 int i = 42;
-Str myString;
-myString +=   i; // this is correct
-myString +=  42; // also correct
-myString += 0.4; // also correct. myString now contains "42420.4"
-D.text(Vec2(0, 0), myString); // draw the string on the screen.
+Str myString =  42;
+myString    +=   i; 
+myString    +=  42; 
+myString    += 4.2; 
 \end{code}
 
-It doesn't end here though. What if you'd like to combine text with numbers? The good news is that Esenthel provides functions that cover most cases. Not all of them though. Take a look at this:
+But when you combine string literals (text between quotes) with numbers, you're in trouble. The compiler will try to combine them first, before dumping them in a string. And it can't do that. So this won't work:
+
 \begin{code}
 Str myString;
-myString = "score: " + 42; // correct
-myString = 42 + "score: "; // wrong
+myString = "score: " + 42; 
+myString = 42 + "score: "; 
 \end{code}
  
 Without going into details here, there is a simple solution: a \eeClass{Str} object called \eeClass{S} is provided by Esenthel. Whenever you run into an error when you try to combine text and integers or floats, start with \eeClass{S +}.

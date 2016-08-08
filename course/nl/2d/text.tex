@@ -33,33 +33,24 @@ Maak een programma dat de muis verbergt en op de positie van de muis het woord `
 \end{exercise}
 
 \section{Getallen en tekst combineren}
-Je kan getallen en tekst niet zomaar combineren. Voor je computer zijn 42 en ``42'' iets helemaal anders. Het eerste is een getal, het tweede een tekst die toevallig de characters 4 en 2 bevat. Dat zie je ook in de volgende code:
+Je kan getallen en tekst niet zomaar combineren. Voor je computer zijn 42 en ``42'' iets helemaal anders. Het eerste is een getal, het tweede een tekst die toevallig de characters 4 en 2 bevat. 
 
-\begin{code}
-int i        =  42    ; // OK
-Str myString =  42    ; // will generate an error
-Str myString = "42"   ; // this is OK
-D.text(Vec2(0, 0), 42); // this is wrong: you cannot pass an integer 
-                        // to a method expecting a string
-\end{code}
-
-Toch wil je vaak ook de waarde van een variabele op het scherm. Hoe pak je dat dan aan? Wel, je kan een getal wel toevoegen aan een \eeClass{Str} object:
+Nu, de \eeClass{Str} class in Esenthel helpt je. Die laat toe dat je getallen toewijst of toevoegt aan een string. Zo kan je bijvoorbeeld toch het volgende schrijven:
 
 \begin{code}
 int i = 42;
-Str myString;
-myString +=   i; // this is correct
-myString +=  42; // also correct
-myString += 0.4; // also correct. myString now contains "42420.4"
-D.text(Vec2(0, 0), myString); // draw the string on the screen.
+Str myString =  42;
+myString    +=   i; 
+myString    +=  42; 
+myString    += 4.2; 
 \end{code}
 
-Maar we zijn nog niet helemaal klaar. Dikwijls wil je tekst en getallen combineren. Het goede nieuws is that Esenthel functies voorziet in de meeste gevallen. Maar niet altijd. Kijk maar naar de volgende code:
+Maar wanneer je een string literal wil combineren met een nummer, dan beginnen de problemen. De compiler zal ze eerst willen samenvoegen, voor dat ze in de string gezet worden. En dat kan niet. Dit werkt dus niet:
 
 \begin{code}
 Str myString;
-myString = "score: " + 42; // correct
-myString = 42 + "score: "; // wrong
+myString = "score: " + 42; 
+myString = 42 + "score: "; 
 \end{code}
 
 We gaan hier niet in op de details, maar er bestaat een eenvoudige oplossing: een \eeClass{Str} object \eeClass{S} die voorzien is in de engine. Wanneer je een foutmelding krijgt bij het combineren van tekst met integers of floats, begin dan met \eeClass{S +}. 

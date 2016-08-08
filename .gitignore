@@ -1,6 +1,7 @@
 course/site/images/*
 course/site/en/*
 course/site/nl/*
+_notes/
 
 
 ## Core latex/pdflatex auxiliary files:
@@ -144,3 +145,9 @@ course/course_en.xref
 *.html
 course/course_en.lg
 *.idv
+*.pdf
+*.tps
+course/course_nl.xref
+*.lg
+course/course_nl.4tc
+*.tps
