@@ -40,11 +40,13 @@ void Draw()
 \end{code}
 
 \begin{exercise}
-Use the example above, but instead of showing this position in the middle of the screen, show it a little bit below the current mouse position.
+Use the example above, but instead of showing this position right below the mouse pointer, show it a little bit below.
 \end{exercise} 
 
+\video{https://www.youtube.com/embed/muw77vAjqgs}
+
 \subsection{Clicks}
-You can use the \eeClass{Ms} object to access anything related to the mouse. Most computer mouses have more than one button, which is why you need to indicate which button you'd like to query. The left button has an index of 0, the right button an index of 1. If the mouse wheel can also be pressed, it will be index 2. Here are some examples: 
+You can use the \eeClass{Ms} object to access anything related to the mouse. Most computer mouses have more than one button, which is why you need to indicate which button you'd like to query. The left button has an index of 0, the right button an index of 1. If the mouse wheel can also be pressed, it will have index 2. Here are some examples: 
 
 \begin{code}
 Ms.bp(0); // true if the left button was pressed in this frame
@@ -106,6 +108,7 @@ The red dot will only update its position on the moment you press the left butto
 Starting with this example, make it so that the second mouse position is shown only when the right mouse button is being held down.
 \end{exercise} 
 
+\video{https://www.youtube.com/embed/wXoxQpOvZ5k}
 
 \subsection{Mouse Wheel}
 Most recent mouse have a wheel. The wheel can be turned, but it doesn't have an absolute position. Esenthel can only tell you how much the wheel was turned since the last update. This distance is called a 'delta'. In general, a delta value indicates the difference between the previous and the current value. There are delta values for time, position changes, mouse wheel changes and so on. For the mouse wheel you will need the function \eeFunc{Ms.wheel()}. The result is a float value.
@@ -130,7 +133,7 @@ void Shut() {}
 bool Update()
 {
    if(Kb.bp(KB_ESC)) return false;  
-   mousePos.y += Ms.wheel();  
+   mousePos.y += Ms.wheel() * 0.1;  
    return true;
 }
 
@@ -144,6 +147,8 @@ void Draw()
 \begin{exercise}
 Start from the example above. When the left mouse button is held down, you need to control the horizontal dot position. When the right mouse button is held down, you control the vertical position of the dot.
 \end{exercise} 
+
+\video{https://www.youtube.com/embed/QDSWHMA-WRE}
 
 \subsection{Cursor}
 The mouse cursor is actually just an image shown at the screen. It is possible to change this image in your application:

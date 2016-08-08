@@ -44,6 +44,8 @@ void Draw()
 Pas het bovenstaande voorbeeld aan, zodat mousePos iets onder de positie van de muis wordt getoond.
 \end{exercise} 
 
+\video{https://www.youtube.com/embed/muw77vAjqgs}
+
 \subsection{Clicks}
 Je kan via het \eeClass{Ms} object vanalles te weten komen over de status van de muis. Aangezien we meestal meer dan \'e\'en knop op een muis hebben, zal je als argument steeds een nummer moeten opgeven. De linkerknop heeft index 0, de rechterknop index 1. Enkele voorbeelden: 
 
@@ -108,6 +110,8 @@ Pas het bovenstaande voorbeeld aan, zodat de tweede muispositie enkel zichtbaar 
 \end{exercise} 
 
 
+\video{https://www.youtube.com/embed/wXoxQpOvZ5k}
+
 \subsection{Muiswiel}
 Tegenwoordig heeft een muis meestal ook een wieltje. daarvoor bestaat geen absolute positie, maar esenthel houdt wel bij hoeveel het muiswiel gedraaid werd tijdens de huidige update. Een afstand die binnen een frame werd afgelegd heet een `delta'. Je kan zo spreken over de delta van de tijd, de delta van een beweging enzovoort. De functie die je nodig hebt om de delta van het muiswiel te weten is \eeFunc{Ms.wheel()}. Het resultaat is een float.
 
@@ -131,7 +135,7 @@ void Shut() {}
 bool Update()
 {
    if(Kb.bp(KB_ESC)) return false;  
-   mousePos.y += Ms.wheel();  
+   mousePos.y += Ms.wheel() * 0.1;  
    return true;
 }
 
@@ -145,6 +149,7 @@ void Draw()
 \begin{exercise}
 Pas het bovenstaande voorbeeld aan zodat, wanneer de linker muisknop ingedrukt is, de horizontale positie wordt aangepast. Is de rechter muisknop ingedrukt, dan pas je de vertikale positie aan.
 \end{exercise} 
+\video{https://www.youtube.com/embed/QDSWHMA-WRE}
 
 \subsection{Cursor}
 De muiscursor is niets anders dan een afbeelding die op het scherm getoond wordt. Je kan aan het begin van je programma (bijvoorbeeld in de Init functie) die afbeelding wijzigen:
