@@ -91,7 +91,7 @@ class account {
 }
 \end{code}
 
-De functie \texttt{getAllRows()} gebruik je eenvoudigweg met de naam van een tabel. Na het uitvoeren van de functie bevat het \texttt{sql} object alle rijen van de gevraagde tabel. Met de functie \texttt{getNextRow()} kan je dan een rij met gegevens opvragen totdat er geen volgende rij meer is. Vervolgens kan je de functie \texttt{getCol()} gebruiken om de waarde van een kolom te verkrijgen. 
+gDe functie \texttt{getAllRows()} gebruik je eenvoudigweg met de naam van een tabel. Na het uitvoeren van de functie bevat het \texttt{sql} object alle rijen van de gevraagde tabel. Met de functie \texttt{getNextRow()} kan je dan een rij met gegevens opvragen totdat er geen volgende rij meer is. Vervolgens kan je de functie \texttt{getCol()} gebruiken om de waarde van een kolom te verkrijgen. 
 
 \begin{note}
 Vraag de kolommen van een rij steeds op in de volgorde waarin ze in de tabel staan. Je kan wel kolommen overslaan, maar niet terug gaan naar een vorige kolom.
@@ -126,7 +126,7 @@ for( ;sql.getNextRow(); ) {
 Je wil niet steeds alle data uit een tabel in het geheugen laden. Dikwijls ben je maar ge\"interesseerd in een of in enkele records. In dat geval gebruik je de functie \texttt{getRows()}. Als argument kan je bij deze functie een voorwaarde opgeven, net zoals je dat in een SQL statement zou doen:
 
 \begin{code}
-sql.GetRows("accounts", "name='freddy'");
+sql.getRows("accounts", "name='freddy'");
 if(sql.getNextRow()) {
 	// load column data
 }
@@ -137,7 +137,7 @@ Dikwijls zal je dergelijke code in een functie gebruiken, en een bepaalde waarde
 \begin{code}
 int getScore(C Str & name) {
   int result = 0;
-	sql.GetRows("accounts", S+ "name='" + name + "'");
+	sql.getRows("accounts", S+ "name='" + name + "'");
 	if(sql.getNextRow()) {
 	  sql.getCol(4, result);
 	}
@@ -170,7 +170,7 @@ Via de functie load kunnen we een account uit de database halen door een naam me
 
 \begin{code}
 bool loadAccount(account & a) {
-  sql.GetRows("accounts", S+"name='"+a.name+"'");
+  sql.getRows("accounts", S+"name='"+a.name+"'");
 	if(sql.getNextRow()) {
 		sql.getCol(0, a.ID);
 		sql.getCol(2, a.password);
