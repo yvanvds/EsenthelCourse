@@ -84,7 +84,7 @@ Vec2 max = blockPos + (2 * SQUARE_SIZE);
 blockRect.set(min, max);
 \end{code}
 
-Now add code to the \eeFunc{draw} method to draw the picture `Tetris\_score' using the rectangle you've just created.
+Now add code to the \eeFunc{draw} method to draw the picture `Tetris\_next\_bg' using the rectangle you've just created.
 
 \subsection{Text}
 You still need two more positions: \eeFunc{scorePos} and \eeFunc{levelPos}. For the position of the score, blockPos will be used as a starting point. Subtract \eeFunc{SQUARE\_SIZE} four times of the vertical value. Now you need the position to draw the level. Start from the score position, and subtract another square.
