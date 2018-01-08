@@ -17,7 +17,7 @@ void ShutIntro() {}
 
 bool UpdateIntro()
 {
-   if(StateActive.time()>3 || Kb.bp(KB_ESC)) {
+   if(Time.stateTime()>3 || Kb.bp(KB_ESC)) {
       StateMenu.set(1.0);                    
    }
    return true;
