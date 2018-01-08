@@ -199,7 +199,7 @@ buttonClose.func(myButtonFunction(), T); // fout!
 buttonClose.func(myButtonFunction, T);   // juist.
 \end{code}
 \end{note}
-
+(
 \begin{exercise}
 Vul de vorige oefening aan met de mogelijkheid om je login window te tonen en te verbergen via de functietoets F1. Zorg ook dat zowel de ok als de cancelbutton het window terug sluiten.
 \end{exercise}
@@ -223,7 +223,7 @@ Str waarde = tl();
 Eenvoudig! Maar\ldots\ meestal hebben we geen \texttt{TextLine} in onze code, maar een \textbf{pointer} naar zo'n element. Dus moet je aangeven dat je wil werken met het element waar die pointer naar verwijst. Dat kan zo:
 
 \begin{code}
-Str waarde = *tl();
+Str waarde = (*tl)();
 \end{code}
 
 Als je dan ook nog eens vanuit een \texttt{static void} functie werkt, zoals een functie die wordt uitgevoerd wanneer je op een knop klikt, dan moet je ook het object van de class meegeven. Bij de class \texttt{loginWindow} van hierboven wordt dat dan:
