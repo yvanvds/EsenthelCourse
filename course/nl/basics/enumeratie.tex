@@ -12,7 +12,7 @@ class enemy {
 	void setWarrior() {
 		warrior = true ;
 		rogue   = false;
-		priest  = false;
+		priest  = false
 	}
 	
 	// de functies setRogue en setPriest zijn gelijkaardig
@@ -22,8 +22,7 @@ class enemy {
 	  if     (warrior) Images(=== warriorImage ===).draw(r);
 		else if(rogue  ) Images(=== rogueImage   ===).draw(r);
 		else if(priest ) Images(=== priestImage  ===).draw(r);
-	}
-}
+	}}
 \end{code}
 
 Alhoewel bovenstaande code werkt, is ze niet erg efficient. Nu gaat het nog maar om 3 classes, maar hoe meer mogelijkheden je hebt, hoe meer variabelen je moet aanpassen bij het selecteren van een class. Veel beter zou zijn om slechts \'e\'en variabele te gebruiken, want een enemy kan tenslotte maar 1 class hebben.
@@ -81,7 +80,7 @@ class enemy {
 }
 \end{code}
 
-Het voordeel van deze code is dat je overal in je programma de waarden \texttt{ET\_WARRIOR} of \texttt{ET\_ROGUE} kan gebruiken. Je kan de functie setType ook geen getal meegeven van een class die niet bestaat. En bovendien zie je op elk moment duidelijk over welke vrucht je het hebt. 
+Het voordeel van deze code is dat je overal in je programma de waarden \texttt{ET\_WARRIOR} of \texttt{ET\_ROGUE} kan gebruiken. Je kan de functie setType ook geen getal meegeven van een class die niet bestaat. En bovendien zie je op elk moment duidelijk over welke vijand je het hebt. 
 
 De waarden van een enum schrijven we in hoofdletters. Dit is niet verplicht, maar wel een conventie. Je kan immers nooit het getal waar een enumeratie waarde voor staat, aanpassen. Iets als \texttt{ET\_WARRIOR = 3} is dus onmogelijk. Aangezien \texttt{ET\_WARRIOR} het tweede woord in de rij is, is zijn waarde steeds 1.
 
