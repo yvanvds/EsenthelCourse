@@ -53,7 +53,7 @@ When a function argument ends with \eeFunc{=NULL}, it is an optional argument.
 The code above also mentions another state: `stateMenu':
 
 \begin{code}
-   if(StateActive.time()>3 || Kb.bp(KB_ESC)) {
+   if(Time.stateTime()>3 || Kb.bp(KB_ESC)) {
       StateMenu.set(1.0);                    
    }
 \end{code}
