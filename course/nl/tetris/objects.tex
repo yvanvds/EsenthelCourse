@@ -126,7 +126,8 @@ Color color(BLACK);
       
 switch(type)
 {
-	 case BT_SQUARE     : color = RED   ; break;
+
+case BT_SQUARE     : color = RED   ; break;
 	 case BT_T          : color = PURPLE; break;
 	 case BT_L          : color = GREY  ; break;
 	 case BT_BACKWARDS_L: color = BLUE  ; break;
@@ -141,8 +142,7 @@ switch(type)
 Dan moeten we de positie bepalen. In de constante GAMEAREA staat de linkeronderhoek van het speelveld. Alle posities worden vanuit dat punt berekend. De linkeronderhoek van het vierkant op positie (0,0) zou dus gelijk moeten zijn aan de linkeronderhoek van het speelveld. Dus:
 
 \begin{code}
-Vec2 screenpos = GAMEAREA;
-\end{code}
+Vec2 screenpos = GAMEAREA;\end{code}
 
 Stel nu dat je een vierkant op positie (1,0) wil. Dan is de linkeronderhoek van dat vierkant gelijk aan die van het speelveld, plus de breedte van \'e\'en vierkant. Voor alle andere posities geldt hetzelfde: je vermenigvuldigt de grid positie met de grootte van het vierkant:
 
@@ -164,9 +164,9 @@ Images(=== tetris square ===).draw(color, TRANSPARENT, r);
 \end{code}
 
 \subsection{De Test}
-Op dit moment zou je squareTester de blokken op het scherm moeten tonen, ook al kan je ze nog niet bewegen. Test je programma dus alvast uit.
 
-De functies move, getPos en setPos zijn nog niet uitgwerkt, maar het lukt je zeker om dat zelf te doen. Controleer achteraf of alles werkt door de squareTester uit te voeren.
+De functies move, getPos en setPos zijn nog niet uitgwerkt, maar het lukt je zeker om dat zelf te doen. Controleer achteraf of alles werkt door de squareTester uit te voeren. Op dit moment zou je squareTester de blokken op het scherm moeten tonen, ook al kan je ze nog niet bewegen. Test je programma dus alvast uit.
+
 
 \section{Blocks}
 Nu voeg je in `tetris Parts/objects' een code bestand `block' toe. Hierin maken we de class \eeClass{block}. Net zoals een vierkant heeft een blok een positie en een type. Maar daarnaast bestaat een blok uit squares. Er moeten dus een container voor squares aanwezig zijn.
